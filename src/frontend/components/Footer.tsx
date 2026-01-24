@@ -30,7 +30,7 @@ export function Footer() {
     <footer
       ref={footerRef}
       id="footer"
-      className="border-t border-white/10 px-6 py-12 lg:px-8"
+      className="bg-[#162d3d] border-t border-white/10 px-6 py-12 lg:px-8"
       role="contentinfo"
     >
       <div className="footer-inner mx-auto max-w-[1280px] flex flex-col items-center">
