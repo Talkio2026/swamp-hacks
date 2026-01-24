@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { UserProfile } from '@clerk/nextjs'
 import { Header } from '@/components/layout/header'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -11,6 +12,9 @@ import {
   Sparkles,
   Check,
   Loader2,
+  Calendar,
+  ExternalLink,
+  X,
 } from 'lucide-react'
 
 interface AIModel {
@@ -25,12 +29,45 @@ interface AISettings {
   openRouterModel?: string
 }
 
+interface GoogleCalendarSettings {
+  connected: boolean
+}
+
 export default function SettingsPage() {
+  const searchParams = useSearchParams()
   const [selectedModel, setSelectedModel] = useState<string>('gemini')
   const [availableModels, setAvailableModels] = useState<AIModel[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  
+  // Google Calendar state
+  const [googleCalendar, setGoogleCalendar] = useState<GoogleCalendarSettings>({ connected: false })
+  const [isConnectingGoogle, setIsConnectingGoogle] = useState(false)
+  const [isDisconnectingGoogle, setIsDisconnectingGoogle] = useState(false)
+  const [googleMessage, setGoogleMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+
+  // Check for Google OAuth callback results
+  useEffect(() => {
+    const googleSuccess = searchParams.get('google_success')
+    const googleError = searchParams.get('google_error')
+    
+    if (googleSuccess === 'true') {
+      setGoogleMessage({ type: 'success', text: 'Google Calendar connected successfully!' })
+      setGoogleCalendar({ connected: true })
+      // Clear URL params
+      window.history.replaceState({}, '', '/settings')
+    } else if (googleError) {
+      const errorMessages: Record<string, string> = {
+        access_denied: 'Google Calendar access was denied.',
+        invalid_callback: 'Invalid callback. Please try again.',
+        no_token: 'Failed to get authorization token.',
+        callback_failed: 'Connection failed. Please try again.',
+      }
+      setGoogleMessage({ type: 'error', text: errorMessages[googleError] || 'Connection failed.' })
+      window.history.replaceState({}, '', '/settings')
+    }
+  }, [searchParams])
 
   // Fetch current settings
   useEffect(() => {
@@ -48,6 +85,10 @@ export default function SettingsPage() {
           }
         }
         
+        if (data.settings?.googleCalendar) {
+          setGoogleCalendar(data.settings.googleCalendar)
+        }
+        
         if (data.availableModels) {
           setAvailableModels(data.availableModels)
         }
@@ -60,6 +101,34 @@ export default function SettingsPage() {
     
     fetchSettings()
   }, [])
+
+  // Connect Google Calendar
+  const handleConnectGoogle = () => {
+    setIsConnectingGoogle(true)
+    window.location.href = '/api/auth/google'
+  }
+
+  // Disconnect Google Calendar
+  const handleDisconnectGoogle = async () => {
+    setIsDisconnectingGoogle(true)
+    setGoogleMessage(null)
+    
+    try {
+      const response = await fetch('/api/auth/google/disconnect', { method: 'POST' })
+      
+      if (response.ok) {
+        setGoogleCalendar({ connected: false })
+        setGoogleMessage({ type: 'success', text: 'Google Calendar disconnected.' })
+      } else {
+        setGoogleMessage({ type: 'error', text: 'Failed to disconnect. Please try again.' })
+      }
+    } catch (error) {
+      console.error('Error disconnecting Google:', error)
+      setGoogleMessage({ type: 'error', text: 'Failed to disconnect. Please try again.' })
+    } finally {
+      setIsDisconnectingGoogle(false)
+    }
+  }
 
   // Save AI model preference
   const handleSaveModel = async () => {

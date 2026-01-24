@@ -3,10 +3,14 @@ import Twilio from "twilio";
 import connectToDatabase from "@/lib/mongodb";
 import Transcript from "@/lib/models/Transcript";
 import Client, { normalizePhoneNumber } from "@/lib/models/Client";
+import { transcribeWithDeepgram, deepgramToConversation } from "@/lib/transcription/deepgram";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const intelligenceServiceSid = process.env.TWILIO_INTELLIGENCE_SERVICE_SID;
+
+// Transcription provider: "deepgram" (recommended) or "twilio"
+const transcriptionProvider = process.env.TRANSCRIPTION_PROVIDER || "deepgram";
 
 interface ConversationEntry {
   speaker: "sales_representative" | "client";
@@ -105,10 +109,11 @@ export async function POST(req: NextRequest) {
 async function processTranscription(recordingSid: string, callSid: string, dialedPhoneNumber: string | null) {
   const twilioClient = Twilio(accountSid, authToken);
 
-  console.log(`[Recording Status] Creating transcript for recording: ${recordingSid}`);
+  console.log(`[Recording Status] Creating transcript for recording: ${recordingSid} using ${transcriptionProvider}`);
 
   // If phone number not provided in webhook, fetch it from Twilio call details
   let phoneNumber = dialedPhoneNumber;
+  let isOutbound = true;
   console.log(`[Recording Status] Initial phone number from webhook: ${phoneNumber}`);
   
   if (!phoneNumber) {
@@ -119,9 +124,8 @@ async function processTranscription(recordingSid: string, callSid: string, diale
       
       // Use "to" for outbound calls (we're calling the client)
       // Use "from" for inbound calls (client is calling us)
-      phoneNumber = callDetails.direction === 'outbound-api' || callDetails.direction === 'outbound-dial' 
-        ? callDetails.to 
-        : callDetails.from;
+      isOutbound = callDetails.direction === 'outbound-api' || callDetails.direction === 'outbound-dial';
+      phoneNumber = isOutbound ? callDetails.to : callDetails.from;
       
       console.log(`[Recording Status] Using phone number: ${phoneNumber} (direction: ${callDetails.direction})`);
     } catch (fetchError) {
@@ -129,115 +133,163 @@ async function processTranscription(recordingSid: string, callSid: string, diale
     }
   }
 
+  let mergedConversation: ConversationEntry[] = [];
+  let overallSentiment = "neutral";
+  let transcriptSid = "";
+
   try {
-    // Create transcript using Twilio Conversational Intelligence
-    // dataLogging: true allows full transcripts without PII redaction
-    const transcript = await twilioClient.intelligence.v2.transcripts.create({
-      serviceSid: intelligenceServiceSid!,
-      channel: {
-        media_properties: {
-          source_sid: recordingSid,
-        },
-      },
-      customerKey: callSid,
-      dataLogging: true, // Disable PII redaction - keeps actual names/dates
-    });
-
-    console.log(`[Recording Status] Transcript created: ${transcript.sid}`);
-
-    // Poll until completed
-    const completed = await waitForTranscriptCompletion(twilioClient, transcript.sid);
-    if (!completed) {
-      console.error(`[Recording Status] Transcript did not complete: ${transcript.sid}`);
-      return;
-    }
-
-    // Fetch sentences
-    console.log(`[Recording Status] Fetching sentences for transcript: ${transcript.sid}`);
-    const sentences = await twilioClient.intelligence.v2
-      .transcripts(transcript.sid)
-      .sentences.list({ limit: 5000 });
-
-    console.log(`[Recording Status] Retrieved ${sentences.length} sentences`);
-
-    // Debug: Log first sentence to see its structure
-    if (sentences.length > 0) {
-      console.log(`[Recording Status] First sentence structure:`, JSON.stringify(sentences[0], null, 2));
-    }
-
-    // Process sentences into conversation timeline
-    const conversation: ConversationEntry[] = [];
-
-    // Sentiment tracking
-    let totalSentimentScore = 0;
-    let sentimentCount = 0;
-    let positiveCount = 0;
-    let negativeCount = 0;
-
-    for (const sentence of sentences) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sentenceAny = sentence as any;
+    // ========== DEEPGRAM TRANSCRIPTION (Recommended - Better Accuracy) ==========
+    if (transcriptionProvider === "deepgram" && process.env.DEEPGRAM_API_KEY) {
+      console.log(`[Recording Status] Using Deepgram for transcription`);
       
-      // Extract text - try multiple possible property names
-      const text = sentence.transcript || sentenceAny.text || sentenceAny.transcript || sentenceAny.words || "";
+      // Get recording URL from Twilio (requires auth)
+      const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.wav`;
       
-      // Extract sentiment from sentence (Twilio provides this when sentiment analysis is enabled)
-      const sentimentScore = sentenceAny.sentiment?.score ?? sentenceAny.sentimentScore ?? null;
+      // Add basic auth to URL for Deepgram to fetch
+      const authRecordingUrl = recordingUrl.replace("https://", `https://${accountSid}:${authToken}@`);
       
-      if (sentimentScore !== null && sentimentScore !== undefined) {
-        const label = sentimentScore > 0.1 ? "positive" : sentimentScore < -0.1 ? "negative" : "neutral";
-        totalSentimentScore += sentimentScore;
-        sentimentCount++;
-        if (label === "positive") positiveCount++;
-        else if (label === "negative") negativeCount++;
-      }
-
-      // Channel mapping:
-      // mediaChannel 1 = sales_representative (outgoing/rep)
-      // mediaChannel 2 = client (incoming/customer)
-      const speaker: "sales_representative" | "client" = 
-        sentence.mediaChannel === 1 ? "sales_representative" : "client";
-
-      const entry: ConversationEntry = {
-        speaker,
-        text,
-        start: parseFloat(String(sentence.startTime)) || 0,
-        end: parseFloat(String(sentence.endTime)) || 0,
-      };
-
-      conversation.push(entry);
-    }
-
-    // Sort conversation by start time
-    conversation.sort((a, b) => a.start - b.start);
-
-    // Merge consecutive messages from the same speaker
-    const mergedConversation: ConversationEntry[] = [];
-    for (const entry of conversation) {
-      const lastEntry = mergedConversation[mergedConversation.length - 1];
+      const deepgramResult = await transcribeWithDeepgram(authRecordingUrl);
       
-      if (lastEntry && lastEntry.speaker === entry.speaker) {
-        // Same speaker - merge text and extend end time
-        lastEntry.text = `${lastEntry.text} ${entry.text}`;
-        lastEntry.end = entry.end;
+      if (deepgramResult && deepgramResult.utterances.length > 0) {
+        // Convert to our format - first speaker (0) is typically the client
+        // (they answer with "Hello?" for outbound, or start the conversation for inbound)
+        // So firstSpeakerIsRep = false in most cases
+        mergedConversation = deepgramToConversation(deepgramResult.utterances, false);
+        transcriptSid = `deepgram_${recordingSid}`;
+        
+        // Simple sentiment based on keywords (Deepgram doesn't provide sentiment natively)
+        const fullText = deepgramResult.fullTranscript.toLowerCase();
+        const positiveWords = ["great", "excellent", "perfect", "thanks", "appreciate", "love", "wonderful", "amazing"];
+        const negativeWords = ["problem", "issue", "frustrated", "annoyed", "disappointed", "terrible", "bad", "hate"];
+        
+        const positiveCount = positiveWords.filter(w => fullText.includes(w)).length;
+        const negativeCount = negativeWords.filter(w => fullText.includes(w)).length;
+        
+        if (positiveCount > negativeCount * 2) overallSentiment = "positive";
+        else if (negativeCount > positiveCount * 2) overallSentiment = "negative";
+        else if (positiveCount > 0 && negativeCount > 0) overallSentiment = "mixed";
+        else overallSentiment = "neutral";
+        
+        console.log(`[Recording Status] Deepgram transcription complete: ${mergedConversation.length} turns, confidence: ${(deepgramResult.confidence * 100).toFixed(1)}%`);
       } else {
-        // Different speaker - add as new entry
-        mergedConversation.push({ ...entry });
+        console.log(`[Recording Status] Deepgram returned no results, falling back to Twilio`);
       }
     }
-
-    console.log(`[Recording Status] Merged ${conversation.length} sentences into ${mergedConversation.length} conversation turns`);
-
-    // Calculate overall sentiment
-    const avgScore = sentimentCount > 0 ? totalSentimentScore / sentimentCount : 0;
-    const getLabel = (score: number) => score > 0.1 ? "positive" : score < -0.1 ? "negative" : "neutral";
     
-    // Determine overall sentiment (mixed if significant variation)
-    let overallSentiment: string;
-    if (positiveCount > 0 && negativeCount > 0 && Math.abs(positiveCount - negativeCount) < Math.max(positiveCount, negativeCount) * 0.5) {
-      overallSentiment = "mixed";
-    } else {
-      overallSentiment = getLabel(avgScore);
+    // ========== TWILIO VOICE INTELLIGENCE (Fallback) ==========
+    if (mergedConversation.length === 0 && intelligenceServiceSid) {
+      console.log(`[Recording Status] Using Twilio Voice Intelligence for transcription`);
+      
+      // Create transcript using Twilio Conversational Intelligence
+      // dataLogging: true + redaction: false = keeps actual names/dates (no PII masking)
+      // Note: These properties exist in API but may not be in SDK types
+      const transcript = await twilioClient.intelligence.v2.transcripts.create({
+        serviceSid: intelligenceServiceSid!,
+        channel: {
+          media_properties: {
+            source_sid: recordingSid,
+          },
+        },
+        customerKey: callSid,
+        dataLogging: true,  // Store full transcript data (required for no redaction)
+        redaction: false,   // Disable PII redaction - keeps names, dates, numbers visible
+      } as Parameters<typeof twilioClient.intelligence.v2.transcripts.create>[0]);
+
+      transcriptSid = transcript.sid;
+      console.log(`[Recording Status] Transcript created: ${transcript.sid}`);
+
+      // Poll until completed
+      const completed = await waitForTranscriptCompletion(twilioClient, transcript.sid);
+      if (!completed) {
+        console.error(`[Recording Status] Transcript did not complete: ${transcript.sid}`);
+        return;
+      }
+
+      // Fetch sentences
+      console.log(`[Recording Status] Fetching sentences for transcript: ${transcript.sid}`);
+      const sentences = await twilioClient.intelligence.v2
+        .transcripts(transcript.sid)
+        .sentences.list({ limit: 5000 });
+
+      console.log(`[Recording Status] Retrieved ${sentences.length} sentences`);
+
+      // Process sentences into conversation timeline
+      const conversation: ConversationEntry[] = [];
+
+      // Sentiment tracking
+      let totalSentimentScore = 0;
+      let sentimentCount = 0;
+      let positiveCount = 0;
+      let negativeCount = 0;
+
+      for (const sentence of sentences) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sentenceAny = sentence as any;
+        
+        // Extract text - try multiple possible property names
+        const text = sentence.transcript || sentenceAny.text || sentenceAny.transcript || sentenceAny.words || "";
+        
+        // Extract sentiment from sentence (Twilio provides this when sentiment analysis is enabled)
+        const sentimentScore = sentenceAny.sentiment?.score ?? sentenceAny.sentimentScore ?? null;
+        
+        if (sentimentScore !== null && sentimentScore !== undefined) {
+          const label = sentimentScore > 0.1 ? "positive" : sentimentScore < -0.1 ? "negative" : "neutral";
+          totalSentimentScore += sentimentScore;
+          sentimentCount++;
+          if (label === "positive") positiveCount++;
+          else if (label === "negative") negativeCount++;
+        }
+
+        // Channel mapping for Twilio dual-channel recordings:
+        // For outbound calls (browser/app → phone):
+        //   mediaChannel 1 = callee (client being called)
+        //   mediaChannel 2 = caller (sales rep)
+        // For inbound calls (phone → rep):
+        //   mediaChannel 1 = caller (client calling in)
+        //   mediaChannel 2 = callee (sales rep answering)
+        // So: channel 1 is always the "other party" (client), channel 2 is the rep
+        const speaker: "sales_representative" | "client" = 
+          sentence.mediaChannel === 2 ? "sales_representative" : "client";
+
+        const entry: ConversationEntry = {
+          speaker,
+          text,
+          start: parseFloat(String(sentence.startTime)) || 0,
+          end: parseFloat(String(sentence.endTime)) || 0,
+        };
+
+        conversation.push(entry);
+      }
+
+      // Sort conversation by start time
+      conversation.sort((a, b) => a.start - b.start);
+
+      // Merge consecutive messages from the same speaker
+      for (const entry of conversation) {
+        const lastEntry = mergedConversation[mergedConversation.length - 1];
+        
+        if (lastEntry && lastEntry.speaker === entry.speaker) {
+          // Same speaker - merge text and extend end time
+          lastEntry.text = `${lastEntry.text} ${entry.text}`;
+          lastEntry.end = entry.end;
+        } else {
+          // Different speaker - add as new entry
+          mergedConversation.push({ ...entry });
+        }
+      }
+
+      console.log(`[Recording Status] Merged ${conversation.length} sentences into ${mergedConversation.length} conversation turns`);
+
+      // Calculate overall sentiment
+      const avgScore = sentimentCount > 0 ? totalSentimentScore / sentimentCount : 0;
+      const getLabel = (score: number) => score > 0.1 ? "positive" : score < -0.1 ? "negative" : "neutral";
+      
+      // Determine overall sentiment (mixed if significant variation)
+      if (positiveCount > 0 && negativeCount > 0 && Math.abs(positiveCount - negativeCount) < Math.max(positiveCount, negativeCount) * 0.5) {
+        overallSentiment = "mixed";
+      } else {
+        overallSentiment = getLabel(avgScore);
+      }
     }
 
     console.log(`[Recording Status] Sentiment analysis: overall=${overallSentiment}`);
@@ -246,7 +298,7 @@ async function processTranscription(recordingSid: string, callSid: string, diale
     const output: TranscriptOutput = {
       callSid,
       recordingSid,
-      transcriptSid: transcript.sid,
+      transcriptSid,
       createdAt: new Date().toISOString(),
       sentiment: overallSentiment,
       conversation: mergedConversation,
@@ -312,9 +364,10 @@ async function processTranscription(recordingSid: string, callSid: string, diale
       {
         callSid,
         recordingSid,
-        transcriptSid: transcript.sid,
+        transcriptSid,
         sentiment: overallSentiment,
         conversation: mergedConversation,
+        transcriptionProvider: transcriptionProvider === "deepgram" && process.env.DEEPGRAM_API_KEY ? "deepgram" : "twilio",
         // Merge client data (will be empty object if no client found)
         ...clientData,
       },
@@ -322,7 +375,7 @@ async function processTranscription(recordingSid: string, callSid: string, diale
     );
 
     console.log(`[Recording Status] Transcript saved to MongoDB: ${savedTranscript._id}`);
-    console.log(`[Recording Status] Summary: ${mergedConversation.length} conversation turns (from ${conversation.length} sentences), sentiment: ${overallSentiment}`);
+    console.log(`[Recording Status] Summary: ${mergedConversation.length} conversation turns, sentiment: ${overallSentiment}`);
     
     if (Object.keys(clientData).length > 0) {
       console.log(`[Recording Status] Client data merged: ${clientData.clientId} - ${clientData.clientName}`);

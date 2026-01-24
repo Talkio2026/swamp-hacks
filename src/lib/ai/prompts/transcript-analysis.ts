@@ -52,6 +52,15 @@ Analyze this sales call transcript and provide a comprehensive analysis in the f
   
   "suggestedFollowUpDate": "Suggested timeframe for next contact (e.g., '2-3 days', 'next week', 'after their board meeting on Friday')",
   
+  "scheduledMeeting": {
+    "detected": true,
+    "date": "2026-01-30",
+    "time": "14:00",
+    "duration": 60,
+    "type": "call|demo|meeting",
+    "notes": "Brief description of what was agreed"
+  },
+  
   "currentStage": "initial_contact|discovery|demo|proposal|negotiation|closing|closed_won|closed_lost",
   
   "stageConfidence": 85
@@ -64,7 +73,8 @@ Analyze this sales call transcript and provide a comprehensive analysis in the f
 4. Identify any competitor mentions
 5. Note any pricing discussions or budget indicators
 6. Flag any urgency or timeline mentions
-7. Return ONLY valid JSON, no additional text
+7. For scheduledMeeting: If a specific meeting/call time was discussed or agreed upon, extract it. Use ISO date format (YYYY-MM-DD) and 24-hour time (HH:MM). If no specific meeting was scheduled, set "detected": false and omit other fields. Today's date is {currentDate}.
+8. Return ONLY valid JSON, no additional text
 
 ## ANALYSIS:
 `
@@ -80,6 +90,7 @@ export function buildAnalysisPrompt(params: {
   callNumber?: number
   initialNotes?: string
 }): string {
+  const currentDate = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
   return TRANSCRIPT_ANALYSIS_PROMPT
     .replace('{transcript}', params.transcript)
     .replace('{clientName}', params.clientName || 'Unknown')
@@ -87,4 +98,5 @@ export function buildAnalysisPrompt(params: {
     .replace('{industry}', params.industry || 'Unknown')
     .replace('{callNumber}', String(params.callNumber || 1))
     .replace('{initialNotes}', params.initialNotes || 'None')
+    .replace('{currentDate}', currentDate)
 }

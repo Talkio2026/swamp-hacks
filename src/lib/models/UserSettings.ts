@@ -10,6 +10,14 @@ export interface IUserSettings extends Document {
     provider: "gemini" | "openrouter";
     openRouterModel?: string;  // e.g., "claude-3-sonnet", "gpt-4-turbo"
   };
+
+  // Google Calendar integration
+  googleCalendar?: {
+    connected: boolean;
+    accessToken?: string;
+    refreshToken?: string;
+    tokenExpiresAt?: Date;
+  };
   
   // Timestamps
   createdAt: Date;
@@ -39,6 +47,21 @@ const UserSettingsSchema = new Schema<IUserSettings>(
       openRouterModel: {
         type: String,
         default: "claude-3-sonnet",
+      },
+    },
+    googleCalendar: {
+      connected: {
+        type: Boolean,
+        default: false,
+      },
+      accessToken: {
+        type: String,
+      },
+      refreshToken: {
+        type: String,
+      },
+      tokenExpiresAt: {
+        type: Date,
       },
     },
   },
