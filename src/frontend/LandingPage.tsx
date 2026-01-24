@@ -27,7 +27,10 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#162d3d]">
-      {/* Extended photo background: covers navbar + hero + ProductSummary with smooth fade */}
+      {/* Fixed navbar that stays throughout the page */}
+      <Navbar />
+      
+      {/* Extended photo background: covers hero + ProductSummary with smooth fade */}
       <div
         className="relative overflow-visible"
         style={{ backgroundImage: "url('/photos/2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }}
@@ -35,7 +38,6 @@ export function LandingPage() {
         {/* Gradient overlay: darkens top, fades to ocean color at bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 via-60% to-[#162d3d]" aria-hidden />
         <div className="relative z-10">
-          <Navbar />
           <Hero />
           <ProductSummary />
         </div>

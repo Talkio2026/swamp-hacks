@@ -1,11 +1,47 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap';
+
+const ROTATING_PHRASES = [
+  'structured intelligence.',
+  'Decision-ready insights.',
+  'Contextual analysis.',
+];
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const rotatingTextRef = useRef<HTMLSpanElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Rotating text animation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (rotatingTextRef.current) {
+        // Animate out (slide up and fade)
+        gsap.to(rotatingTextRef.current, {
+          y: -20,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.in',
+          onComplete: () => {
+            setCurrentIndex((prev) => (prev + 1) % ROTATING_PHRASES.length);
+            // Reset position below and animate in
+            gsap.set(rotatingTextRef.current, { y: 20 });
+            gsap.to(rotatingTextRef.current, {
+              y: 0,
+              opacity: 1,
+              duration: 0.4,
+              ease: 'power2.out',
+            });
+          },
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // #region agent log
@@ -72,14 +108,23 @@ export function Hero() {
     >
       <div className="relative z-10 flex flex-col justify-center h-full px-6 pt-24 pb-12 lg:px-8 lg:pt-32 lg:pb-16">
         <div className="mx-auto max-w-[1280px] w-full">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center -mt-16 lg:-mt-24">
           {/* Left: Text Content — light, inverted against photo */}
           <div className="max-w-2xl">
             <h1
               id="hero-heading"
-              className="hero-heading text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl lg:leading-[1.1]"
+              className="hero-heading text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl lg:leading-[1.15]"
             >
-              Turn every sales call into structured intelligence.
+              <span className="whitespace-nowrap">Turn every sales call into</span>
+              <br />
+              <span className="inline-block overflow-hidden align-bottom h-[1.2em]">
+                <span
+                  ref={rotatingTextRef}
+                  className="inline-block"
+                >
+                  {ROTATING_PHRASES[currentIndex]}
+                </span>
+              </span>
             </h1>
             <p className="hero-subhead mt-6 text-base text-slate-200 sm:text-lg">
               Post-call AI analysis that generates summaries, tracks context, and surfaces next actions—automatically.
@@ -105,23 +150,23 @@ export function Hero() {
           </div>
 
           {/* Right: Preview — dark glass, light text */}
-          <div className="hero-preview">
-            <div className="relative rounded-2xl border border-white/20 bg-black/40 p-6 shadow-xl backdrop-blur-md">
+          <div className="hero-preview w-full max-w-md ml-auto">
+            <div className="relative rounded-xl border border-white/20 bg-black/40 p-4 shadow-xl backdrop-blur-md">
               {/* Search Bar */}
-              <div className="mb-6 flex items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-4 py-3">
-                <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mb-4 flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2">
+                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
                   type="text"
                   readOnly
                   value="former tesla autopilot engineers..."
-                  className="flex-1 bg-transparent text-sm text-slate-200 outline-none placeholder:text-slate-500"
+                  className="flex-1 bg-transparent text-xs text-slate-200 outline-none placeholder:text-slate-500"
                 />
               </div>
 
               {/* Results Preview */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[
                   { name: 'Dr. Emily Zhang', role: 'VP of Engineering', company: 'Wayve', matches: 3 },
                   { name: 'Alex Petrov', role: 'Lead Machine Learning', company: 'Aurora', matches: 3 },
@@ -129,20 +174,20 @@ export function Hero() {
                 ].map((person, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-3 transition-colors hover:border-white/20"
+                    className="flex items-center gap-2 rounded-md border border-white/10 bg-white/5 p-2 transition-colors hover:border-white/20"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm font-medium text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-xs font-medium text-white">
                       {person.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-white text-sm">{person.name}</div>
-                      <div className="text-xs text-slate-400">
+                      <div className="font-medium text-white text-xs">{person.name}</div>
+                      <div className="text-[10px] text-slate-400">
                         {person.role} • {person.company}
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                       {[...Array(person.matches)].map((_, j) => (
-                        <div key={j} className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                        <div key={j} className="h-1 w-1 rounded-full bg-emerald-400" />
                       ))}
                     </div>
                   </div>
@@ -150,23 +195,23 @@ export function Hero() {
               </div>
 
               {/* Bottom badge */}
-              <div className="mt-6 flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+              <div className="mt-4 flex items-center justify-between rounded-md border border-white/10 bg-white/5 px-3 py-2">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex items-center gap-1">
+                    <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    <span className="text-xs font-medium text-slate-300">Max Compute</span>
+                    <span className="text-[10px] font-medium text-slate-300">Max Compute</span>
                   </div>
-                  <div className="h-3 w-px bg-white/20" />
-                  <div className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="h-2.5 w-px bg-white/20" />
+                  <div className="flex items-center gap-1">
+                    <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
-                    <span className="text-xs font-medium text-slate-300">High Reasoning</span>
+                    <span className="text-[10px] font-medium text-slate-300">High Reasoning</span>
                   </div>
                 </div>
-                <span className="text-xs font-medium text-slate-400">Try Atlas →</span>
+                <span className="text-[10px] font-medium text-slate-400">Try Atlas →</span>
               </div>
             </div>
           </div>

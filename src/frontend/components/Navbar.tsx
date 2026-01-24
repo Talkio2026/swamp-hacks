@@ -55,19 +55,19 @@ export function Navbar() {
   return (
     <header
       ref={headerRef}
-      className="navbar sticky top-4 z-50 w-full px-4 lg:px-8"
+      className="navbar fixed top-4 left-0 right-0 z-50 w-full px-4 lg:px-8"
     >
       <nav
-        className="mx-auto max-w-[1280px] rounded-full bg-white/60 border border-[#2c4a6a]/20 shadow-lg shadow-[#1e3a5f]/5 backdrop-blur-xl px-8 py-4 flex items-center justify-between gap-6"
+        className="mx-auto max-w-[1280px] rounded-full bg-white/10 border border-white/20 shadow-lg shadow-black/10 backdrop-blur-xl px-8 py-4 flex items-center justify-between gap-6"
         aria-label="Main navigation"
       >
         {/* Logo */}
         <Link
           href="/"
-          className="relative h-10 w-[120px] flex-shrink-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-xl"
+          className="relative h-10 w-[120px] flex-shrink-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-xl"
         >
           <Image
-            src="/talkio-logo.svg"
+            src="/talkio-logo-white.svg"
             alt="Talkio"
             fill
             className="object-contain object-left"
@@ -81,11 +81,11 @@ export function Navbar() {
             <Link
               key={label}
               href={href}
-              className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-xl"
+              className="inline-flex items-center gap-1 text-[15px] font-medium text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-xl"
             >
               {label}
               {hasDropdown && (
-                <ChevronDown className="w-4 h-4 text-slate-500" />
+                <ChevronDown className="w-4 h-4 text-white/60" />
               )}
             </Link>
           ))}
@@ -95,7 +95,7 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center justify-center rounded-full bg-[#1e3a5f] px-8 py-2.5 text-[15px] font-medium text-white transition-all hover:bg-[#2c4a6a] hover:shadow-lg hover:shadow-[#1e3a5f]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a5f] focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-2.5 text-[15px] font-medium text-slate-900 transition-all hover:bg-white/90 hover:shadow-lg hover:shadow-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
               >
                 Dashboard
               </Link>
@@ -105,7 +105,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setMobileOpen((o) => !o)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-[#1e3a5f]/10 hover:text-[#1e3a5f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a5f] lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-white/80 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 lg:hidden"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
         >
@@ -128,7 +128,7 @@ export function Navbar() {
           id="mobile-nav"
           role="region"
           aria-label="Mobile menu"
-          className="lg:hidden mt-2 mx-auto max-w-[1280px] rounded-[32px] bg-white/80 border border-[#2c4a6a]/20 shadow-xl shadow-[#1e3a5f]/10 backdrop-blur-xl p-6"
+          className="lg:hidden mt-2 mx-auto max-w-[1280px] rounded-[32px] bg-black/40 border border-white/20 shadow-xl shadow-black/20 backdrop-blur-xl p-6"
         >
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map(({ label, href, hasDropdown }) => (
@@ -136,19 +136,19 @@ export function Navbar() {
                 key={label}
                 href={href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between rounded-2xl px-4 py-3 text-slate-600 hover:bg-[#1e3a5f]/5 hover:text-slate-900"
+                className="flex items-center justify-between rounded-2xl px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white"
               >
                 <span>{label}</span>
                 {hasDropdown && (
-                  <ChevronDown className="w-4 h-4 text-slate-500" />
+                  <ChevronDown className="w-4 h-4 text-white/60" />
                 )}
               </Link>
             ))}
-            <div className="mt-3 pt-3 border-t border-[#2c4a6a]/20 flex flex-col gap-2">
+            <div className="mt-3 pt-3 border-t border-white/20 flex flex-col gap-2">
               <Link
                 href="/sign-up"
                 onClick={() => setMobileOpen(false)}
-                className="inline-flex items-center justify-center rounded-full bg-[#1e3a5f] px-6 py-3 text-sm font-medium text-white hover:bg-[#2c4a6a] hover:shadow-lg hover:shadow-[#1e3a5f]/20"
+                className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-slate-900 hover:bg-white/90 hover:shadow-lg hover:shadow-white/20"
               >
                 Dashboard
               </Link>
