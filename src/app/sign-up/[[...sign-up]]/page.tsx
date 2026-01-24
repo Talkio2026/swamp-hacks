@@ -33,8 +33,8 @@ export default function SignUpPage() {
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 py-8">
-        {/* Glass card container */}
-        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8 text-center">
+        {/* Glass card container - perfectly centered */}
+        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8 flex flex-col items-center text-center">
           {/* Logo */}
           <Link href="/" className="inline-block mb-6">
             <span 
@@ -55,44 +55,47 @@ export default function SignUpPage() {
             appearance={{
               elements: {
                 rootBox: 'w-full flex justify-center',
-                card: 'bg-transparent shadow-none p-0 w-full border-none',
-                cardBox: 'shadow-none bg-transparent w-full',
+                card: 'bg-transparent shadow-none p-0 w-full border-none flex flex-col items-center',
+                cardBox: 'shadow-none bg-transparent w-full flex flex-col items-center',
                 header: 'hidden',
                 headerTitle: 'hidden',
                 headerSubtitle: 'hidden',
                 
-                // Social buttons with glass effect and hover animation
+                // Google button HIGHLIGHTED with glow effect
                 socialButtonsBlockButton: `
-                  bg-white/15 
-                  border border-white/25 
+                  bg-white/25 
+                  border-2 border-white/40 
                   text-white 
                   rounded-xl 
-                  h-12
+                  h-14
+                  shadow-lg
+                  shadow-white/20
                   transition-all 
                   duration-300 
                   ease-out
-                  hover:bg-white/25 
-                  hover:border-white/40 
-                  hover:scale-[1.03]
+                  hover:bg-white/35 
+                  hover:border-white/60 
+                  hover:scale-[1.04]
                   hover:shadow-xl
-                  hover:shadow-white/15
+                  hover:shadow-white/30
                   active:scale-[0.98]
                 `,
-                socialButtonsBlockButtonText: 'text-white font-bold text-sm tracking-wide',
-                socialButtonsProviderIcon: 'w-5 h-5',
+                socialButtonsBlockButtonText: 'text-white font-bold text-base tracking-wide',
+                socialButtonsProviderIcon: 'w-6 h-6',
                 socialButtonsBlockButtonArrow: 'hidden',
                 
                 // Divider centered
                 dividerLine: 'bg-white/20',
-                dividerText: 'text-white/50 text-xs bg-transparent px-3',
-                dividerRow: 'my-6 flex items-center justify-center',
+                dividerText: 'text-white/50 text-xs bg-transparent px-4',
+                dividerRow: 'my-6 w-full flex items-center justify-center',
                 
                 // Form fields centered with highlighted label
-                formFieldLabel: 'text-white font-semibold text-sm text-left mb-2 block',
+                formFieldLabel: 'text-white font-semibold text-sm mb-2 block w-full text-center',
                 formFieldInput: `
                   bg-white/10 
                   border border-white/20 
                   text-white 
+                  text-center
                   placeholder:text-white/40 
                   rounded-xl 
                   h-12
@@ -134,19 +137,19 @@ export default function SignUpPage() {
                 
                 // Other elements
                 identityPreview: 'bg-white/10 border border-white/20 rounded-xl',
-                identityPreviewText: 'text-white',
+                identityPreviewText: 'text-white text-center',
                 identityPreviewEditButton: 'text-white/70 hover:text-white transition-colors',
                 formFieldInputShowPasswordButton: 'text-white/50 hover:text-white transition-colors',
-                otpCodeFieldInput: 'bg-white/10 border border-white/20 text-white rounded-xl focus:border-white/40',
+                otpCodeFieldInput: 'bg-white/10 border border-white/20 text-white rounded-xl focus:border-white/40 text-center',
                 formResendCodeLink: 'text-white/70 hover:text-white transition-colors',
-                alertText: 'text-white/80',
-                formFieldErrorText: 'text-red-300 text-xs mt-1',
+                alertText: 'text-white/80 text-center',
+                formFieldErrorText: 'text-red-300 text-xs mt-1 text-center',
                 
-                // Layout centered
+                // Layout ALL centered
                 main: 'gap-5 w-full flex flex-col items-center',
-                form: 'w-full gap-5',
-                formFieldRow: 'w-full',
-                socialButtons: 'w-full',
+                form: 'w-full gap-5 flex flex-col items-center',
+                formFieldRow: 'w-full flex flex-col items-center',
+                socialButtons: 'w-full flex flex-col items-center',
               },
               layout: {
                 socialButtonsPlacement: 'top',
