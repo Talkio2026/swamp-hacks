@@ -9,27 +9,17 @@ import { Footer } from './components/Footer'
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50/50 via-purple-100/40 to-purple-50/60 relative">
-      {/* Dotted background pattern */}
-      <div 
-        className="absolute inset-0 opacity-50"
-        style={{
-          backgroundImage: 'radial-gradient(circle, #a78bfa 1.5px, transparent 1.5px)',
-          backgroundSize: '24px 24px'
-        }}
-      />
-      <div className="relative z-10">
-        <Navbar />
-        <main>
-          <Hero />
-          <Features />
-          <HowItWorks />
-          <ForReps />
-          <ForManagers />
-          <FinalCTA />
-        </main>
+    <div className="min-h-screen bg-black">
+      <Navbar />
+      <Hero />
+      <main className="bg-black">
+        <Features />
+        <HowItWorks />
+        <ForReps />
+        <ForManagers />
+        <FinalCTA />
         <Footer />
-      </div>
+      </main>
     </div>
   )
 }

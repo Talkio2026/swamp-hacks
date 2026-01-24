@@ -30,22 +30,22 @@ export function Footer() {
     <footer
       ref={footerRef}
       id="footer"
-      className="border-t border-purple-200/40 bg-white/60 px-6 py-12 lg:px-8"
+      className="border-t border-white/10 px-6 py-12 lg:px-8"
       role="contentinfo"
     >
       <div className="footer-inner mx-auto max-w-[1280px] flex flex-col items-center">
         <Link
           href="/"
-          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-sm"
+          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
         >
           <Image
-            src="/talkio-logo.svg"
+            src="/talkio-logo-white.svg"
             alt="Talkio"
             fill
             className="object-contain"
           />
         </Link>
-        <p className="mt-3 text-sm text-slate-600">
+        <p className="mt-3 text-sm text-slate-500">
           © 2026 Talkio. All rights reserved.
         </p>
       </div>

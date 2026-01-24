@@ -62,26 +62,26 @@ export function HowItWorks() {
   return (
     <section
       ref={sectionRef}
-      className="bg-white px-6 py-14 lg:px-8 lg:py-20"
+      className="px-6 py-14 lg:px-8 lg:py-20"
     >
       <div className="mx-auto max-w-[1280px]">
-        <h2 className="how-heading text-center text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
+        <h2 className="how-heading text-center text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
           How it works
         </h2>
-        <p className="mt-4 text-center text-sm text-slate-600 max-w-2xl mx-auto">
+        <p className="mt-4 text-center text-sm text-slate-400 max-w-2xl mx-auto">
           Simple, automated workflow. No manual data entry, no real-time disruption.
         </p>
 
         <div className="steps-grid mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step) => (
             <div key={step.number} className="step-card flex flex-col">
-              <div className="mb-4 text-4xl font-bold text-purple-600/20">
+              <div className="mb-4 text-4xl font-bold text-white/10">
                 {step.number}
               </div>
-              <h3 className="text-base font-semibold text-slate-900">
+              <h3 className="text-base font-semibold text-white">
                 {step.title}
               </h3>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-sm text-slate-400">
                 {step.description}
               </p>
             </div>
