@@ -1,0 +1,176 @@
+{
+  "clientId": "CLT_001",
+  "clientName": "Sarah Chen",
+  "companyName": "Bright Ideas Marketing",
+  "industry": "Marketing",
+  "contactEmail": "sarah@brightideasmarketing.com",
+  "contactPhone": "+15551001001",
+  "salesRepName": "Michael",
+  "callNumber": 1,
+  "callSid": "MOCK_CA_CLT001_CALL001",
+  "recordingSid": "MOCK_RE_CLT001_CALL001",
+  "transcriptSid": "MOCK_GT_CLT001_CALL001",
+  "status": "initial_contact",
+  "outcome": "interested",
+  "nextAction": "scheduled_demo",
+  "createdAt": "2026-01-10T14:30:00.000Z",
+  "sentiment": "positive",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "client",
+      "text": "Hello, this is Sarah speaking.",
+      "start": 5.0,
+      "end": 6.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi Sarah! This is Michael from TechFlow Solutions. How are you doing today?",
+      "start": 7.2,
+      "end": 11.4
+    },
+    {
+      "speaker": "client",
+      "text": "I'm doing well, thanks for asking. What can I help you with?",
+      "start": 11.8,
+      "end": 15.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great to hear! I'm reaching out because I noticed your company, Bright Ideas Marketing, has been growing rapidly. Congratulations on that, by the way.",
+      "start": 15.6,
+      "end": 23.4
+    },
+    {
+      "speaker": "client",
+      "text": "Oh, thank you! Yes, it's been a busy year for us.",
+      "start": 23.8,
+      "end": 27.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I can imagine. The reason I'm calling is that we specialize in helping marketing agencies like yours streamline their client communication and project management. Are you currently using any software for managing your client relationships?",
+      "start": 27.6,
+      "end": 40.8
+    },
+    {
+      "speaker": "client",
+      "text": "We use a combination of spreadsheets and some basic CRM, but honestly, it's becoming a bit chaotic as we scale. We've been meaning to look into better solutions.",
+      "start": 41.2,
+      "end": 52.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That's actually very common at your stage of growth. Many of our clients came to us with the same challenge. What specific pain points are you experiencing with your current setup?",
+      "start": 52.8,
+      "end": 64.2
+    },
+    {
+      "speaker": "client",
+      "text": "Well, the biggest issue is that information gets lost between team members. Someone talks to a client, but then another team member doesn't know about that conversation. We've had some embarrassing moments because of that.",
+      "start": 64.6,
+      "end": 78.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I completely understand. That can really damage client relationships and team morale. Our platform actually has a centralized communication hub where all client interactions are logged automatically, whether it's email, phone, or chat.",
+      "start": 78.8,
+      "end": 93.6
+    },
+    {
+      "speaker": "client",
+      "text": "That sounds useful. Does it integrate with the tools we're already using? We're pretty heavily invested in the Google Workspace ecosystem.",
+      "start": 94.0,
+      "end": 103.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely! We have native integrations with Google Workspace, including Gmail, Calendar, and Drive. The setup takes about fifteen minutes, and everything syncs in real-time.",
+      "start": 103.6,
+      "end": 115.4
+    },
+    {
+      "speaker": "client",
+      "text": "Okay, that's good to know. I'm definitely interested in learning more. What would be the next step?",
+      "start": 115.8,
+      "end": 123.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'd love to set up a demo where I can show you the platform in action and answer any technical questions. Would you be available sometime this week or next?",
+      "start": 124.0,
+      "end": 135.4
+    },
+    {
+      "speaker": "client",
+      "text": "Let me check my calendar... How about Thursday at two PM? And can I bring my business partner, Jennifer? She handles a lot of the operations.",
+      "start": 135.8,
+      "end": 146.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Thursday at two PM works perfectly. And yes, absolutely bring Jennifer - the more stakeholders in the conversation, the better. I'll send a calendar invite to your email. Is sarah@brightideasmarketing.com correct?",
+      "start": 146.6,
+      "end": 162.4
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, that's correct. You can add Jennifer at jennifer@brightideasmarketing.com as well.",
+      "start": 162.8,
+      "end": 170.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect! I'll include both of you. Is there anything specific you'd like me to focus on during the demo?",
+      "start": 171.0,
+      "end": 179.4
+    },
+    {
+      "speaker": "client",
+      "text": "Definitely show us the communication logging feature you mentioned. And if you have any analytics or reporting capabilities, I'd love to see those too.",
+      "start": 179.8,
+      "end": 190.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Noted! I'll make sure to highlight those features. Before our demo, I'll also send over some case studies from similar marketing agencies so you have context. Sound good?",
+      "start": 191.0,
+      "end": 204.2
+    },
+    {
+      "speaker": "client",
+      "text": "That would be great. I'm looking forward to it, Michael.",
+      "start": 204.6,
+      "end": 209.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Wonderful! Thank you so much for your time today, Sarah. I'll send that calendar invite and the materials within the hour. Have a great rest of your day!",
+      "start": 209.8,
+      "end": 221.6
+    },
+    {
+      "speaker": "client",
+      "text": "Thank you! Talk to you Thursday. Bye!",
+      "start": 222.0,
+      "end": 225.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Goodbye, Sarah!",
+      "start": 225.8,
+      "end": 227.2
+    }
+  ]
+}

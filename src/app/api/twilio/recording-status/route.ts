@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Twilio from "twilio";
 import connectToDatabase from "@/lib/mongodb";
 import Transcript from "@/lib/models/Transcript";
+import Client from "@/lib/models/Client";
+import CallClientMapping from "@/lib/models/CallClientMapping";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -217,6 +219,46 @@ async function processTranscription(recordingSid: string, callSid: string) {
     // Connect to MongoDB and save transcript
     await connectToDatabase();
     
+    // Look up client data using the call-client mapping
+    let clientData: Record<string, unknown> = {};
+    let callNumber = 1;
+    
+    try {
+      const mapping = await CallClientMapping.findOne({ callSid });
+      
+      if (mapping) {
+        const client = await Client.findOne({ clientId: mapping.clientId });
+        
+        if (client) {
+          // Increment call count and get call number
+          callNumber = client.totalCalls + 1;
+          client.totalCalls = callNumber;
+          await client.save();
+          
+          // Extract client data to merge with transcript
+          clientData = {
+            clientId: client.clientId,
+            clientName: client.clientName,
+            companyName: client.companyName,
+            industry: client.industry,
+            contactEmail: client.contactEmail,
+            contactPhone: client.contactPhone,
+            salesRepName: client.salesRepName,
+            initialNotes: client.initialNotes,
+            callNumber,
+            status: callNumber === 1 ? "initial_contact" : "followup",
+          };
+          
+          console.log(`[Recording Status] Found client data for call: ${client.clientId} - ${client.clientName} (Call #${callNumber})`);
+        }
+      } else {
+        console.log(`[Recording Status] No client mapping found for callSid: ${callSid}`);
+      }
+    } catch (clientError) {
+      console.error(`[Recording Status] Error fetching client data:`, clientError);
+      // Continue without client data - transcript will still be saved
+    }
+    
     // Use upsert to update if exists or create if not
     const savedTranscript = await Transcript.findOneAndUpdate(
       { callSid },
@@ -226,12 +268,18 @@ async function processTranscription(recordingSid: string, callSid: string) {
         transcriptSid: transcript.sid,
         sentiment: overallSentiment,
         conversation: mergedConversation,
+        // Merge client data (will be empty object if no client found)
+        ...clientData,
       },
       { upsert: true, new: true }
     );
 
     console.log(`[Recording Status] Transcript saved to MongoDB: ${savedTranscript._id}`);
     console.log(`[Recording Status] Summary: ${mergedConversation.length} conversation turns (from ${conversation.length} sentences), sentiment: ${overallSentiment}`);
+    
+    if (Object.keys(clientData).length > 0) {
+      console.log(`[Recording Status] Client data merged: ${clientData.clientId} - ${clientData.clientName}`);
+    }
   } catch (error) {
     console.error(`[Recording Status] Error processing transcription:`, error);
     throw error;

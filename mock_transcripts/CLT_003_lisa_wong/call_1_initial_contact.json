@@ -1,0 +1,188 @@
+{
+  "clientId": "CLT_003",
+  "clientName": "Lisa Wong",
+  "companyName": "Nexus Retail Solutions",
+  "industry": "Retail",
+  "contactEmail": "lisa@nexusretail.com",
+  "contactPhone": "+15551003003",
+  "salesRepName": "Kevin",
+  "callNumber": 1,
+  "callSid": "MOCK_CA_CLT003_CALL001",
+  "recordingSid": "MOCK_RE_CLT003_CALL001",
+  "transcriptSid": "MOCK_GT_CLT003_CALL001",
+  "status": "initial_contact",
+  "outcome": "interested",
+  "nextAction": "scheduled_demo",
+  "createdAt": "2026-01-15T11:00:00.000Z",
+  "sentiment": "positive",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "client",
+      "text": "This is Lisa.",
+      "start": 5.0,
+      "end": 6.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi Lisa! This is Kevin from SmartHR Solutions. Do you have a few minutes to chat?",
+      "start": 6.6,
+      "end": 12.4
+    },
+    {
+      "speaker": "client",
+      "text": "Sure, I have about ten minutes before my next meeting. What can I do for you?",
+      "start": 12.8,
+      "end": 19.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'll be quick then. I'm reaching out because I noticed Nexus Retail has been growing - you've added three new store locations in the past year. Congratulations!",
+      "start": 19.6,
+      "end": 32.4
+    },
+    {
+      "speaker": "client",
+      "text": "Thank you! Yes, it's been an exciting year. How did you know about our expansion?",
+      "start": 32.8,
+      "end": 39.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I follow retail news, and your company has been getting some good press. The reason I'm calling is that with rapid expansion often comes HR challenges - onboarding, engagement, managing distributed teams. Is that something you're experiencing?",
+      "start": 40.0,
+      "end": 58.4
+    },
+    {
+      "speaker": "client",
+      "text": "Ha! You have no idea. We went from forty employees to almost a hundred in twelve months. Our HR team of two is drowning.",
+      "start": 58.8,
+      "end": 70.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That's a significant growth rate. A hundred employees with a two-person HR team is definitely stretched thin. What's taking up most of their time right now?",
+      "start": 71.0,
+      "end": 83.4
+    },
+    {
+      "speaker": "client",
+      "text": "Honestly, everything feels urgent. Onboarding new hires, managing benefits questions, trying to do some kind of engagement tracking. We're still using spreadsheets for most of it.",
+      "start": 83.8,
+      "end": 98.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Spreadsheets work great until they don't scale. Our platform helps automate a lot of those manual tasks - onboarding workflows, self-service benefits portal, and employee engagement surveys with analytics. Would you be interested in seeing how it could help Nexus?",
+      "start": 98.6,
+      "end": 118.4
+    },
+    {
+      "speaker": "client",
+      "text": "Possibly. We've been thinking about getting a proper HR system, but haven't had time to evaluate options. What makes your platform different from others?",
+      "start": 118.8,
+      "end": 131.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great question. A few things set us apart. First, we're specifically designed for mid-size companies in retail and hospitality - so features like multi-location management and shift worker scheduling are built-in, not add-ons. Second, our onboarding automation typically saves HR teams about eight hours per new hire.",
+      "start": 132.0,
+      "end": 156.8
+    },
+    {
+      "speaker": "client",
+      "text": "Eight hours per hire? We're hiring about five people a month right now. That would be forty hours saved monthly.",
+      "start": 157.2,
+      "end": 166.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Exactly. And that's just onboarding. When you factor in benefits administration and engagement tracking automation, most HR teams see fifty to sixty percent of their manual work eliminated.",
+      "start": 166.8,
+      "end": 182.6
+    },
+    {
+      "speaker": "client",
+      "text": "That would be a game-changer. What does something like this cost?",
+      "start": 183.0,
+      "end": 188.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "For a company your size, you'd be looking at around twelve hundred dollars per month for the full platform. I can put together a more specific quote based on your needs. Would you be open to a demo where I can show you the features in detail?",
+      "start": 189.2,
+      "end": 207.4
+    },
+    {
+      "speaker": "client",
+      "text": "Twelve hundred a month is doable if it actually delivers the time savings you mentioned. Yes, let's schedule a demo. Can we do it next week? I want to include my HR director, Pam.",
+      "start": 207.8,
+      "end": 223.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely. How about Wednesday at eleven AM? That would give you and Pam time to prepare any questions.",
+      "start": 223.6,
+      "end": 232.8
+    },
+    {
+      "speaker": "client",
+      "text": "Let me check... yes, Wednesday at eleven works for both of us.",
+      "start": 233.2,
+      "end": 239.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect! I'll send a calendar invite. Is your email lisa@nexusretail.com?",
+      "start": 239.8,
+      "end": 247.2
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, and Pam's is pam.rodriguez@nexusretail.com.",
+      "start": 247.6,
+      "end": 253.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Got it. I'll include both of you. Before the demo, I'll send over a brief overview of the platform and a few questions about your current processes so I can tailor the presentation to your specific needs.",
+      "start": 253.8,
+      "end": 270.6
+    },
+    {
+      "speaker": "client",
+      "text": "That would be helpful. I'm looking forward to it, Kevin.",
+      "start": 271.0,
+      "end": 276.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Likewise! Thanks for your time today, Lisa. I'll see you Wednesday. Have a great rest of your day!",
+      "start": 276.6,
+      "end": 284.8
+    },
+    {
+      "speaker": "client",
+      "text": "Thanks! Talk soon. Bye!",
+      "start": 285.2,
+      "end": 288.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Goodbye!",
+      "start": 288.8,
+      "end": 290.2
+    }
+  ]
+}

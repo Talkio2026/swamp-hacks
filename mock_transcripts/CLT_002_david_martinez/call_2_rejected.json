@@ -1,0 +1,183 @@
+{
+  "clientId": "CLT_002",
+  "clientName": "David Martinez",
+  "companyName": "Genesis Tech Solutions",
+  "industry": "Technology",
+  "contactEmail": "d.martinez@genesistech.com",
+  "contactPhone": "+15551002002",
+  "salesRepName": "Jessica",
+  "callNumber": 2,
+  "callSid": "MOCK_CA_CLT002_CALL002",
+  "recordingSid": "MOCK_RE_CLT002_CALL002",
+  "transcriptSid": "MOCK_GT_CLT002_CALL002",
+  "status": "rejected",
+  "outcome": "closed_lost",
+  "nextAction": "none",
+  "lostReason": "budget_constraints_and_existing_contract",
+  "createdAt": "2026-01-12T14:00:00.000Z",
+  "sentiment": "negative",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "client",
+      "text": "Hey Jessica, it's David.",
+      "start": 5.0,
+      "end": 7.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi David! Thanks for joining. How's your day going?",
+      "start": 7.6,
+      "end": 11.8
+    },
+    {
+      "speaker": "client",
+      "text": "It's been hectic, honestly. We've had some internal changes this week that have affected our priorities.",
+      "start": 12.2,
+      "end": 20.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'm sorry to hear things are hectic. Is this still a good time to chat, or would you prefer to reschedule?",
+      "start": 21.0,
+      "end": 28.8
+    },
+    {
+      "speaker": "client",
+      "text": "No, let's do it now. Actually, the internal changes are relevant to our conversation. I'll explain in a bit.",
+      "start": 29.2,
+      "end": 38.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Okay, I appreciate you taking the time. Should I go ahead and share my screen to show you the ransomware protection features you asked about?",
+      "start": 38.8,
+      "end": 49.6
+    },
+    {
+      "speaker": "client",
+      "text": "Actually, before you do that, let me give you the context. Our CFO announced a company-wide budget freeze yesterday. We're going through a restructuring, and all new vendor evaluations have been put on hold indefinitely.",
+      "start": 50.0,
+      "end": 67.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I see. That's significant news. I'm sorry to hear about the restructuring - I know those can be stressful times for everyone involved.",
+      "start": 68.2,
+      "end": 78.4
+    },
+    {
+      "speaker": "client",
+      "text": "Yeah, it's not ideal. So even if your product is great, there's no path forward for us right now. I wanted to tell you directly rather than just ghosting.",
+      "start": 78.8,
+      "end": 92.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I really appreciate your honesty, David. That's refreshing. Can I ask - is this a temporary freeze, or are we looking at a longer-term situation?",
+      "start": 93.0,
+      "end": 105.4
+    },
+    {
+      "speaker": "client",
+      "text": "Honestly, I don't know. Could be six months, could be longer. The restructuring involves some potential acquisitions, so everything is uncertain right now.",
+      "start": 105.8,
+      "end": 119.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I understand. These things take time to sort out. Would it be helpful if I still gave you a quick overview of our capabilities? That way, when things stabilize, you'd already have the information if it becomes relevant.",
+      "start": 119.6,
+      "end": 136.8
+    },
+    {
+      "speaker": "client",
+      "text": "I appreciate the offer, but honestly, I think it would be a waste of both our time. By the time things stabilize, your product will have changed, pricing will be different. I'd need to start fresh anyway.",
+      "start": 137.2,
+      "end": 153.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That's a fair point. Let me ask - beyond the budget freeze, if finances weren't a factor, is there anything about your current security setup that would make you consider switching?",
+      "start": 153.8,
+      "end": 168.6
+    },
+    {
+      "speaker": "client",
+      "text": "Look, Jessica, you seem like a good salesperson, but I'm going to be straight with you. Even without the budget freeze, we probably wouldn't switch. Our current vendor, despite its shortcomings, is deeply integrated into our systems. The migration cost and risk would be enormous.",
+      "start": 169.0,
+      "end": 190.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I appreciate the directness. The integration concern is valid - migrations are never simple. We do have a transition support program, but I hear what you're saying about the overall risk appetite.",
+      "start": 190.6,
+      "end": 206.4
+    },
+    {
+      "speaker": "client",
+      "text": "Plus, and I probably shouldn't tell you this, but our current vendor offered us a thirty percent discount to extend our contract early when they heard we were taking this call. So we're actually in a better position now.",
+      "start": 206.8,
+      "end": 224.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Ha, well that's actually a win for you then. Competition benefits the customer. I'm glad you were able to negotiate a better deal.",
+      "start": 225.0,
+      "end": 236.4
+    },
+    {
+      "speaker": "client",
+      "text": "Yeah, so between the budget freeze, the restructuring uncertainty, the integration concerns, and the new discount from our current vendor... I just don't see a scenario where this works out.",
+      "start": 236.8,
+      "end": 252.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I completely understand, David. It sounds like you've thought this through carefully. I won't push further. I genuinely wish you the best with the restructuring.",
+      "start": 253.0,
+      "end": 266.8
+    },
+    {
+      "speaker": "client",
+      "text": "Thanks, I appreciate that. And look, if something changes dramatically down the road, I'll keep CloudSecure in mind. You've been professional about this.",
+      "start": 267.2,
+      "end": 280.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That means a lot, thank you. If you ever want to reconnect in the future, you have my contact info. No pressure, just know the door is open.",
+      "start": 280.8,
+      "end": 293.6
+    },
+    {
+      "speaker": "client",
+      "text": "Will do. Take care, Jessica.",
+      "start": 294.0,
+      "end": 297.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "You too, David. Best of luck with everything. Goodbye!",
+      "start": 297.8,
+      "end": 303.2
+    },
+    {
+      "speaker": "client",
+      "text": "Bye.",
+      "start": 303.6,
+      "end": 304.6
+    }
+  ]
+}

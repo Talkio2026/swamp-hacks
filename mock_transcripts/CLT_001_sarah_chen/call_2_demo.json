@@ -1,0 +1,260 @@
+{
+  "clientId": "CLT_001",
+  "clientName": "Sarah Chen",
+  "companyName": "Bright Ideas Marketing",
+  "industry": "Marketing",
+  "contactEmail": "sarah@brightideasmarketing.com",
+  "contactPhone": "+15551001001",
+  "salesRepName": "Michael",
+  "callNumber": 2,
+  "callSid": "MOCK_CA_CLT001_CALL002",
+  "recordingSid": "MOCK_RE_CLT001_CALL002",
+  "transcriptSid": "MOCK_GT_CLT001_CALL002",
+  "status": "demo",
+  "outcome": "very_interested",
+  "nextAction": "proposal_review",
+  "createdAt": "2026-01-13T14:00:00.000Z",
+  "sentiment": "positive",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi everyone! Can you hear me okay?",
+      "start": 5.0,
+      "end": 7.8
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, we can hear you. This is Sarah, and I have Jennifer with me today.",
+      "start": 8.2,
+      "end": 13.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect! Hi Sarah, hi Jennifer. Thanks so much for taking the time today. I'm excited to show you the platform. Before I start screen sharing, Jennifer, do you have any specific questions or areas you'd like me to cover?",
+      "start": 13.8,
+      "end": 29.6
+    },
+    {
+      "speaker": "client",
+      "text": "Hi Michael. Sarah told me about the communication logging feature. I'm really interested in seeing that in action. Also, I want to understand how the team adoption process works - we've had tools fail because people just don't use them.",
+      "start": 30.0,
+      "end": 46.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great points, Jennifer. Adoption is critical - the best software is useless if people don't use it. I'll definitely address that. Let me share my screen now. Can you both see the dashboard?",
+      "start": 47.2,
+      "end": 60.4
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, we can see it clearly.",
+      "start": 60.8,
+      "end": 63.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect. So this is the main interface your team would see every day. On the left, you have your client list. In the center is the activity feed showing all recent interactions across your entire team. Let me click into one of these clients to show you the communication hub Sarah asked about.",
+      "start": 63.6,
+      "end": 84.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Here you can see every touchpoint with this client - emails, calls, meetings, even internal notes. Notice how it's all in one timeline. When you talked to a client yesterday and your colleague needs to follow up today, they have full context right here.",
+      "start": 85.2,
+      "end": 103.6
+    },
+    {
+      "speaker": "client",
+      "text": "Oh wow, this is exactly what we need. Sarah, look at this - it even shows the email thread previews.",
+      "start": 104.0,
+      "end": 112.4
+    },
+    {
+      "speaker": "client",
+      "text": "I see it. Michael, how does it capture phone calls? We don't use a VOIP system right now.",
+      "start": 112.8,
+      "end": 120.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Good question. For phone calls, team members can log them manually with one click, or you can integrate with most phone systems. We also have a mobile app where you can log a call right after hanging up - takes about ten seconds. Some clients use our built-in calling feature which logs automatically.",
+      "start": 121.0,
+      "end": 142.8
+    },
+    {
+      "speaker": "client",
+      "text": "The mobile app is important. Our team is always on the go.",
+      "start": 143.2,
+      "end": 148.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely. Let me show you the mobile interface briefly. Here's how it looks - clean, simple, quick actions. You can see client info, log activities, and even check your tasks all from your phone.",
+      "start": 148.8,
+      "end": 164.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Now, Jennifer, you mentioned adoption. Let me address that. We have a few features designed specifically to drive usage. First, the daily digest email - each team member gets a summary of their tasks and any client activity they should know about. Second, we have Slack integration so notifications can go directly to where your team already works.",
+      "start": 165.0,
+      "end": 190.2
+    },
+    {
+      "speaker": "client",
+      "text": "We do use Slack heavily, so that's great.",
+      "start": 190.6,
+      "end": 195.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect fit then. Third, and this is my favorite - gamification. There's a team leaderboard showing who's logging the most activities, who has the best response times. It creates a bit of healthy competition and makes using the tool more engaging.",
+      "start": 195.8,
+      "end": 214.6
+    },
+    {
+      "speaker": "client",
+      "text": "Ha! Our team is competitive. They'd love that.",
+      "start": 215.0,
+      "end": 219.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Now let me show you the analytics dashboard Sarah mentioned. This is where you get visibility into team performance and client health. You can see metrics like average response time, activity volume by team member, and client engagement scores.",
+      "start": 220.2,
+      "end": 239.4
+    },
+    {
+      "speaker": "client",
+      "text": "Can we customize what metrics we track?",
+      "start": 239.8,
+      "end": 244.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Yes! You can create custom dashboards with the metrics that matter to your business. You can also schedule automated reports to go to stakeholders weekly or monthly.",
+      "start": 244.6,
+      "end": 257.4
+    },
+    {
+      "speaker": "client",
+      "text": "This is really impressive. Jennifer, what do you think?",
+      "start": 257.8,
+      "end": 263.2
+    },
+    {
+      "speaker": "client",
+      "text": "I'm sold on the features. My main question now is implementation - how painful is this going to be to set up?",
+      "start": 263.6,
+      "end": 273.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great question. For a team your size, implementation typically takes about two weeks. The first week we handle all the technical setup - integrations, data migration if needed, customization. The second week is training. We provide live sessions plus on-demand videos your team can reference anytime.",
+      "start": 273.8,
+      "end": 296.6
+    },
+    {
+      "speaker": "client",
+      "text": "What about pricing? You mentioned it briefly when we spoke, Michael, but I'd like to understand the full breakdown.",
+      "start": 297.0,
+      "end": 306.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Of course. For your team of twenty, you'd be looking at our Professional plan at forty-nine dollars per user per month, billed annually. That's nine hundred eighty dollars per month total. Implementation has a one-time fee of two thousand dollars, which covers the dedicated onboarding support.",
+      "start": 306.6,
+      "end": 328.4
+    },
+    {
+      "speaker": "client",
+      "text": "So roughly twelve thousand annually plus the two thousand setup. That's within our budget range. What do you think, Jennifer?",
+      "start": 328.8,
+      "end": 340.6
+    },
+    {
+      "speaker": "client",
+      "text": "I think it makes sense. The productivity gains alone would justify it. But I'd want to see a formal proposal we can review internally before committing.",
+      "start": 341.0,
+      "end": 353.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely. I'll prepare a detailed proposal with everything we discussed - pricing breakdown, implementation timeline, and the expected ROI based on similar agencies. Can I send that over by tomorrow?",
+      "start": 354.2,
+      "end": 370.6
+    },
+    {
+      "speaker": "client",
+      "text": "Tomorrow works. We have a leadership meeting on Monday where we can discuss it.",
+      "start": 371.0,
+      "end": 378.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect timing. Would it be helpful if I included a one-page executive summary for anyone who wasn't on this call?",
+      "start": 378.8,
+      "end": 388.2
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, that would be very helpful. We'll need to get our CFO's sign-off.",
+      "start": 388.6,
+      "end": 395.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'll include ROI calculations that speak to the financial benefits. After your Monday meeting, would you like to schedule a follow-up call to discuss any questions that come up?",
+      "start": 395.8,
+      "end": 410.6
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, let's tentatively plan for Tuesday afternoon. We can confirm after the meeting.",
+      "start": 411.0,
+      "end": 419.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Sounds great. I'll send a hold for Tuesday at three PM. Any final questions before we wrap up?",
+      "start": 419.8,
+      "end": 428.2
+    },
+    {
+      "speaker": "client",
+      "text": "I think we're good. Thank you for the thorough demo, Michael. This looks like exactly what we've been searching for.",
+      "start": 428.6,
+      "end": 438.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Thank you both for your time and great questions! I'm excited about the potential partnership. Enjoy the rest of your day, and I'll talk to you Tuesday!",
+      "start": 438.8,
+      "end": 451.2
+    },
+    {
+      "speaker": "client",
+      "text": "Thanks, Michael. Bye!",
+      "start": 451.6,
+      "end": 454.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Goodbye!",
+      "start": 454.6,
+      "end": 455.8
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "clientId": "CLT_003",
+  "clientName": "Lisa Wong",
+  "companyName": "Nexus Retail Solutions",
+  "industry": "Retail",
+  "contactEmail": "lisa@nexusretail.com",
+  "contactPhone": "+15551003003",
+  "salesRepName": "Kevin",
+  "callNumber": 2,
+  "callSid": "MOCK_CA_CLT003_CALL002",
+  "recordingSid": "MOCK_RE_CLT003_CALL002",
+  "transcriptSid": "MOCK_GT_CLT003_CALL002",
+  "status": "in_progress",
+  "outcome": "pending_decision",
+  "nextAction": "awaiting_cfo_approval",
+  "scheduledFollowup": "2026-01-27T14:00:00.000Z",
+  "createdAt": "2026-01-20T11:00:00.000Z",
+  "sentiment": "positive",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi everyone! Can you hear me clearly?",
+      "start": 5.0,
+      "end": 7.8
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, we can hear you. This is Lisa, and I have Pam with me today.",
+      "start": 8.2,
+      "end": 13.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great! Hi Lisa, hi Pam. Thanks for making time for this demo. Pam, Lisa mentioned you're the HR director - I'm looking forward to showing you how SmartHR can help lighten the load for your team.",
+      "start": 13.8,
+      "end": 29.2
+    },
+    {
+      "speaker": "client",
+      "text": "Hi Kevin. Yes, I'm very interested to see this. We really need help with our onboarding process - it's completely manual right now and taking forever.",
+      "start": 29.6,
+      "end": 42.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect, I'll make sure to focus on that. Let me share my screen. Can you both see the dashboard?",
+      "start": 42.8,
+      "end": 51.2
+    },
+    {
+      "speaker": "client",
+      "text": "Yes, we can see it.",
+      "start": 51.6,
+      "end": 53.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great. So this is the main SmartHR dashboard. The first thing I want to show you is our onboarding workflow builder. This is where you create automated journeys for new hires.",
+      "start": 54.2,
+      "end": 68.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Here's an example workflow for a retail associate. When you hire someone, you add them to the system and this entire sequence kicks off automatically - welcome email, document collection, training assignments, manager introductions, everything is scheduled and tracked without manual intervention.",
+      "start": 69.0,
+      "end": 91.4
+    },
+    {
+      "speaker": "client",
+      "text": "Oh wow. We literally do all of that by hand right now. Pam, this would save you so much time.",
+      "start": 91.8,
+      "end": 101.2
+    },
+    {
+      "speaker": "client",
+      "text": "This is impressive. Can we customize the workflows for different positions? Our store managers have a very different onboarding path than sales associates.",
+      "start": 101.6,
+      "end": 113.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely. You can create unlimited workflow templates. Let me show you - here's another template for management roles. Different duration, different training modules, different stakeholders involved. You can even branch workflows based on location or department.",
+      "start": 113.8,
+      "end": 133.6
+    },
+    {
+      "speaker": "client",
+      "text": "That's exactly what we need. What about the employee self-service portal? Our team gets bombarded with benefits questions.",
+      "start": 134.0,
+      "end": 144.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Let me switch to the employee view. This is what your staff would see when they log in. They can access their benefits information, request time off, view pay stubs, update personal information - all without having to ask HR. Studies show this reduces routine HR inquiries by about seventy percent.",
+      "start": 144.6,
+      "end": 169.8
+    },
+    {
+      "speaker": "client",
+      "text": "Seventy percent reduction in questions? That alone would be worth the investment.",
+      "start": 170.2,
+      "end": 177.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Now let me show you the engagement module Lisa mentioned being interested in. Here's where you can create and send pulse surveys to check in with your team. The system automatically analyzes responses and highlights areas of concern.",
+      "start": 177.8,
+      "end": 196.6
+    },
+    {
+      "speaker": "client",
+      "text": "Can we do this anonymously? Employees might not be honest if they think their managers can see who said what.",
+      "start": 197.0,
+      "end": 206.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great question, Pam. Yes, surveys can be completely anonymous. Managers only see aggregated results, and we require a minimum of five responses before any data is shown to prevent identification by process of elimination.",
+      "start": 207.2,
+      "end": 225.4
+    },
+    {
+      "speaker": "client",
+      "text": "That's smart. What about our smaller stores that only have three or four employees?",
+      "start": 225.8,
+      "end": 233.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "For smaller teams, results get rolled up to the regional or company level. So you maintain anonymity while still capturing the feedback.",
+      "start": 233.6,
+      "end": 245.4
+    },
+    {
+      "speaker": "client",
+      "text": "Kevin, this all looks really good. I think we're convinced on the features. The question now is the business case for our CFO.",
+      "start": 245.8,
+      "end": 258.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I can help with that. Based on your company size and the time savings we discussed, I estimate SmartHR would save your HR team approximately sixty hours per month. At a fully-loaded labor cost, that's significant savings that far outweighs the subscription cost.",
+      "start": 258.6,
+      "end": 281.4
+    },
+    {
+      "speaker": "client",
+      "text": "Can you put together a formal ROI analysis? Our CFO, Robert, is very numbers-driven. He'll want to see the breakdown.",
+      "start": 281.8,
+      "end": 293.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely. I'll prepare a detailed ROI document with time savings by category, cost comparisons, and projected benefits over a twelve-month period. I can have that to you by tomorrow.",
+      "start": 293.6,
+      "end": 310.4
+    },
+    {
+      "speaker": "client",
+      "text": "Perfect. We have a leadership meeting next Friday where we present new tool requests. If you get us the materials this week, we can include SmartHR in that discussion.",
+      "start": 310.8,
+      "end": 326.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'll make sure you have everything by Thursday at the latest. Would it help if I also created a one-page executive summary for Robert? Something he can review in two minutes that hits the key points?",
+      "start": 326.6,
+      "end": 343.4
+    },
+    {
+      "speaker": "client",
+      "text": "Yes! That would be perfect. Robert doesn't have time for long documents.",
+      "start": 343.8,
+      "end": 350.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Consider it done. So after your Friday meeting, what would be a good time to reconnect? I can answer any questions that come up and discuss next steps.",
+      "start": 350.6,
+      "end": 364.4
+    },
+    {
+      "speaker": "client",
+      "text": "How about the following Monday? That gives us the weekend to think things through. Say, two PM?",
+      "start": 364.8,
+      "end": 374.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Monday at two PM works great. I'll send a calendar hold. Is there anything else you'd like to see or any concerns I haven't addressed?",
+      "start": 374.6,
+      "end": 386.4
+    },
+    {
+      "speaker": "client",
+      "text": "I think we're good for now. Pam, anything from you?",
+      "start": 386.8,
+      "end": 392.2
+    },
+    {
+      "speaker": "client",
+      "text": "Just one thing - how long does implementation take? We're about to enter our busy season and I don't want to disrupt things at the worst time.",
+      "start": 392.6,
+      "end": 405.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Implementation typically takes three to four weeks, but we're flexible on timing. We could sign now and schedule implementation to start after your busy season if that works better.",
+      "start": 405.8,
+      "end": 421.6
+    },
+    {
+      "speaker": "client",
+      "text": "That's good to know. We'll factor that into our discussion.",
+      "start": 422.0,
+      "end": 428.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Sounds good. Thank you both for your time today. I'm optimistic about working together. I'll get those materials over to you by Thursday, and we'll reconnect Monday after your leadership meeting.",
+      "start": 428.6,
+      "end": 445.4
+    },
+    {
+      "speaker": "client",
+      "text": "Thanks, Kevin. This was really helpful. We'll talk Monday!",
+      "start": 445.8,
+      "end": 452.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Thank you, Lisa. Thank you, Pam. Have a great rest of your week!",
+      "start": 452.6,
+      "end": 458.8
+    },
+    {
+      "speaker": "client",
+      "text": "You too! Bye!",
+      "start": 459.2,
+      "end": 461.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Goodbye!",
+      "start": 461.8,
+      "end": 463.2
+    }
+  ]
+}

@@ -10,12 +10,29 @@ export interface IConversationEntry {
 
 // Interface for the Transcript document
 export interface ITranscript extends Document {
+  // Core Twilio fields (required)
   callSid: string;
   recordingSid: string;
   transcriptSid: string;
   createdAt: Date;
   sentiment: "positive" | "negative" | "neutral" | "mixed";
   conversation: IConversationEntry[];
+  
+  // Client data fields (populated from dashboard)
+  clientId?: string;
+  clientName?: string;
+  companyName?: string;
+  industry?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  salesRepName?: string;
+  initialNotes?: string;
+  
+  // Call tracking fields
+  callNumber?: number;
+  status?: "initial_contact" | "demo" | "followup" | "negotiation" | "contract_accepted" | "rejected" | "in_progress";
+  outcome?: "interested" | "very_interested" | "hesitant_interest" | "pending_decision" | "closed_won" | "closed_lost" | "rejected";
+  nextAction?: string;
 }
 
 // Schema for conversation entries
@@ -45,6 +62,7 @@ const ConversationEntrySchema = new Schema<IConversationEntry>(
 // Main Transcript schema
 const TranscriptSchema = new Schema<ITranscript>(
   {
+    // Core Twilio fields (required)
     callSid: {
       type: String,
       required: true,
@@ -71,6 +89,50 @@ const TranscriptSchema = new Schema<ITranscript>(
     conversation: {
       type: [ConversationEntrySchema],
       default: [],
+    },
+    
+    // Client data fields (populated from dashboard - all optional)
+    clientId: {
+      type: String,
+      index: true,
+    },
+    clientName: {
+      type: String,
+    },
+    companyName: {
+      type: String,
+    },
+    industry: {
+      type: String,
+    },
+    contactEmail: {
+      type: String,
+    },
+    contactPhone: {
+      type: String,
+      index: true,
+    },
+    salesRepName: {
+      type: String,
+    },
+    initialNotes: {
+      type: String,
+    },
+    
+    // Call tracking fields
+    callNumber: {
+      type: Number,
+    },
+    status: {
+      type: String,
+      enum: ["initial_contact", "demo", "followup", "negotiation", "contract_accepted", "rejected", "in_progress"],
+    },
+    outcome: {
+      type: String,
+      enum: ["interested", "very_interested", "hesitant_interest", "pending_decision", "closed_won", "closed_lost", "rejected"],
+    },
+    nextAction: {
+      type: String,
     },
   },
   {

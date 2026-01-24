@@ -1,0 +1,170 @@
+{
+  "clientId": "CLT_002",
+  "clientName": "David Martinez",
+  "companyName": "Genesis Tech Solutions",
+  "industry": "Technology",
+  "contactEmail": "d.martinez@genesistech.com",
+  "contactPhone": "+15551002002",
+  "salesRepName": "Jessica",
+  "callNumber": 1,
+  "callSid": "MOCK_CA_CLT002_CALL001",
+  "recordingSid": "MOCK_RE_CLT002_CALL001",
+  "transcriptSid": "MOCK_GT_CLT002_CALL001",
+  "status": "initial_contact",
+  "outcome": "hesitant_interest",
+  "nextAction": "scheduled_followup",
+  "createdAt": "2026-01-08T10:15:00.000Z",
+  "sentiment": "neutral",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "client",
+      "text": "David Martinez speaking.",
+      "start": 5.0,
+      "end": 6.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi David, this is Jessica from CloudSecure Systems. How are you doing today?",
+      "start": 7.2,
+      "end": 12.4
+    },
+    {
+      "speaker": "client",
+      "text": "I'm alright. What's this about?",
+      "start": 12.8,
+      "end": 15.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'm reaching out to IT directors like yourself about our enterprise security platform. I understand Genesis Tech has been expanding its cloud infrastructure, and I wanted to discuss how we might help with your security needs.",
+      "start": 16.0,
+      "end": 31.4
+    },
+    {
+      "speaker": "client",
+      "text": "Look, I appreciate the call, but we're pretty set with our current security vendor. We've been with them for five years.",
+      "start": 31.8,
+      "end": 42.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Five years is a solid relationship. I'm not looking to disrupt what's working for you. I'm just curious - in those five years, has the threat landscape changed for your organization?",
+      "start": 42.6,
+      "end": 56.4
+    },
+    {
+      "speaker": "client",
+      "text": "Well, yes, obviously. We've had to adapt. We're dealing with more sophisticated attacks now, ransomware attempts have tripled in the last year alone.",
+      "start": 56.8,
+      "end": 69.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Ransomware is definitely the big concern right now. How has your current solution adapted to handle these new threats?",
+      "start": 69.6,
+      "end": 79.4
+    },
+    {
+      "speaker": "client",
+      "text": "They've added some features, but honestly, we've had to supplement with additional tools. It's becoming a bit of a patchwork situation.",
+      "start": 79.8,
+      "end": 91.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That patchwork approach is common, but it creates gaps and management overhead. Our platform takes a unified approach - threat detection, response, and recovery all in one system. Would you be open to seeing how that compares to your current setup?",
+      "start": 92.0,
+      "end": 110.8
+    },
+    {
+      "speaker": "client",
+      "text": "I mean, I'm not actively looking to switch, but I suppose it doesn't hurt to stay informed about what's out there. What would that involve?",
+      "start": 111.2,
+      "end": 123.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Just a thirty-minute overview call where I can show you the platform and answer any questions. No pressure, purely informational. If it's not a fit, at least you'll have benchmark data for your next vendor review.",
+      "start": 123.8,
+      "end": 140.2
+    },
+    {
+      "speaker": "client",
+      "text": "Alright, I can spare thirty minutes. But I want to be clear - we're not in buying mode right now. Our contract doesn't renew for another eighteen months.",
+      "start": 140.6,
+      "end": 153.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Completely understood. I'm not expecting any decisions today. Sometimes it's just good to build relationships ahead of time. How does next week look for you?",
+      "start": 154.2,
+      "end": 167.4
+    },
+    {
+      "speaker": "client",
+      "text": "Tuesday afternoon could work. Say, two PM?",
+      "start": 167.8,
+      "end": 173.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Tuesday at two PM works great. I'll send a calendar invite to your email. Is d.martinez@genesistech.com correct?",
+      "start": 173.6,
+      "end": 184.4
+    },
+    {
+      "speaker": "client",
+      "text": "That's right.",
+      "start": 184.8,
+      "end": 186.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Perfect. I'll also send over a brief overview document so you have context before our call. Is there any specific capability you'd want me to focus on during the demo?",
+      "start": 187.0,
+      "end": 200.8
+    },
+    {
+      "speaker": "client",
+      "text": "Show me what you've got for ransomware protection specifically. That's our biggest concern right now.",
+      "start": 201.2,
+      "end": 209.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Noted. I'll make sure to highlight our ransomware detection and automated response features. Thanks for your time today, David. I'll see you Tuesday.",
+      "start": 209.8,
+      "end": 222.6
+    },
+    {
+      "speaker": "client",
+      "text": "Alright. Talk to you then.",
+      "start": 223.0,
+      "end": 226.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Take care, David. Goodbye!",
+      "start": 226.6,
+      "end": 229.4
+    },
+    {
+      "speaker": "client",
+      "text": "Bye.",
+      "start": 229.8,
+      "end": 230.8
+    }
+  ]
+}

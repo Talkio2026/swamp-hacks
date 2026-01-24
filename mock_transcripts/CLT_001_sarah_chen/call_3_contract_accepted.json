@@ -1,0 +1,200 @@
+{
+  "clientId": "CLT_001",
+  "clientName": "Sarah Chen",
+  "companyName": "Bright Ideas Marketing",
+  "industry": "Marketing",
+  "contactEmail": "sarah@brightideasmarketing.com",
+  "contactPhone": "+15551001001",
+  "salesRepName": "Michael",
+  "callNumber": 3,
+  "callSid": "MOCK_CA_CLT001_CALL003",
+  "recordingSid": "MOCK_RE_CLT001_CALL003",
+  "transcriptSid": "MOCK_GT_CLT001_CALL003",
+  "status": "contract_accepted",
+  "outcome": "closed_won",
+  "nextAction": "implementation_kickoff",
+  "createdAt": "2026-01-17T15:00:00.000Z",
+  "sentiment": "positive",
+  "conversation": [
+    {
+      "speaker": "client",
+      "text": "This call may be recorded for quality and training.",
+      "start": 0,
+      "end": 3.12
+    },
+    {
+      "speaker": "client",
+      "text": "Connecting you now.",
+      "start": 3.28,
+      "end": 4.64
+    },
+    {
+      "speaker": "client",
+      "text": "Hi Michael!",
+      "start": 5.0,
+      "end": 6.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Hi Sarah! Great to hear from you. How did the leadership meeting go on Monday?",
+      "start": 6.6,
+      "end": 12.4
+    },
+    {
+      "speaker": "client",
+      "text": "It went really well! Jennifer and I presented the proposal, and everyone was impressed with what TechFlow can do for us.",
+      "start": 12.8,
+      "end": 22.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That's wonderful to hear! Were there any questions or concerns that came up during the discussion?",
+      "start": 23.0,
+      "end": 30.2
+    },
+    {
+      "speaker": "client",
+      "text": "Our CFO, David, had a few questions about the contract terms. Specifically, he wanted to know about the cancellation policy and whether the pricing is locked in for the duration.",
+      "start": 30.6,
+      "end": 44.8
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great questions from David. For annual contracts, you can cancel with thirty days notice after the first year, though we'd prorate any unused months. As for pricing, we guarantee your rate for the full contract term - no surprise increases.",
+      "start": 45.2,
+      "end": 63.4
+    },
+    {
+      "speaker": "client",
+      "text": "Perfect, that's exactly what he wanted to hear. He also asked if we could start the billing cycle in February instead of immediately, since our fiscal planning works better that way.",
+      "start": 63.8,
+      "end": 78.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Absolutely, we can accommodate that. We can sign the agreement now, begin implementation this month, and start billing February first. That way you get a head start on setup without impacting this month's budget.",
+      "start": 78.6,
+      "end": 95.4
+    },
+    {
+      "speaker": "client",
+      "text": "That's exactly what I was hoping you'd say. David approved the budget this morning, so we're ready to move forward.",
+      "start": 95.8,
+      "end": 106.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Sarah, that's fantastic news! Congratulations on getting the approval. I'm thrilled to officially welcome Bright Ideas Marketing as a TechFlow client!",
+      "start": 106.6,
+      "end": 118.4
+    },
+    {
+      "speaker": "client",
+      "text": "Thank you! We're excited too. The team has been asking when we're getting the new system ever since Jennifer showed them some screenshots from the demo.",
+      "start": 118.8,
+      "end": 131.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "That's the enthusiasm we love to see! It makes implementation so much smoother when the team is bought in from the start. So let's talk next steps. I'll send over the contract this afternoon for e-signature. Once that's signed, I'll introduce you to your dedicated implementation manager.",
+      "start": 131.6,
+      "end": 152.8
+    },
+    {
+      "speaker": "client",
+      "text": "Sounds good. How quickly can we get started with implementation?",
+      "start": 153.2,
+      "end": 158.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "We can kick off as early as this week. Your implementation manager will reach out within twenty-four hours of the signed contract to schedule the discovery call. That's where we map out your specific workflows, integrations needed, and create a customized implementation plan.",
+      "start": 159.0,
+      "end": 179.4
+    },
+    {
+      "speaker": "client",
+      "text": "Perfect. And remind me - what does the implementation timeline look like?",
+      "start": 179.8,
+      "end": 186.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "For your team, we're looking at about two weeks total. Week one covers technical setup - integrations with Google Workspace, importing your existing client data, and customizing the platform for your workflows. Week two is training - we'll do live sessions for your team and make sure everyone is comfortable before we consider implementation complete.",
+      "start": 186.6,
+      "end": 213.8
+    },
+    {
+      "speaker": "client",
+      "text": "That's faster than I expected. Will there be any disruption to our current processes during the transition?",
+      "start": 214.2,
+      "end": 223.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Minimal disruption. We run in parallel with your existing tools during implementation. Your team continues working as normal while we set everything up in the background. When we flip the switch, it's seamless.",
+      "start": 223.8,
+      "end": 240.6
+    },
+    {
+      "speaker": "client",
+      "text": "That's reassuring. One more thing - after implementation, what kind of ongoing support do we get?",
+      "start": 241.0,
+      "end": 250.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Great question. With the Professional plan, you get priority support with a guaranteed four-hour response time during business hours. You'll also have access to our help center, video tutorials, and quarterly check-ins with your customer success manager to optimize your usage.",
+      "start": 250.6,
+      "end": 272.4
+    },
+    {
+      "speaker": "client",
+      "text": "This all sounds great, Michael. I'm really confident we made the right choice.",
+      "start": 272.8,
+      "end": 280.2
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "I'm confident you did too, Sarah. You and Jennifer asked all the right questions, did your due diligence, and I'm excited to help Bright Ideas continue growing. Is there anything else you need from me before I send the contract?",
+      "start": 280.6,
+      "end": 298.4
+    },
+    {
+      "speaker": "client",
+      "text": "I think we're all set. Send it over and I'll get it signed today.",
+      "start": 298.8,
+      "end": 305.6
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Wonderful! You'll have it in your inbox within the hour. Thank you again for choosing TechFlow, Sarah. This is going to be a great partnership!",
+      "start": 306.0,
+      "end": 317.8
+    },
+    {
+      "speaker": "client",
+      "text": "Thank you, Michael! You've been so helpful throughout this whole process. Talk soon!",
+      "start": 318.2,
+      "end": 326.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "My pleasure! Looking forward to seeing your success with the platform. Have a great day, Sarah!",
+      "start": 326.8,
+      "end": 335.2
+    },
+    {
+      "speaker": "client",
+      "text": "You too! Bye!",
+      "start": 335.6,
+      "end": 337.4
+    },
+    {
+      "speaker": "sales_representative",
+      "text": "Goodbye!",
+      "start": 337.8,
+      "end": 339.2
+    }
+  ]
+}
