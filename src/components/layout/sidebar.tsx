@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Users,
   FileText,
+  GraduationCap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
@@ -19,6 +20,7 @@ import { useState } from 'react'
 const navigation = [
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Calls', href: '/calls', icon: Phone },
+  { name: 'Sales Training', href: '/training', icon: GraduationCap },
   { name: 'Live Copilot', href: '/copilot', icon: Mic },
   { name: 'Playbooks', href: '/playbooks', icon: BookOpen },
   { name: 'Docs', href: '/docs', icon: FileText },
