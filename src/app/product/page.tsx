@@ -181,7 +181,7 @@ export default function ProductPage() {
                   <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">📋</span>
                   Overview
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 lg:p-8">
+                <div>
                   <p className="text-white/70 leading-relaxed mb-4">
                     Talkio is a <span className="text-white font-medium">post-call AI analysis platform</span> that transforms your sales conversations into actionable intelligence.
                   </p>
@@ -211,7 +211,7 @@ export default function ProductPage() {
                   <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">⚙️</span>
                   How It Works
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 lg:p-8">
+                <div>
                   <p className="text-white/70 leading-relaxed mb-6">
                     Talkio operates entirely post-call, meaning there's no real-time overhead during your conversations.
                   </p>
@@ -221,7 +221,7 @@ export default function ProductPage() {
                       { step: '2', title: 'AI Analysis', desc: 'After the call ends, our AI processes the transcript to extract key information—summaries, sentiment, objections, and next steps.' },
                       { step: '3', title: 'Structured Output', desc: 'You receive clean, organized data: summaries, action items, and context—all searchable and linked to the client record.' },
                     ].map((item) => (
-                      <div key={item.step} className="flex gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+                      <div key={item.step} className="flex gap-4 py-3">
                         <div className="w-10 h-10 rounded-lg bg-white/10 text-white flex items-center justify-center font-bold flex-shrink-0">
                           {item.step}
                         </div>
@@ -241,25 +241,23 @@ export default function ProductPage() {
                   <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">✨</span>
                   Key Features
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 lg:p-8">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {[
-                      { name: 'Smart Summaries', desc: 'AI-generated call summaries highlighting key discussion points, decisions made, and outcomes.', icon: '📝' },
-                      { name: 'Action Tracking', desc: 'Automatic extraction of follow-up tasks with suggested dates and clear intent.', icon: '✅' },
-                      { name: 'Client Context', desc: 'Persistent memory across all client interactions. Never lose context between calls.', icon: '🧠' },
-                      { name: 'Team Dashboard', desc: 'Manager visibility into all calls, performance metrics, and team activity.', icon: '📊' },
-                      { name: 'Search & Filter', desc: 'Find any conversation instantly. Search by client, topic, date, or outcome.', icon: '🔍' },
-                      { name: 'Secure Storage', desc: 'All call data encrypted and securely stored. Full compliance with data regulations.', icon: '🔒' },
-                    ].map((feature) => (
-                      <div key={feature.name} className="flex gap-4 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
-                        <span className="text-2xl flex-shrink-0">{feature.icon}</span>
-                        <div>
-                          <div className="font-medium text-white mb-1">{feature.name}</div>
-                          <p className="text-sm text-white/60">{feature.desc}</p>
-                        </div>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {[
+                    { name: 'Smart Summaries', desc: 'AI-generated call summaries highlighting key discussion points, decisions made, and outcomes.', icon: '📝' },
+                    { name: 'Action Tracking', desc: 'Automatic extraction of follow-up tasks with suggested dates and clear intent.', icon: '✅' },
+                    { name: 'Client Context', desc: 'Persistent memory across all client interactions. Never lose context between calls.', icon: '🧠' },
+                    { name: 'Team Dashboard', desc: 'Manager visibility into all calls, performance metrics, and team activity.', icon: '📊' },
+                    { name: 'Search & Filter', desc: 'Find any conversation instantly. Search by client, topic, date, or outcome.', icon: '🔍' },
+                    { name: 'Secure Storage', desc: 'All call data encrypted and securely stored. Full compliance with data regulations.', icon: '🔒' },
+                  ].map((feature) => (
+                    <div key={feature.name} className="flex gap-4 py-2">
+                      <span className="text-2xl flex-shrink-0">{feature.icon}</span>
+                      <div>
+                        <div className="font-medium text-white mb-1">{feature.name}</div>
+                        <p className="text-sm text-white/60">{feature.desc}</p>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </section>
 
@@ -269,56 +267,54 @@ export default function ProductPage() {
                   <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">💼</span>
                   Use Cases
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 lg:p-8">
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="p-5 rounded-xl border border-white/10 bg-white/5">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white">👤</span>
-                        <span className="font-medium text-white">For Sales Reps</span>
-                      </div>
-                      <ul className="space-y-3 text-sm text-white/60">
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Focus on the conversation, not note-taking
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Never miss a follow-up action or deadline
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Quick context refresh before every call
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Build stronger client relationships with full history
-                        </li>
-                      </ul>
+                <div className="grid gap-8 lg:grid-cols-2">
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="text-xl">👤</span>
+                      <span className="font-medium text-white">For Sales Reps</span>
                     </div>
-                    <div className="p-5 rounded-xl border border-white/10 bg-white/5">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white">👥</span>
-                        <span className="font-medium text-white">For Managers</span>
-                      </div>
-                      <ul className="space-y-3 text-sm text-white/60">
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Visibility into all team call activity
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Track deal progress and outcomes at scale
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Identify coaching opportunities from real calls
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-white/80 mt-0.5">→</span>
-                          Ensure follow-ups are happening on schedule
-                        </li>
-                      </ul>
+                    <ul className="space-y-3 text-sm text-white/60">
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Focus on the conversation, not note-taking
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Never miss a follow-up action or deadline
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Quick context refresh before every call
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Build stronger client relationships with full history
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="text-xl">👥</span>
+                      <span className="font-medium text-white">For Managers</span>
                     </div>
+                    <ul className="space-y-3 text-sm text-white/60">
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Visibility into all team call activity
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Track deal progress and outcomes at scale
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Identify coaching opportunities from real calls
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-white/80 mt-0.5">→</span>
+                        Ensure follow-ups are happening on schedule
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </section>
@@ -329,22 +325,22 @@ export default function ProductPage() {
                   <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">🔗</span>
                   Integration
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 lg:p-8">
+                <div>
                   <p className="text-white/70 leading-relaxed mb-6">
                     Talkio is built on <span className="text-white font-medium">Twilio</span> for reliable VoIP and call recording. Setup is seamless with no complex configuration required.
                   </p>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-center">
+                  <div className="grid gap-6 sm:grid-cols-3">
+                    <div className="text-center">
                       <div className="text-2xl mb-2">📞</div>
                       <div className="text-sm font-medium text-white">Twilio VoIP</div>
                       <div className="text-xs text-white/50 mt-1">Call capture & recording</div>
                     </div>
-                    <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-center">
+                    <div className="text-center">
                       <div className="text-2xl mb-2">🤖</div>
                       <div className="text-sm font-medium text-white">AI Processing</div>
                       <div className="text-xs text-white/50 mt-1">Gemini-powered analysis</div>
                     </div>
-                    <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-center">
+                    <div className="text-center">
                       <div className="text-2xl mb-2">☁️</div>
                       <div className="text-sm font-medium text-white">Cloud Storage</div>
                       <div className="text-xs text-white/50 mt-1">Secure & scalable</div>
