@@ -1,5 +1,58 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
+// Interface for cached agent summary
+export interface IAgentSummaryCache {
+  relationshipSummary: string;
+  clientProfile: {
+    communicationStyle: string;
+    decisionMakingProcess: string;
+    keyPriorities: string[];
+    painPoints: string[];
+  };
+  progressionAnalysis: {
+    startingStage: string;
+    currentStage: string;
+    stageProgression: string;
+    velocityAssessment: string;
+  };
+  sentimentTrend: {
+    overall: string;
+    trend: string;
+    analysis: string;
+  };
+  objectionsHistory: Array<{
+    objection: string;
+    whenRaised: string;
+    status: string;
+    resolution: string;
+  }>;
+  competitorIntelligence: {
+    mentioned: string[];
+    clientPerception: string;
+    differentiators: string;
+  };
+  buyingSignals: string[];
+  risks: Array<{
+    risk: string;
+    severity: string;
+    mitigation: string;
+  }>;
+  recommendedStrategy: {
+    immediateActions: string[];
+    talkingPoints: string[];
+    questionsToAsk: string[];
+    avoidTopics: string[];
+  };
+  nextBestAction: string;
+  dealProbability: {
+    percentage: number;
+    rationale: string;
+  };
+  modelUsed: string;
+  generatedAt: Date;
+  processingTimeMs: number;
+}
+
 // Interface for the Client document
 export interface IClient extends Document {
   clientId: string;
@@ -13,6 +66,9 @@ export interface IClient extends Document {
   initialNotes?: string;
   currentStatus: "prospect" | "qualified" | "demo_scheduled" | "negotiation" | "closed_won" | "closed_lost";
   totalCalls: number;
+  // Cached agent summary
+  agentSummary?: IAgentSummaryCache;
+  agentSummaryTranscriptCount?: number; // Number of transcripts when summary was generated
   createdAt: Date;
   updatedAt: Date;
 }
@@ -67,6 +123,15 @@ const ClientSchema = new Schema<IClient>(
       default: "prospect",
     },
     totalCalls: {
+      type: Number,
+      default: 0,
+    },
+    // Cached agent summary
+    agentSummary: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+    agentSummaryTranscriptCount: {
       type: Number,
       default: 0,
     },

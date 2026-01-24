@@ -22,7 +22,7 @@ export interface GeminiResponse {
  */
 export async function callGemini(request: GeminiRequest): Promise<GeminiResponse> {
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       temperature: request.temperature ?? 0.3,
       maxOutputTokens: request.maxTokens ?? 4096,
@@ -52,7 +52,7 @@ export async function callGemini(request: GeminiRequest): Promise<GeminiResponse
  */
 export async function* streamGemini(request: GeminiRequest): AsyncGenerator<string> {
   const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       temperature: request.temperature ?? 0.5,
       maxOutputTokens: request.maxTokens ?? 1024,

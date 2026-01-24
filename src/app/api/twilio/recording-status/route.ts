@@ -71,8 +71,13 @@ export async function POST(req: NextRequest) {
   // "From" is our Twilio number
   const toNumber = formData.get("To") as string | null;
   const fromNumber = formData.get("From") as string | null;
+  
+  // Get the dialed number from query parameter (passed from voice TwiML)
+  // This is more reliable than Twilio's form data for browser-originated calls
+  const url = new URL(req.url);
+  const dialedNumber = url.searchParams.get("dialedNumber");
 
-  console.log(`[Recording Status] Received callback: RecordingSid=${recordingSid}, CallSid=${callSid}, Status=${recordingStatus}, To=${toNumber}, From=${fromNumber}`);
+  console.log(`[Recording Status] Received callback: RecordingSid=${recordingSid}, CallSid=${callSid}, Status=${recordingStatus}, To=${toNumber}, From=${fromNumber}, DialedNumber=${dialedNumber}`);
 
   // Immediately respond 200 to Twilio
   // Process transcription in background
@@ -88,8 +93,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Process transcription asynchronously (don't await)
-  // Pass the phone number that was dialed (toNumber) for client matching
-  processTranscription(recordingSid, callSid, toNumber).catch((err) => {
+  // Use dialedNumber from query param (most reliable), fallback to toNumber from form data
+  const phoneForMatching = dialedNumber || toNumber;
+  processTranscription(recordingSid, callSid, phoneForMatching).catch((err) => {
     console.error(`[Recording Status] Background transcription error:`, err);
   });
 
@@ -125,6 +131,7 @@ async function processTranscription(recordingSid: string, callSid: string, diale
 
   try {
     // Create transcript using Twilio Conversational Intelligence
+    // dataLogging: true allows full transcripts without PII redaction
     const transcript = await twilioClient.intelligence.v2.transcripts.create({
       serviceSid: intelligenceServiceSid!,
       channel: {
@@ -133,6 +140,7 @@ async function processTranscription(recordingSid: string, callSid: string, diale
         },
       },
       customerKey: callSid,
+      dataLogging: true, // Disable PII redaction - keeps actual names/dates
     });
 
     console.log(`[Recording Status] Transcript created: ${transcript.sid}`);

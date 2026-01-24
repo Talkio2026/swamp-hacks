@@ -17,8 +17,35 @@ import {
   TrendingUp,
   AlertCircle,
   Loader2,
+  Sparkles,
+  Brain,
+  Target,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
 } from 'lucide-react'
 import { formatDuration } from '@/lib/utils'
+
+// Analysis result type
+interface AnalysisResult {
+  summary: string
+  keyPoints: string[]
+  overallSentiment: 'positive' | 'neutral' | 'negative' | 'mixed'
+  clientInterestLevel: 'high' | 'medium' | 'low'
+  objections: string[]
+  buyingSignals: string[]
+  risks: string[]
+  nextSteps: string[]
+  suggestedFollowUpDate?: string
+  currentStage: string
+  stageConfidence: number
+  analyzedAt: string
+  modelUsed: string
+  processingTimeMs: number
+}
 
 // Type for call data
 interface CallData {
@@ -241,6 +268,88 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
   const [call, setCall] = useState<CallData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Analysis state
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysisError, setAnalysisError] = useState<string | null>(null)
+  const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(true)
+  const [userModelPreference, setUserModelPreference] = useState<{
+    provider: 'gemini' | 'openrouter'
+    model?: string
+    displayName?: string
+  }>({ provider: 'gemini', displayName: 'Gemini' })
+
+  // Fetch user's saved model preference
+  const fetchUserSettings = async () => {
+    try {
+      const response = await fetch('/api/settings')
+      const data = await response.json()
+      
+      if (data.settings?.aiModel) {
+        const aiModel = data.settings.aiModel
+        const availableModels = data.availableModels || []
+        
+        // Find the display name for the model
+        let displayName = 'Gemini'
+        if (aiModel.provider === 'openrouter' && aiModel.openRouterModel) {
+          const modelInfo = availableModels.find((m: { id: string }) => m.id === aiModel.openRouterModel)
+          displayName = modelInfo?.name || aiModel.openRouterModel
+        }
+        
+        setUserModelPreference({
+          provider: aiModel.provider,
+          model: aiModel.openRouterModel,
+          displayName,
+        })
+      }
+    } catch (err) {
+      console.error('Error fetching user settings:', err)
+    }
+  }
+
+  // Fetch existing analysis
+  const fetchAnalysis = async () => {
+    try {
+      const response = await fetch(`/api/analyze/${id}`)
+      const data = await response.json()
+      if (data.hasAnalysis) {
+        setAnalysis(data.analysis)
+      }
+    } catch (err) {
+      console.error('Error fetching analysis:', err)
+    }
+  }
+
+  // Run AI analysis using user's saved preference
+  const runAnalysis = async () => {
+    setIsAnalyzing(true)
+    setAnalysisError(null)
+    
+    try {
+      const response = await fetch(`/api/analyze/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          provider: userModelPreference.provider,
+          model: userModelPreference.model,
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Analysis failed')
+      }
+      
+      setAnalysis(data.analysis)
+    } catch (err) {
+      console.error('Error running analysis:', err)
+      setAnalysisError(err instanceof Error ? err.message : 'Analysis failed')
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchCall() {
@@ -288,6 +397,8 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
     }
 
     fetchCall()
+    fetchAnalysis()
+    fetchUserSettings()
   }, [id])
 
   if (isLoading) {
@@ -430,6 +541,235 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
                   </div>
                 )}
               </CardContent>
+            </Card>
+
+            {/* AI Analysis Panel */}
+            <Card>
+              <CardHeader className="cursor-pointer" onClick={() => setIsAnalysisExpanded(!isAnalysisExpanded)}>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-purple-500" />
+                    AI Insights
+                    {analysis && (
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {analysis.modelUsed}
+                      </Badge>
+                    )}
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    {!analysis && !isAnalyzing && (
+                      <Badge variant="outline" className="text-xs">
+                        Using: {userModelPreference.displayName}
+                      </Badge>
+                    )}
+                    {analysis ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          runAnalysis()
+                        }}
+                        disabled={isAnalyzing}
+                        className="h-7 px-2"
+                      >
+                        <RefreshCw className={`h-3 w-3 ${isAnalyzing ? 'animate-spin' : ''}`} />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          runAnalysis()
+                        }}
+                        disabled={isAnalyzing}
+                        className="h-7"
+                      >
+                        {isAnalyzing ? (
+                          <>
+                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <Brain className="h-3 w-3 mr-1" />
+                            Analyze
+                          </>
+                        )}
+                      </Button>
+                    )}
+                    {isAnalysisExpanded ? (
+                      <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
+              
+              {isAnalysisExpanded && (
+                <CardContent className="space-y-4">
+                  {analysisError && (
+                    <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
+                      {analysisError}
+                    </div>
+                  )}
+                  
+                  {isAnalyzing && (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-center">
+                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-purple-500" />
+                        <p className="text-sm text-muted-foreground">Analyzing transcript...</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {!analysis && !isAnalyzing && !analysisError && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Brain className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                      <p className="text-sm">Click &quot;Analyze&quot; to get AI-powered insights</p>
+                      <p className="text-xs mt-1">
+                        Using <span className="font-medium">{userModelPreference.displayName}</span> • 
+                        <Link href="/settings" className="text-primary hover:underline ml-1">Change in Settings</Link>
+                      </p>
+                    </div>
+                  )}
+                  
+                  {analysis && !isAnalyzing && (
+                    <div className="space-y-4">
+                      {/* Summary */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4" />
+                          Summary
+                        </h4>
+                        <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                          {analysis.summary}
+                        </p>
+                      </div>
+                      
+                      {/* Interest & Sentiment */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-muted/50 p-3 rounded-lg">
+                          <p className="text-xs text-muted-foreground mb-1">Client Interest</p>
+                          <Badge variant={
+                            analysis.clientInterestLevel === 'high' ? 'success' :
+                            analysis.clientInterestLevel === 'medium' ? 'warning' : 'destructive'
+                          }>
+                            {(analysis.clientInterestLevel || 'unknown').toUpperCase()}
+                          </Badge>
+                        </div>
+                        <div className="bg-muted/50 p-3 rounded-lg">
+                          <p className="text-xs text-muted-foreground mb-1">Stage Confidence</p>
+                          <p className="text-lg font-semibold">{analysis.stageConfidence}%</p>
+                        </div>
+                      </div>
+                      
+                      {/* Key Points */}
+                      {analysis.keyPoints.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                            <Target className="h-4 w-4" />
+                            Key Points
+                          </h4>
+                          <ul className="text-sm space-y-1">
+                            {analysis.keyPoints.map((point, i) => (
+                              <li key={i} className="flex items-start gap-2">
+                                <span className="text-muted-foreground">•</span>
+                                <span className="text-muted-foreground">{point}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {/* Buying Signals */}
+                      {analysis.buyingSignals.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-green-600">
+                            <CheckCircle2 className="h-4 w-4" />
+                            Buying Signals
+                          </h4>
+                          <ul className="text-sm space-y-1">
+                            {analysis.buyingSignals.map((signal, i) => (
+                              <li key={i} className="flex items-start gap-2 text-green-600/80">
+                                <span>+</span>
+                                <span>{signal}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {/* Objections */}
+                      {analysis.objections.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-yellow-600">
+                            <AlertCircle className="h-4 w-4" />
+                            Objections Raised
+                          </h4>
+                          <ul className="text-sm space-y-1">
+                            {analysis.objections.map((obj, i) => (
+                              <li key={i} className="flex items-start gap-2 text-yellow-600/80">
+                                <span>!</span>
+                                <span>{obj}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {/* Risks */}
+                      {analysis.risks.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-red-600">
+                            <AlertTriangle className="h-4 w-4" />
+                            Risks
+                          </h4>
+                          <ul className="text-sm space-y-1">
+                            {analysis.risks.map((risk, i) => (
+                              <li key={i} className="flex items-start gap-2 text-red-600/80">
+                                <span>⚠</span>
+                                <span>{risk}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {/* Next Steps */}
+                      {analysis.nextSteps.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4" />
+                            Recommended Next Steps
+                          </h4>
+                          <ol className="text-sm space-y-1 list-decimal list-inside">
+                            {analysis.nextSteps.map((step, i) => (
+                              <li key={i} className="text-muted-foreground">{step}</li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
+                      
+                      {/* Follow-up Date */}
+                      {analysis.suggestedFollowUpDate && (
+                        <div className="flex items-center gap-2 text-sm bg-primary/5 p-3 rounded-lg">
+                          <Clock className="h-4 w-4 text-primary" />
+                          <span className="font-medium">Suggested Follow-up:</span>
+                          <span className="text-muted-foreground">{analysis.suggestedFollowUpDate}</span>
+                        </div>
+                      )}
+                      
+                      {/* Metadata */}
+                      <div className="text-xs text-muted-foreground pt-2 border-t">
+                        Analyzed in {analysis.processingTimeMs}ms • {new Date(analysis.analyzedAt).toLocaleString()}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              )}
             </Card>
           </div>
           

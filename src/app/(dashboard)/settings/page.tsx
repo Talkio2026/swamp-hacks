@@ -1,21 +1,89 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+import { UserProfile } from '@clerk/nextjs'
 import { Header } from '@/components/layout/header'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { 
-  Building2, 
   Users, 
-  Shield, 
-  Clock,
-  Key,
-  Bell,
-  Database,
+  Sparkles,
+  Check,
+  Loader2,
 } from 'lucide-react'
 
+interface AIModel {
+  id: string
+  provider: 'gemini' | 'openrouter'
+  name: string
+  description: string
+}
+
+interface AISettings {
+  provider: 'gemini' | 'openrouter'
+  openRouterModel?: string
+}
+
 export default function SettingsPage() {
+  const [selectedModel, setSelectedModel] = useState<string>('gemini')
+  const [availableModels, setAvailableModels] = useState<AIModel[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+
+  // Fetch current settings
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const response = await fetch('/api/settings')
+        const data = await response.json()
+        
+        if (data.settings?.aiModel) {
+          const aiModel = data.settings.aiModel as AISettings
+          if (aiModel.provider === 'gemini') {
+            setSelectedModel('gemini')
+          } else if (aiModel.openRouterModel) {
+            setSelectedModel(aiModel.openRouterModel)
+          }
+        }
+        
+        if (data.availableModels) {
+          setAvailableModels(data.availableModels)
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchSettings()
+  }, [])
+
+  // Save AI model preference
+  const handleSaveModel = async () => {
+    setIsSaving(true)
+    setSaveSuccess(false)
+    
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aiModelId: selectedModel }),
+      })
+      
+      if (response.ok) {
+        setSaveSuccess(true)
+        setTimeout(() => setSaveSuccess(false), 3000)
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   return (
     <div className="flex flex-col h-full">
       <Header 
@@ -25,181 +93,122 @@ export default function SettingsPage() {
       
       <div className="flex-1 p-6 overflow-auto">
         <div className="max-w-3xl mx-auto space-y-6">
-          {/* Organization Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                Organization
-              </CardTitle>
-              <CardDescription>
-                Your organization details and branding
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Input 
-                label="Organization Name" 
-                defaultValue="Acme Sales Inc" 
-              />
-              <Input 
-                label="Billing Email" 
-                type="email"
-                defaultValue="billing@acme.com" 
-              />
-              <Button>Save Changes</Button>
-            </CardContent>
-          </Card>
-          
-          {/* Team Members */}
+          {/* Profile Settings - Clerk Component */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
-                Team Members
+                Profile Settings
               </CardTitle>
               <CardDescription>
-                Manage who has access to your organization
+                Update your profile photo, name, and account settings
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {[
-                  { name: 'Sarah Wilson', email: 'sarah@acme.com', role: 'ADMIN' },
-                  { name: 'John Doe', email: 'john@acme.com', role: 'MANAGER' },
-                  { name: 'Jane Smith', email: 'jane@acme.com', role: 'REP' },
-                ].map((member) => (
-                  <div 
-                    key={member.email}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div>
-                      <div className="font-medium">{member.name}</div>
-                      <div className="text-sm text-muted-foreground">{member.email}</div>
-                    </div>
-                    <Badge variant={
-                      member.role === 'ADMIN' ? 'default' :
-                      member.role === 'MANAGER' ? 'secondary' : 'outline'
-                    }>
-                      {member.role}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-              <Button variant="outline" className="mt-4">
-                Invite Member
-              </Button>
+              <UserProfile 
+                appearance={{
+                  elements: {
+                    rootBox: 'w-full',
+                    cardBox: 'shadow-none border-0 w-full',
+                    navbar: 'hidden',
+                    navbarMobileMenuButton: 'hidden',
+                    headerTitle: 'hidden',
+                    headerSubtitle: 'hidden',
+                    profileSectionTitleText: 'text-sm font-medium',
+                  },
+                }}
+              />
             </CardContent>
           </Card>
-          
-          {/* API Keys */}
+
+          {/* AI Model Settings */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Key className="h-5 w-5" />
-                API Configuration
+                <Sparkles className="h-5 w-5 text-purple-500" />
+                AI Summarizer Model
               </CardTitle>
               <CardDescription>
-                Configure your AI and integration API keys
+                Choose the AI model used for analyzing call transcripts. This affects all future analyses.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Input 
-                label="Gemini API Key" 
-                type="password"
-                placeholder="Enter your Gemini API key"
-              />
-              <Input 
-                label="OpenRouter API Key (Fallback)" 
-                type="password"
-                placeholder="Enter your OpenRouter API key"
-              />
-              <Input 
-                label="ElevenLabs API Key (Optional)" 
-                type="password"
-                placeholder="For voice features"
-              />
-              <Button>Save API Keys</Button>
-            </CardContent>
-          </Card>
-          
-          {/* Data & Privacy */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Database className="h-5 w-5" />
-                Data & Privacy
-              </CardTitle>
-              <CardDescription>
-                Manage data retention and privacy settings
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <div className="font-medium">Data Retention</div>
-                  <div className="text-sm text-muted-foreground">
-                    How long to keep call recordings and transcripts
-                  </div>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
-                <select className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  <option value="90">90 days</option>
-                  <option value="180">180 days</option>
-                  <option value="365" selected>1 year</option>
-                  <option value="730">2 years</option>
-                </select>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <div className="font-medium">Auto-delete Transcripts</div>
-                  <div className="text-sm text-muted-foreground">
-                    Automatically remove transcripts after analysis
+              ) : (
+                <>
+                  <div className="grid gap-3">
+                    {availableModels.map((model) => (
+                      <div
+                        key={model.id}
+                        onClick={() => setSelectedModel(model.id)}
+                        className={`
+                          flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all
+                          ${selectedModel === model.id 
+                            ? 'border-primary bg-primary/5 ring-1 ring-primary' 
+                            : 'hover:border-muted-foreground/50'
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`
+                            w-4 h-4 rounded-full border-2 flex items-center justify-center
+                            ${selectedModel === model.id ? 'border-primary bg-primary' : 'border-muted-foreground'}
+                          `}>
+                            {selectedModel === model.id && (
+                              <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-medium flex items-center gap-2">
+                              {model.name}
+                              <Badge variant="outline" className="text-xs">
+                                {model.provider === 'gemini' ? 'Google' : 'OpenRouter'}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-muted-foreground">{model.description}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
-              </div>
+                  
+                  <div className="flex items-center gap-3 pt-2">
+                    <Button 
+                      onClick={handleSaveModel} 
+                      disabled={isSaving}
+                    >
+                      {isSaving ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : saveSuccess ? (
+                        <>
+                          <Check className="h-4 w-4 mr-2" />
+                          Saved!
+                        </>
+                      ) : (
+                        'Save Model Preference'
+                      )}
+                    </Button>
+                    {saveSuccess && (
+                      <span className="text-sm text-green-600">
+                        Model preference updated successfully
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Note: OpenRouter models require an OpenRouter API key. Gemini is the default if no OpenRouter key is configured.
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
-          
-          {/* Audit Log */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Audit Log
-              </CardTitle>
-              <CardDescription>
-                Recent activity in your organization
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {[
-                  { action: 'Call analyzed', user: 'System', time: '5 min ago' },
-                  { action: 'User invited', user: 'Sarah Wilson', time: '1 hour ago' },
-                  { action: 'Playbook updated', user: 'John Doe', time: '2 hours ago' },
-                  { action: 'Settings changed', user: 'Sarah Wilson', time: '1 day ago' },
-                ].map((log, i) => (
-                  <div 
-                    key={i}
-                    className="flex items-center justify-between py-2 border-b last:border-0"
-                  >
-                    <div>
-                      <div className="text-sm font-medium">{log.action}</div>
-                      <div className="text-xs text-muted-foreground">by {log.user}</div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">{log.time}</div>
-                  </div>
-                ))}
-              </div>
-              <Button variant="ghost" className="mt-2 px-0 text-primary hover:text-primary/80">
-                View full audit log →
-              </Button>
-            </CardContent>
-          </Card>
+
         </div>
       </div>
     </div>

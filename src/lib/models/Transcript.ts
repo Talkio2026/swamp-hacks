@@ -8,6 +8,24 @@ export interface IConversationEntry {
   end: number;
 }
 
+// Interface for AI Analysis result
+export interface IAnalysis {
+  summary: string;
+  keyPoints: string[];
+  overallSentiment: "positive" | "neutral" | "negative" | "mixed";
+  clientInterestLevel: "high" | "medium" | "low";
+  objections: string[];
+  buyingSignals: string[];
+  risks: string[];
+  nextSteps: string[];
+  suggestedFollowUpDate?: string;
+  currentStage: string;
+  stageConfidence: number;
+  analyzedAt: Date;
+  modelUsed: string;
+  processingTimeMs: number;
+}
+
 // Interface for the Transcript document
 export interface ITranscript extends Document {
   // Core Twilio fields (required)
@@ -34,6 +52,9 @@ export interface ITranscript extends Document {
   status?: "initial_contact" | "demo" | "followup" | "negotiation" | "contract_accepted" | "rejected" | "in_progress";
   outcome?: "interested" | "very_interested" | "hesitant_interest" | "pending_decision" | "closed_won" | "closed_lost" | "rejected";
   nextAction?: string;
+  
+  // AI Analysis
+  analysis?: IAnalysis;
 }
 
 // Schema for conversation entries
@@ -138,6 +159,30 @@ const TranscriptSchema = new Schema<ITranscript>(
     },
     nextAction: {
       type: String,
+    },
+    
+    // AI Analysis
+    analysis: {
+      summary: String,
+      keyPoints: [String],
+      overallSentiment: {
+        type: String,
+        enum: ["positive", "neutral", "negative", "mixed"],
+      },
+      clientInterestLevel: {
+        type: String,
+        enum: ["high", "medium", "low"],
+      },
+      objections: [String],
+      buyingSignals: [String],
+      risks: [String],
+      nextSteps: [String],
+      suggestedFollowUpDate: String,
+      currentStage: String,
+      stageConfidence: Number,
+      analyzedAt: Date,
+      modelUsed: String,
+      processingTimeMs: Number,
     },
   },
   {

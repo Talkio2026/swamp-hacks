@@ -19,7 +19,16 @@ import {
   XCircle,
   Clock,
   Loader2,
-  Trash2
+  Trash2,
+  Bot,
+  X,
+  TrendingUp,
+  TrendingDown,
+  Target,
+  AlertTriangle,
+  Lightbulb,
+  MessageSquare,
+  RefreshCw
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -200,7 +209,59 @@ export default function ClientsPage() {
   const [expandedClients, setExpandedClients] = useState<Set<string>>(new Set())
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [callingClient, setCallingClient] = useState<string | null>(null)
+  
+  // Agent summary state
+  const [agentModalOpen, setAgentModalOpen] = useState(false)
+  const [agentLoading, setAgentLoading] = useState(false)
+  const [agentError, setAgentError] = useState<string | null>(null)
+  const [agentSummary, setAgentSummary] = useState<{
+    clientId: string
+    clientName: string
+    companyName: string
+    summary: {
+      relationshipSummary: string
+      clientProfile: {
+        communicationStyle: string
+        decisionMakingProcess: string
+        keyPriorities: string[]
+        painPoints: string[]
+      }
+      progressionAnalysis: {
+        currentStage: string
+        stageProgression: string
+        velocityAssessment: string
+      }
+      sentimentTrend: {
+        overall: string
+        trend: string
+        analysis: string
+      }
+      objectionsHistory: Array<{
+        objection: string
+        status: string
+        resolution: string
+      }>
+      buyingSignals: string[]
+      risks: Array<{
+        risk: string
+        severity: string
+        mitigation: string
+      }>
+      recommendedStrategy: {
+        immediateActions: string[]
+        talkingPoints: string[]
+        questionsToAsk: string[]
+      }
+      nextBestAction: string
+      dealProbability: {
+        percentage: number
+        rationale: string
+      }
+      modelUsed: string
+      generatedAt?: string
+    }
+    cached?: boolean
+  } | null>(null)
 
   useEffect(() => {
     async function fetchClients() {
@@ -340,38 +401,88 @@ export default function ClientsPage() {
     setDeleteConfirm(null)
   }
 
-  const handleCallClient = async (e: React.MouseEvent, client: Client) => {
+  // Handle agent button click
+  const handleAgentClick = async (e: React.MouseEvent, clientId: string) => {
     e.stopPropagation() // Prevent folder toggle
     
+    const client = clients.find(c => c.clientId === clientId)
+    if (!client) return
+    
+    // For mock clients, show a message
     if (client.isMock) {
-      alert('Cannot call demo clients. Add a real client to make calls.')
+      setAgentError('AI Agent is only available for real clients with actual call transcripts.')
+      setAgentModalOpen(true)
       return
     }
-
-    setCallingClient(client.clientId)
+    
+    // Check if client has calls
+    if (client.calls.length === 0) {
+      setAgentError('No calls found for this client. Make some calls first to generate AI insights.')
+      setAgentModalOpen(true)
+      return
+    }
+    
+    setAgentLoading(true)
+    setAgentError(null)
+    setAgentSummary(null)
+    setAgentModalOpen(true)
     
     try {
-      const response = await fetch('/api/twilio/outbound', {
+      const response = await fetch(`/api/clients/${clientId}/agent-summary`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phoneNumber: client.contactPhone,
-          clientName: client.clientName,
-        }),
       })
       
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to initiate call')
+        throw new Error(data.error || 'Failed to generate summary')
       }
       
-      alert(`Call initiated to ${client.clientName}!\nCall SID: ${data.callSid}`)
+      setAgentSummary({
+        clientId: data.clientId,
+        clientName: data.clientName,
+        companyName: data.companyName,
+        summary: data.summary,
+        cached: data.cached,
+      })
     } catch (err) {
-      console.error('Error initiating call:', err)
-      alert(err instanceof Error ? err.message : 'Failed to initiate call')
+      console.error('Error generating agent summary:', err)
+      setAgentError(err instanceof Error ? err.message : 'Failed to generate summary')
     } finally {
-      setCallingClient(null)
+      setAgentLoading(false)
+    }
+  }
+
+  // Handle refresh agent summary (force regeneration)
+  const handleAgentRefresh = async () => {
+    if (!agentSummary) return
+    
+    setAgentLoading(true)
+    setAgentError(null)
+    
+    try {
+      const response = await fetch(`/api/clients/${agentSummary.clientId}/agent-summary?refresh=true`, {
+        method: 'POST',
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to regenerate summary')
+      }
+      
+      setAgentSummary({
+        clientId: data.clientId,
+        clientName: data.clientName,
+        companyName: data.companyName,
+        summary: data.summary,
+        cached: data.cached,
+      })
+    } catch (err) {
+      console.error('Error regenerating agent summary:', err)
+      setAgentError(err instanceof Error ? err.message : 'Failed to regenerate summary')
+    } finally {
+      setAgentLoading(false)
     }
   }
 
@@ -489,9 +600,12 @@ export default function ClientsPage() {
                 {clients.map((client) => (
                   <div key={client.clientId} className="border rounded-lg overflow-hidden">
                     {/* Client Header (Folder) */}
-                    <button
+                    <div
                       onClick={() => toggleClient(client.clientId)}
                       className="w-full flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && toggleClient(client.clientId)}
                     >
                       <div className="flex items-center gap-3">
                         {expandedClients.has(client.clientId) ? (
@@ -535,16 +649,11 @@ export default function ClientsPage() {
                           {client.calls.length} call{client.calls.length !== 1 ? 's' : ''}
                         </span>
                         <button
-                          onClick={(e) => handleCallClient(e, client)}
-                          disabled={callingClient === client.clientId}
-                          className="p-1.5 rounded-md hover:bg-green-500/10 text-muted-foreground hover:text-green-500 transition-colors cursor-pointer disabled:opacity-50"
-                          title="Call client"
+                          onClick={(e) => handleAgentClick(e, client.clientId)}
+                          className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                          title="AI Agent Summary"
                         >
-                          {callingClient === client.clientId ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Phone className="h-4 w-4" />
-                          )}
+                          <Bot className="h-4 w-4" />
                         </button>
                         <button
                           onClick={(e) => handleDeleteClick(e, client.clientId)}
@@ -554,7 +663,7 @@ export default function ClientsPage() {
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
-                    </button>
+                    </div>
                     
                     {/* Calls (Files in Folder) */}
                     {expandedClients.has(client.clientId) && (
@@ -652,6 +761,256 @@ export default function ClientsPage() {
                   )}
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Agent Summary Modal */}
+      {agentModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <CardHeader className="flex-shrink-0 border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Bot className="h-5 w-5 text-primary" />
+                  AI Client Agent
+                  {agentSummary && (
+                    <span className="text-muted-foreground font-normal text-base">
+                      — {agentSummary.clientName} ({agentSummary.companyName})
+                    </span>
+                  )}
+                </CardTitle>
+                <button
+                  onClick={() => setAgentModalOpen(false)}
+                  className="p-2 hover:bg-muted rounded-md transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto p-6">
+              {agentLoading && (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+                  <p className="text-muted-foreground">Analyzing client history...</p>
+                  <p className="text-xs text-muted-foreground mt-1">This may take a moment</p>
+                </div>
+              )}
+
+              {agentError && !agentLoading && (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <AlertTriangle className="h-10 w-10 text-destructive mb-4" />
+                  <p className="text-destructive font-medium">Error</p>
+                  <p className="text-muted-foreground text-center mt-2">{agentError}</p>
+                </div>
+              )}
+
+              {agentSummary && !agentLoading && (
+                <div className="space-y-6">
+                  {/* Relationship Summary */}
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                    <h3 className="font-semibold flex items-center gap-2 mb-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Relationship Summary
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {agentSummary.summary.relationshipSummary}
+                    </p>
+                  </div>
+
+                  {/* Deal Probability & Next Action */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <h4 className="text-sm font-medium mb-2">Deal Probability</h4>
+                      <div className="flex items-center gap-3">
+                        <div className="text-3xl font-bold text-primary">
+                          {agentSummary.summary.dealProbability.percentage}%
+                        </div>
+                        <p className="text-xs text-muted-foreground flex-1">
+                          {agentSummary.summary.dealProbability.rationale}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                      <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                        <Target className="h-4 w-4 text-green-600" />
+                        Next Best Action
+                      </h4>
+                      <p className="text-sm">{agentSummary.summary.nextBestAction}</p>
+                    </div>
+                  </div>
+
+                  {/* Sentiment & Progression */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4">
+                      <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                        {agentSummary.summary.sentimentTrend.trend === 'improving' ? (
+                          <TrendingUp className="h-4 w-4 text-green-600" />
+                        ) : agentSummary.summary.sentimentTrend.trend === 'declining' ? (
+                          <TrendingDown className="h-4 w-4 text-red-600" />
+                        ) : (
+                          <Target className="h-4 w-4" />
+                        )}
+                        Sentiment Trend
+                      </h4>
+                      <Badge variant={
+                        agentSummary.summary.sentimentTrend.overall === 'positive' ? 'success' :
+                        agentSummary.summary.sentimentTrend.overall === 'negative' ? 'destructive' : 'default'
+                      }>
+                        {agentSummary.summary.sentimentTrend.overall} ({agentSummary.summary.sentimentTrend.trend})
+                      </Badge>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {agentSummary.summary.sentimentTrend.analysis}
+                      </p>
+                    </div>
+                    <div className="border rounded-lg p-4">
+                      <h4 className="text-sm font-medium mb-2">Pipeline Stage</h4>
+                      <Badge>{agentSummary.summary.progressionAnalysis.currentStage.replace('_', ' ')}</Badge>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {agentSummary.summary.progressionAnalysis.velocityAssessment}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Client Profile */}
+                  <div className="border rounded-lg p-4">
+                    <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Client Profile
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Communication Style:</span>
+                        <p>{agentSummary.summary.clientProfile.communicationStyle}</p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Decision Making:</span>
+                        <p>{agentSummary.summary.clientProfile.decisionMakingProcess}</p>
+                      </div>
+                    </div>
+                    {agentSummary.summary.clientProfile.keyPriorities.length > 0 && (
+                      <div className="mt-3">
+                        <span className="text-muted-foreground text-sm">Key Priorities:</span>
+                        <ul className="list-disc list-inside text-sm mt-1">
+                          {agentSummary.summary.clientProfile.keyPriorities.map((p, i) => (
+                            <li key={i}>{p}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Buying Signals */}
+                  {agentSummary.summary.buyingSignals.length > 0 && (
+                    <div className="border border-green-500/20 bg-green-500/5 rounded-lg p-4">
+                      <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-green-700">
+                        <Lightbulb className="h-4 w-4" />
+                        Buying Signals
+                      </h4>
+                      <ul className="text-sm space-y-1">
+                        {agentSummary.summary.buyingSignals.map((signal, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            {signal}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Risks */}
+                  {agentSummary.summary.risks.length > 0 && (
+                    <div className="border border-red-500/20 bg-red-500/5 rounded-lg p-4">
+                      <h4 className="text-sm font-medium mb-2 flex items-center gap-2 text-red-700">
+                        <AlertTriangle className="h-4 w-4" />
+                        Risks
+                      </h4>
+                      <div className="space-y-2">
+                        {agentSummary.summary.risks.map((risk, i) => (
+                          <div key={i} className="text-sm">
+                            <div className="flex items-center gap-2">
+                              <Badge variant={
+                                risk.severity === 'high' ? 'destructive' :
+                                risk.severity === 'medium' ? 'warning' : 'default'
+                              } className="text-xs">
+                                {risk.severity}
+                              </Badge>
+                              <span>{risk.risk}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground ml-14 mt-1">
+                              Mitigation: {risk.mitigation}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Recommended Strategy */}
+                  <div className="border rounded-lg p-4">
+                    <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <Target className="h-4 w-4" />
+                      Recommended Strategy
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      {agentSummary.summary.recommendedStrategy.immediateActions.length > 0 && (
+                        <div>
+                          <span className="text-muted-foreground font-medium">Immediate Actions:</span>
+                          <ul className="list-disc list-inside mt-1">
+                            {agentSummary.summary.recommendedStrategy.immediateActions.map((a, i) => (
+                              <li key={i}>{a}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {agentSummary.summary.recommendedStrategy.talkingPoints.length > 0 && (
+                        <div>
+                          <span className="text-muted-foreground font-medium">Talking Points:</span>
+                          <ul className="list-disc list-inside mt-1">
+                            {agentSummary.summary.recommendedStrategy.talkingPoints.map((t, i) => (
+                              <li key={i}>{t}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {agentSummary.summary.recommendedStrategy.questionsToAsk.length > 0 && (
+                        <div>
+                          <span className="text-muted-foreground font-medium">Questions to Ask:</span>
+                          <ul className="list-disc list-inside mt-1">
+                            {agentSummary.summary.recommendedStrategy.questionsToAsk.map((q, i) => (
+                              <li key={i}>{q}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Model info and cache status */}
+                  <div className="flex items-center justify-center gap-4 pt-2 border-t">
+                    <p className="text-xs text-muted-foreground">
+                      {agentSummary.cached ? (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          Cached result
+                        </span>
+                      ) : (
+                        <span>Generated by {agentSummary.summary.modelUsed}</span>
+                      )}
+                    </p>
+                    <button
+                      onClick={handleAgentRefresh}
+                      disabled={agentLoading}
+                      className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 disabled:opacity-50"
+                      title="Regenerate summary"
+                    >
+                      <RefreshCw className={`h-3 w-3 ${agentLoading ? 'animate-spin' : ''}`} />
+                      Refresh
+                    </button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
