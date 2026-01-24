@@ -13,7 +13,6 @@ interface Message {
 }
 
 const INACTIVITY_TIMEOUT = 30000;
-const TYPING_DELAY = 2000; // 2 second loading animation
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -135,21 +134,54 @@ export function Chatbot() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageContent = inputValue.trim();
     setInputValue('');
     setIsLoading(true);
 
-    // 2 second loading animation before response
-    setTimeout(() => {
+    try {
+      // Build conversation history for context
+      const conversationHistory = messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: messageContent,
+          conversationHistory,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get response');
+      }
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'Thanks for reaching out! This is a demo response. Connect me to your AI backend for real conversations.',
+        content: data.message || 'Sorry, I could not process your request.',
         role: 'assistant',
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, something went wrong. Please try again.',
+        role: 'assistant',
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
       resetInactivityTimer();
-    }, TYPING_DELAY);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -259,8 +291,8 @@ export function Chatbot() {
           </div>
 
           {/* Messages Area */}
-          <ScrollArea.Root className="flex-1 h-[380px]">
-            <ScrollArea.Viewport className="h-full w-full p-4">
+          <ScrollArea.Root className="flex-1 h-[380px]" type="always">
+            <ScrollArea.Viewport className="h-full w-full p-4 pr-6">
               <div className="flex flex-col gap-4">
                 {messages.map((message) => (
                   <div
@@ -317,10 +349,10 @@ export function Chatbot() {
               </div>
             </ScrollArea.Viewport>
             <ScrollArea.Scrollbar
-              className="flex select-none touch-none p-0.5 bg-transparent data-[orientation=vertical]:w-1.5"
+              className="flex select-none touch-none p-1 bg-white/5 rounded-full m-1 data-[orientation=vertical]:w-2.5"
               orientation="vertical"
             >
-              <ScrollArea.Thumb className="flex-1 bg-white/10 rounded-full" />
+              <ScrollArea.Thumb className="flex-1 bg-white/30 rounded-full relative before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-full before:min-w-[44px] before:min-h-[44px] hover:bg-white/50 transition-colors" />
             </ScrollArea.Scrollbar>
           </ScrollArea.Root>
 
