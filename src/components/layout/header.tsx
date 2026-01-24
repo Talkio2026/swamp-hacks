@@ -6,7 +6,7 @@ import { Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface HeaderProps {
-  title: string
+  title: React.ReactNode
   description?: string
   role?: 'ADMIN' | 'MANAGER' | 'REP'
   actions?: React.ReactNode

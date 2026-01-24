@@ -27,71 +27,71 @@ export function ForReps() {
   return (
     <section
       ref={sectionRef}
-      className="bg-gradient-to-br from-purple-50/40 to-white px-6 py-14 lg:px-8 lg:py-20"
+      className="px-6 py-14 lg:px-8 lg:py-20"
     >
       <div className="mx-auto max-w-[1280px]">
         <div className="rep-content grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div>
-            <div className="inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-900">
+            <div className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-slate-300">
               For Sales Reps
             </div>
-            <h2 className="mt-4 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
+            <h2 className="mt-4 text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
               Never miss a follow-up. Never forget context.
             </h2>
-            <p className="mt-4 text-sm text-slate-600">
+            <p className="mt-4 text-sm text-slate-400">
               After every call, you get a clean summary of what happened, what was discussed, and what needs to happen next. No note-taking during calls, no scrambling to remember details.
             </p>
             <ul className="mt-6 space-y-3">
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-slate-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-slate-700">
-                  <strong>Auto-generated summaries</strong> with key discussion points
+                <span className="text-sm text-slate-300">
+                  <strong className="text-white">Auto-generated summaries</strong> with key discussion points
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-slate-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-slate-700">
-                  <strong>Clear next actions</strong> with suggested follow-up dates
+                <span className="text-sm text-slate-300">
+                  <strong className="text-white">Clear next actions</strong> with suggested follow-up dates
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-slate-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-slate-700">
-                  <strong>Full client history</strong> available before every call
+                <span className="text-sm text-slate-300">
+                  <strong className="text-white">Full client history</strong> available before every call
                 </span>
               </li>
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-purple-200/60 bg-white/80 p-6 shadow-lg backdrop-blur-sm">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="space-y-4">
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="rounded-lg border border-white/10 bg-white/5 p-4">
                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Summary</div>
-                <div className="mt-2 text-sm text-slate-700">
+                <div className="mt-2 text-sm text-slate-300">
                   Discussed Q1 budget concerns. Client interested in annual plan but needs CFO approval. Pricing objection on enterprise tier.
                 </div>
               </div>
-              <div className="rounded-lg border border-purple-200 bg-purple-50/50 p-4">
-                <div className="text-xs font-medium text-purple-700 uppercase tracking-wide">Next Action</div>
+              <div className="rounded-lg border border-white/15 bg-white/10 p-4">
+                <div className="text-xs font-medium text-slate-400 uppercase tracking-wide">Next Action</div>
                 <div className="mt-2 space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-700">Follow-up call scheduled</span>
-                    <span className="font-medium text-purple-900">Jan 28, 2:00 PM</span>
+                    <span className="text-slate-300">Follow-up call scheduled</span>
+                    <span className="font-medium text-white">Jan 28, 2:00 PM</span>
                   </div>
-                  <div className="text-xs text-slate-600">
+                  <div className="text-xs text-slate-400">
                     Intent: Present revised pricing with CFO on call
                   </div>
                 </div>
               </div>
-              <div className="rounded-lg border border-slate-200 bg-white p-4">
+              <div className="rounded-lg border border-white/10 bg-white/5 p-4">
                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Key Points</div>
-                <ul className="mt-2 space-y-1 text-xs text-slate-600">
+                <ul className="mt-2 space-y-1 text-xs text-slate-400">
                   <li>• Budget approval needed by Feb 1</li>
                   <li>• Competitor comparison requested</li>
                   <li>• Demo scheduled with technical team</li>
