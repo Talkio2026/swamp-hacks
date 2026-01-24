@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { LuMessageCircle, LuX, LuSend, LuSparkles, LuUser } from 'react-icons/lu';
 
 interface Message {
@@ -41,8 +40,10 @@ export function Chatbot() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
   const dragStartRef = useRef({ x: 0, y: 0, buttonX: 0, buttonY: 0 });
 
   const scrollToBottom = () => {
@@ -252,7 +253,7 @@ export function Chatbot() {
 
       <Popover.Portal>
         <Popover.Content
-          className="chatbot-content z-[9998] w-[360px] rounded-2xl flex flex-col overflow-hidden
+          className="chatbot-content z-[9998] w-[360px] max-h-[520px] h-[520px] rounded-2xl flex flex-col overflow-hidden
             bg-slate-900/90 backdrop-blur-xl
             border border-white/10
             shadow-2xl shadow-black/30"
@@ -290,71 +291,72 @@ export function Chatbot() {
             </Popover.Close>
           </div>
 
-          {/* Messages Area */}
-          <ScrollArea.Root className="flex-1 h-[380px]" type="always">
-            <ScrollArea.Viewport className="h-full w-full p-4 pr-6">
-              <div className="flex flex-col gap-4">
-                {messages.map((message) => (
+          {/* Messages Area - Native Scroll */}
+          <div 
+            ref={messagesContainerRef}
+            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 pr-2
+              [&::-webkit-scrollbar]:w-2
+              [&::-webkit-scrollbar-track]:bg-white/5
+              [&::-webkit-scrollbar-track]:rounded-full
+              [&::-webkit-scrollbar-thumb]:bg-white/20
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-thumb]:hover:bg-white/40"
+          >
+            <div className="flex flex-col gap-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
                   <div
-                    key={message.id}
-                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex gap-2.5 max-w-[85%] ${
+                      message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                    } items-end`}
                   >
                     <div
-                      className={`flex gap-2.5 max-w-[85%] ${
-                        message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                      } items-end`}
+                      className={`h-7 w-7 rounded-lg flex-shrink-0 flex items-center justify-center ${
+                        message.role === 'user' ? 'bg-white/10' : 'bg-white/5'
+                      }`}
                     >
-                      <div
-                        className={`h-7 w-7 rounded-lg flex-shrink-0 flex items-center justify-center ${
-                          message.role === 'user' ? 'bg-white/10' : 'bg-white/5'
-                        }`}
-                      >
-                        {message.role === 'user' ? (
-                          <LuUser className="h-3.5 w-3.5 text-white/60" />
-                        ) : (
-                          <LuSparkles className="h-3.5 w-3.5 text-amber-400/80" />
-                        )}
-                      </div>
-                      <div
-                        className={`px-4 py-2.5 rounded-2xl ${
-                          message.role === 'user'
-                            ? 'bg-white/10 rounded-br-md'
-                            : 'bg-white/5 rounded-bl-md'
-                        }`}
-                      >
-                        <p className="text-white/80 text-[13px] leading-relaxed">{message.content}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                {/* Loading Animation - 2s typing indicator */}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="flex gap-2.5 items-end">
-                      <div className="h-7 w-7 rounded-lg bg-white/5 flex items-center justify-center">
+                      {message.role === 'user' ? (
+                        <LuUser className="h-3.5 w-3.5 text-white/60" />
+                      ) : (
                         <LuSparkles className="h-3.5 w-3.5 text-amber-400/80" />
-                      </div>
-                      <div className="px-4 py-3 bg-white/5 rounded-2xl rounded-bl-md">
-                        <div className="flex gap-1.5 items-center">
-                          <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-[pulse_1.5s_ease-in-out_infinite]" />
-                          <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-[pulse_1.5s_ease-in-out_0.3s_infinite]" />
-                          <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-[pulse_1.5s_ease-in-out_0.6s_infinite]" />
-                        </div>
+                      )}
+                    </div>
+                    <div
+                      className={`px-4 py-2.5 rounded-2xl ${
+                        message.role === 'user'
+                          ? 'bg-white/10 rounded-br-md'
+                          : 'bg-white/5 rounded-bl-md'
+                      }`}
+                    >
+                      <p className="text-white/80 text-[13px] leading-relaxed">{message.content}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Loading Animation */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="flex gap-2.5 items-end">
+                    <div className="h-7 w-7 rounded-lg bg-white/5 flex items-center justify-center">
+                      <LuSparkles className="h-3.5 w-3.5 text-amber-400/80" />
+                    </div>
+                    <div className="px-4 py-3 bg-white/5 rounded-2xl rounded-bl-md">
+                      <div className="flex gap-1.5 items-center">
+                        <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-[pulse_1.5s_ease-in-out_infinite]" />
+                        <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-[pulse_1.5s_ease-in-out_0.3s_infinite]" />
+                        <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-[pulse_1.5s_ease-in-out_0.6s_infinite]" />
                       </div>
                     </div>
                   </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea.Viewport>
-            <ScrollArea.Scrollbar
-              className="flex select-none touch-none p-1 bg-white/5 rounded-full m-1 data-[orientation=vertical]:w-2.5"
-              orientation="vertical"
-            >
-              <ScrollArea.Thumb className="flex-1 bg-white/30 rounded-full relative before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-full before:min-w-[44px] before:min-h-[44px] hover:bg-white/50 transition-colors" />
-            </ScrollArea.Scrollbar>
-          </ScrollArea.Root>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
 
           {/* Input Area - Clean minimal */}
           <div className="p-3 border-t border-white/5">
