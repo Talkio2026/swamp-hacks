@@ -7,7 +7,6 @@ import { ChevronDown } from 'lucide-react';
 
 const NAV_LINKS = [
   { label: 'Product', href: '/product', hasDropdown: false },
-  { label: 'Dashboard', href: '/dashboard', hasDropdown: false },
   { label: 'Contact Us', href: 'mailto:contact@talkio.com', hasDropdown: false },
 ] as const;
 
@@ -18,22 +17,6 @@ export function Navbar() {
   useEffect(() => {
     const el = headerRef.current;
     if (!el) return;
-
-    // #region agent log
-    const rect = el.getBoundingClientRect();
-    const styles = window.getComputedStyle(el);
-    const debugData = {
-      top:rect.top,
-      bottom:rect.bottom,
-      height:rect.height,
-      marginTop:styles.marginTop,
-      marginBottom:styles.marginBottom,
-      topStyle:styles.top,
-      position:styles.position
-    };
-    console.log('[DEBUG Navbar.tsx:24] Navbar position', debugData);
-    fetch('http://127.0.0.1:7242/ingest/a4918017-0b21-4e17-ac77-6519ee12f785',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Navbar.tsx:24',message:'Navbar dimensions',data:debugData,timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H4'})}).catch(()=>{});
-    // #endregion
 
     const ctx = gsap.context(() => {
       // Initial page load: fade in, y -10 → 0
@@ -86,6 +69,14 @@ export function Navbar() {
           ))}
         </div>
 
+        {/* Dashboard button - right side */}
+        <Link
+          href="/dashboard"
+          className="hidden lg:inline-flex items-center justify-center rounded-xl bg-white px-5 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+        >
+          Dashboard
+        </Link>
+
         {/* Mobile menu button */}
         <button
           type="button"
@@ -129,6 +120,13 @@ export function Navbar() {
                 )}
               </Link>
             ))}
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className="mt-2 flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
+            >
+              Dashboard
+            </Link>
           </div>
         </div>
       )}
