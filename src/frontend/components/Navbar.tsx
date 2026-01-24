@@ -7,10 +7,8 @@ import { ChevronDown } from 'lucide-react';
 
 const NAV_LINKS = [
   { label: 'Product', href: '#features', hasDropdown: true },
-  { label: 'Individuals', href: '#features', hasDropdown: true },
-  { label: 'Business', href: '#features', hasDropdown: false },
-  { label: 'Pricing', href: '#cta', hasDropdown: false },
-  { label: 'About', href: '#footer', hasDropdown: true },
+  { label: 'Dashboard', href: '/sign-up', hasDropdown: false },
+  { label: 'Contact Us', href: 'mailto:contact@talkio.com', hasDropdown: false },
 ] as const;
 
 export function Navbar() {
@@ -88,16 +86,6 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Desktop CTAs */}
-            <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-2.5 text-[15px] font-medium text-slate-900 transition-all hover:bg-white/90 hover:shadow-lg hover:shadow-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-              >
-                Dashboard
-              </Link>
-            </div>
-
         {/* Mobile menu button */}
         <button
           type="button"
@@ -141,15 +129,6 @@ export function Navbar() {
                 )}
               </Link>
             ))}
-            <div className="mt-3 pt-3 border-t border-white/20 flex flex-col gap-2">
-              <Link
-                href="/sign-up"
-                onClick={() => setMobileOpen(false)}
-                className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-slate-900 hover:bg-white/90 hover:shadow-lg hover:shadow-white/20"
-              >
-                Dashboard
-              </Link>
-            </div>
           </div>
         </div>
       )}
