@@ -1,5 +1,15 @@
-import { redirect } from 'next/navigation'
+import { Navbar, Hero, Features, FinalCTA, Footer } from '@/components/marketing';
 
 export default function HomePage() {
-  redirect('/dashboard')
+  return (
+    <div className="min-h-screen bg-[#faf8ff]">
+      <Navbar />
+      <main>
+        <Hero />
+        <Features />
+        <FinalCTA />
+        <Footer />
+      </main>
+    </div>
+  );
 }
