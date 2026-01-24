@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Twilio from "twilio";
 import connectToDatabase from "@/lib/mongodb";
 import Transcript from "@/lib/models/Transcript";
-import Client from "@/lib/models/Client";
-import CallClientMapping from "@/lib/models/CallClientMapping";
+import Client, { normalizePhoneNumber } from "@/lib/models/Client";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -66,8 +65,14 @@ export async function POST(req: NextRequest) {
   const recordingSid = formData.get("RecordingSid") as string;
   const callSid = formData.get("CallSid") as string;
   const recordingStatus = formData.get("RecordingStatus") as string;
+  
+  // Get phone numbers from Twilio callback
+  // "To" is the number that was dialed (client's number)
+  // "From" is our Twilio number
+  const toNumber = formData.get("To") as string | null;
+  const fromNumber = formData.get("From") as string | null;
 
-  console.log(`[Recording Status] Received callback: RecordingSid=${recordingSid}, CallSid=${callSid}, Status=${recordingStatus}`);
+  console.log(`[Recording Status] Received callback: RecordingSid=${recordingSid}, CallSid=${callSid}, Status=${recordingStatus}, To=${toNumber}, From=${fromNumber}`);
 
   // Immediately respond 200 to Twilio
   // Process transcription in background
@@ -83,21 +88,22 @@ export async function POST(req: NextRequest) {
   }
 
   // Process transcription asynchronously (don't await)
-  processTranscription(recordingSid, callSid).catch((err) => {
+  // Pass the phone number that was dialed (toNumber) for client matching
+  processTranscription(recordingSid, callSid, toNumber).catch((err) => {
     console.error(`[Recording Status] Background transcription error:`, err);
   });
 
   return NextResponse.json({ status: "ok" });
 }
 
-async function processTranscription(recordingSid: string, callSid: string) {
-  const client = Twilio(accountSid, authToken);
+async function processTranscription(recordingSid: string, callSid: string, dialedPhoneNumber: string | null) {
+  const twilioClient = Twilio(accountSid, authToken);
 
   console.log(`[Recording Status] Creating transcript for recording: ${recordingSid}`);
 
   try {
     // Create transcript using Twilio Conversational Intelligence
-    const transcript = await client.intelligence.v2.transcripts.create({
+    const transcript = await twilioClient.intelligence.v2.transcripts.create({
       serviceSid: intelligenceServiceSid!,
       channel: {
         media_properties: {
@@ -110,7 +116,7 @@ async function processTranscription(recordingSid: string, callSid: string) {
     console.log(`[Recording Status] Transcript created: ${transcript.sid}`);
 
     // Poll until completed
-    const completed = await waitForTranscriptCompletion(client, transcript.sid);
+    const completed = await waitForTranscriptCompletion(twilioClient, transcript.sid);
     if (!completed) {
       console.error(`[Recording Status] Transcript did not complete: ${transcript.sid}`);
       return;
@@ -118,7 +124,7 @@ async function processTranscription(recordingSid: string, callSid: string) {
 
     // Fetch sentences
     console.log(`[Recording Status] Fetching sentences for transcript: ${transcript.sid}`);
-    const sentences = await client.intelligence.v2
+    const sentences = await twilioClient.intelligence.v2
       .transcripts(transcript.sid)
       .sentences.list({ limit: 5000 });
 
@@ -219,40 +225,46 @@ async function processTranscription(recordingSid: string, callSid: string) {
     // Connect to MongoDB and save transcript
     await connectToDatabase();
     
-    // Look up client data using the call-client mapping
+    // Look up client data by matching the dialed phone number
     let clientData: Record<string, unknown> = {};
     let callNumber = 1;
     
     try {
-      const mapping = await CallClientMapping.findOne({ callSid });
-      
-      if (mapping) {
-        const client = await Client.findOne({ clientId: mapping.clientId });
+      if (dialedPhoneNumber) {
+        // Normalize the phone number for matching
+        const normalizedPhone = normalizePhoneNumber(dialedPhoneNumber);
+        console.log(`[Recording Status] Looking up client by phone: ${dialedPhoneNumber} -> ${normalizedPhone}`);
         
-        if (client) {
+        // Find client by phone number
+        const matchedClient = await Client.findOne({ contactPhone: normalizedPhone });
+        
+        if (matchedClient) {
           // Increment call count and get call number
-          callNumber = client.totalCalls + 1;
-          client.totalCalls = callNumber;
-          await client.save();
+          callNumber = matchedClient.totalCalls + 1;
+          matchedClient.totalCalls = callNumber;
+          await matchedClient.save();
           
           // Extract client data to merge with transcript
           clientData = {
-            clientId: client.clientId,
-            clientName: client.clientName,
-            companyName: client.companyName,
-            industry: client.industry,
-            contactEmail: client.contactEmail,
-            contactPhone: client.contactPhone,
-            salesRepName: client.salesRepName,
-            initialNotes: client.initialNotes,
+            clientId: matchedClient.clientId,
+            clientName: matchedClient.clientName,
+            companyName: matchedClient.companyName,
+            industry: matchedClient.industry,
+            contactEmail: matchedClient.contactEmail,
+            contactPhone: matchedClient.contactPhone,
+            salesRepName: matchedClient.salesRepName,
+            salesRepEmail: matchedClient.salesRepEmail,
+            initialNotes: matchedClient.initialNotes,
             callNumber,
             status: callNumber === 1 ? "initial_contact" : "followup",
           };
           
-          console.log(`[Recording Status] Found client data for call: ${client.clientId} - ${client.clientName} (Call #${callNumber})`);
+          console.log(`[Recording Status] Matched client by phone: ${matchedClient.clientId} - ${matchedClient.clientName} (Call #${callNumber})`);
+        } else {
+          console.log(`[Recording Status] No client found with phone number: ${normalizedPhone}`);
         }
       } else {
-        console.log(`[Recording Status] No client mapping found for callSid: ${callSid}`);
+        console.log(`[Recording Status] No phone number provided for client matching`);
       }
     } catch (clientError) {
       console.error(`[Recording Status] Error fetching client data:`, clientError);

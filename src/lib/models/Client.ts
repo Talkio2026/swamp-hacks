@@ -9,6 +9,7 @@ export interface IClient extends Document {
   contactEmail: string;
   contactPhone: string;
   salesRepName: string;
+  salesRepEmail: string;
   initialNotes?: string;
   currentStatus: "prospect" | "qualified" | "demo_scheduled" | "negotiation" | "closed_won" | "closed_lost";
   totalCalls: number;
@@ -50,6 +51,11 @@ const ClientSchema = new Schema<IClient>(
     salesRepName: {
       type: String,
       required: true,
+    },
+    salesRepEmail: {
+      type: String,
+      required: true,
+      index: true,
     },
     initialNotes: {
       type: String,

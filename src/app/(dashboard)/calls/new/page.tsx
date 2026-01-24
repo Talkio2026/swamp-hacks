@@ -34,7 +34,7 @@ export default function NewCallPage() {
   return (
     <div className="flex flex-col h-full">
       <Header 
-        title="New Call" 
+        title="New Client" 
         description="Upload a transcript for AI analysis"
         actions={
           <Link href="/calls">

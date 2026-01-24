@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RiskBadge, StatusBadge } from '@/components/ui/badge'
-import { Plus, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatDate, formatDuration } from '@/lib/utils'
 
 // Mock data - will be replaced with real API data
@@ -91,14 +91,6 @@ export default function CallsPage() {
       <Header 
         title="Calls" 
         description="Browse and manage your sales calls"
-        actions={
-          <Link href="/calls/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Call
-            </Button>
-          </Link>
-        }
       />
       
       <div className="flex-1 p-6 space-y-4 overflow-auto">
@@ -236,13 +228,7 @@ export default function CallsPage() {
             <div className="text-muted-foreground">
               <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-medium mb-2">No calls found</h3>
-              <p className="mb-4">Try adjusting your search or filters</p>
-              <Link href="/calls/new">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add your first call
-                </Button>
-              </Link>
+              <p>Try adjusting your search or filters</p>
             </div>
           </Card>
         )}

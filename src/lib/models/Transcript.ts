@@ -26,6 +26,7 @@ export interface ITranscript extends Document {
   contactEmail?: string;
   contactPhone?: string;
   salesRepName?: string;
+  salesRepEmail?: string;
   initialNotes?: string;
   
   // Call tracking fields
@@ -114,6 +115,10 @@ const TranscriptSchema = new Schema<ITranscript>(
     },
     salesRepName: {
       type: String,
+    },
+    salesRepEmail: {
+      type: String,
+      index: true,
     },
     initialNotes: {
       type: String,

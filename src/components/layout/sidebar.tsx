@@ -4,19 +4,19 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
 import {
-  LayoutDashboard,
   Phone,
   BookOpen,
   Settings,
   Mic,
   ChevronLeft,
   ChevronRight,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Calls', href: '/calls', icon: Phone },
   { name: 'Live Copilot', href: '/copilot', icon: Mic },
   { name: 'Playbooks', href: '/playbooks', icon: BookOpen },
@@ -37,7 +37,7 @@ export function Sidebar() {
       {/* Logo & Org Switcher */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!collapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/clients" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">T</span>
             </div>

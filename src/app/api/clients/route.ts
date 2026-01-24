@@ -1,22 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 import connectDB from "@/lib/mongodb";
 import Client, { normalizePhoneNumber } from "@/lib/models/Client";
 
 // POST /api/clients - Create a new client
 export async function POST(request: NextRequest) {
   try {
+    // Get the logged-in user
+    const user = await currentUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized: Please log in" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
 
     const body = await request.json();
     
-    // Validate required fields
+    // Validate required fields (salesRepName removed - auto-filled from logged-in user)
     const requiredFields = [
       "clientName",
       "companyName",
       "industry",
       "contactEmail",
       "contactPhone",
-      "salesRepName",
     ];
     
     for (const field of requiredFields) {
@@ -43,6 +53,10 @@ export async function POST(request: NextRequest) {
     // Generate client ID
     const clientId = await Client.generateClientId();
 
+    // Get sales rep info from logged-in user
+    const salesRepName = [user.firstName, user.lastName].filter(Boolean).join(" ") || "Unknown";
+    const salesRepEmail = user.emailAddresses[0]?.emailAddress || "";
+
     // Create the client
     const client = await Client.create({
       clientId,
@@ -51,13 +65,14 @@ export async function POST(request: NextRequest) {
       industry: body.industry,
       contactEmail: body.contactEmail,
       contactPhone: normalizedPhone,
-      salesRepName: body.salesRepName,
+      salesRepName,
+      salesRepEmail,
       initialNotes: body.initialNotes || null,
       currentStatus: "prospect",
       totalCalls: 0,
     });
 
-    console.log(`[API] Created new client: ${clientId} - ${body.clientName} (${body.companyName})`);
+    console.log(`[API] Created new client: ${clientId} - ${body.clientName} (${body.companyName}) by ${salesRepName}`);
 
     return NextResponse.json(
       {
