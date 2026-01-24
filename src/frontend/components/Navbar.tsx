@@ -42,13 +42,13 @@ export function Navbar() {
       className="navbar sticky top-4 z-50 w-full px-4 lg:px-8"
     >
       <nav
-        className="mx-auto max-w-[1280px] rounded-2xl bg-white/40 border border-purple-200/30 shadow-sm backdrop-blur-xl px-6 py-4 flex items-center justify-between gap-6"
+        className="mx-auto max-w-[1280px] rounded-full bg-white/40 border border-purple-200/30 shadow-sm backdrop-blur-xl px-8 py-4 flex items-center justify-between gap-6"
         aria-label="Main navigation"
       >
         {/* Logo */}
         <Link
           href="/"
-          className="relative h-10 w-[120px] flex-shrink-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-sm"
+          className="relative h-10 w-[120px] flex-shrink-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-xl"
         >
           <Image
             src="/talkio-logo.svg"
@@ -65,7 +65,7 @@ export function Navbar() {
             <Link
               key={label}
               href={href}
-              className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-sm"
+              className="inline-flex items-center gap-1 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-xl"
             >
               {label}
               {hasDropdown && (
@@ -79,7 +79,7 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-8 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
               >
                 Dashboard
               </Link>
@@ -89,7 +89,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setMobileOpen((o) => !o)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-[#FCE5FC] hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E7C6FF] lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-[#FCE5FC] hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E7C6FF] lg:hidden"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
         >
@@ -112,7 +112,7 @@ export function Navbar() {
           id="mobile-nav"
           role="region"
           aria-label="Mobile menu"
-          className="lg:hidden mt-2 mx-auto max-w-[1280px] rounded-2xl bg-white/70 border border-purple-200/30 shadow-lg backdrop-blur-xl p-4"
+          className="lg:hidden mt-2 mx-auto max-w-[1280px] rounded-[32px] bg-white/70 border border-purple-200/30 shadow-lg backdrop-blur-xl p-6"
         >
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map(({ label, href, hasDropdown }) => (
@@ -120,7 +120,7 @@ export function Navbar() {
                 key={label}
                 href={href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between rounded-lg px-4 py-3 text-slate-600 hover:bg-purple-50 hover:text-slate-900"
+                className="flex items-center justify-between rounded-2xl px-4 py-3 text-slate-600 hover:bg-purple-50 hover:text-slate-900"
               >
                 <span>{label}</span>
                 {hasDropdown && (
@@ -132,7 +132,7 @@ export function Navbar() {
               <Link
                 href="/sign-up"
                 onClick={() => setMobileOpen(false)}
-                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white hover:bg-slate-800"
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-medium text-white hover:bg-slate-800"
               >
                 Dashboard
               </Link>

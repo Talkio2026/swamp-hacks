@@ -1,5 +1,6 @@
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
+import { ProductSummary } from './components/ProductSummary'
 import { Features } from './components/Features'
 import { HowItWorks } from './components/HowItWorks'
 import { ForReps } from './components/ForReps'
@@ -22,6 +23,7 @@ export function LandingPage() {
         <Navbar />
         <main>
           <Hero />
+          <ProductSummary />
           <Features />
           <HowItWorks />
           <ForReps />

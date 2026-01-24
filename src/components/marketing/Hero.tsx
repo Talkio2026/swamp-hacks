@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
 
@@ -52,21 +53,21 @@ export function Hero() {
               Turn every sales call into structured intelligence.
             </h1>
             <p className="hero-subhead mt-6 text-base text-slate-600 sm:text-lg">
-              Post-call AI analysis that generates summaries, tracks context, and surfaces next actions—automatically.
+              Post-call AI analysis that generates summaries, tracks context, and surfaces next actions—automatically. No real-time overhead, just results.
             </p>
 
             <div className="hero-ctas mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
               >
-                Sign in to search
+                Get Started
               </Link>
               <Link
                 href="#features"
-                className="inline-flex items-center justify-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+                className="inline-flex items-center justify-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 rounded-full px-6 py-3"
               >
-                Access API
+                See How It Works
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
@@ -74,71 +75,20 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right: Preview/Demo */}
+          {/* Right: City Skyline Image */}
           <div className="hero-preview">
-            <div className="relative rounded-2xl border border-purple-200/60 bg-white/80 p-6 shadow-xl backdrop-blur-sm">
-              {/* Search Bar */}
-              <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-200 bg-purple-50/30 px-4 py-3">
-                <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  readOnly
-                  value="former tesla autopilot engineers..."
-                  className="flex-1 bg-transparent text-sm text-slate-600 outline-none"
+            <div className="relative rounded-3xl overflow-hidden border border-purple-200/60 shadow-2xl">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="/skyline-hero.jpg"
+                  alt="City skyline at dusk"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
-              </div>
-
-              {/* Results Preview */}
-              <div className="space-y-3">
-                {[
-                  { name: 'Dr. Emily Zhang', role: 'VP of Engineering', company: 'Wayve', matches: 3 },
-                  { name: 'Alex Petrov', role: 'Lead Machine Learning', company: 'Aurora', matches: 3 },
-                  { name: 'Dr. Priya Sharma', role: 'Co-Founder & CTO', company: 'MotionPilot', matches: 3 },
-                ].map((person, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 rounded-lg border border-slate-200/60 bg-white/60 p-3 transition-colors hover:border-purple-300/60"
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-purple-200 text-sm font-medium text-purple-900">
-                      {person.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-slate-900 text-sm">{person.name}</div>
-                      <div className="text-xs text-slate-500">
-                        {person.role} • {person.company}
-                      </div>
-                    </div>
-                    <div className="flex gap-1">
-                      {[...Array(person.matches)].map((_, j) => (
-                        <div key={j} className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Bottom badge */}
-              <div className="mt-6 flex items-center justify-between rounded-lg border border-purple-200/60 bg-purple-50/40 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span className="text-xs font-medium text-slate-700">Max Compute</span>
-                  </div>
-                  <div className="h-3 w-px bg-slate-300" />
-                  <div className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    <span className="text-xs font-medium text-slate-700">High Reasoning</span>
-                  </div>
-                </div>
-                <button className="text-xs font-medium text-slate-600 hover:text-slate-900">
-                  Try Atlas →
-                </button>
+                {/* Overlay gradient for better text visibility if needed */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent" />
               </div>
             </div>
           </div>

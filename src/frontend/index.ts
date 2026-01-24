@@ -4,6 +4,7 @@ export { LandingPage } from './LandingPage'
 // Individual Components
 export { Navbar } from './components/Navbar'
 export { Hero } from './components/Hero'
+export { ProductSummary } from './components/ProductSummary'
 export { Features } from './components/Features'
 export { HowItWorks } from './components/HowItWorks'
 export { ForReps } from './components/ForReps'

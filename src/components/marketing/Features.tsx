@@ -108,8 +108,8 @@ export function Features() {
         >
           Everything you need to understand and act on sales calls
         </h2>
-        <p className="mt-4 text-center text-sm text-slate-600 max-w-2xl mx-auto">
-          Post-call analysis powered by AI. No real-time overhead, just structured intelligence when you need it.
+        <p className="mt-4 text-center text-sm text-slate-600 max-w-3xl mx-auto">
+          Twilio VoIP captures every call. AI processes it after it ends—extracting summaries, tracking context across conversations, and surfacing clear next actions. No real-time overhead. Just structured intelligence that helps reps stay on top of deals and managers see what matters.
         </p>
         <div className="features-grid mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ title, body, icon }) => (
