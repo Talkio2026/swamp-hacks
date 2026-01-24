@@ -30,7 +30,7 @@ export function LandingPage() {
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Extended photo background: covers navbar + hero + ProductSummary with smooth fade */}
       <div
-        className="relative overflow-visible"
+        className="relative overflow-visible shadow-2xl shadow-[#1e3a5f]/40"
         style={{ backgroundImage: "url('/photos/2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }}
       >
         {/* Gradient overlay: darkens top, fades to ocean color at bottom */}
