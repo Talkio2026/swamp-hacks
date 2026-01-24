@@ -18,8 +18,8 @@ export default function SignUpPage() {
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
 
-      {/* Header */}
-      <header className="relative z-10 px-6 py-6">
+      {/* Header - positioned absolutely so it doesn't affect centering */}
+      <header className="absolute top-0 left-0 z-20 px-6 py-6">
         <Link 
           href="/"
           className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-all duration-300"
@@ -31,12 +31,12 @@ export default function SignUpPage() {
         </Link>
       </header>
 
-      {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 py-8">
-        {/* Glass card container - perfectly centered */}
-        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8 flex flex-col items-center text-center">
+      {/* Main content - perfectly centered on screen */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-8">
+        {/* Glass card container - more padding */}
+        <div className="w-full max-w-[460px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-10 flex flex-col items-center text-center">
           {/* Logo */}
-          <Link href="/" className="inline-block mb-6">
+          <Link href="/" className="inline-block mb-8">
             <span 
               className="text-3xl font-normal text-white"
               style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
@@ -46,11 +46,11 @@ export default function SignUpPage() {
           </Link>
 
           {/* Welcome text */}
-          <h1 className="text-xl font-semibold text-white mb-1">Create your account</h1>
-          <p className="text-white/50 text-sm mb-8">Get started with AI-powered call intelligence</p>
+          <h1 className="text-xl font-semibold text-white mb-2">Create your account</h1>
+          <p className="text-white/50 text-sm mb-10">Get started with AI-powered call intelligence</p>
 
-          {/* Inner box containing all login options - white pastel solid */}
-          <div className="w-full rounded-2xl bg-[#f0f4f8] p-6 flex flex-col items-center">
+          {/* Inner box containing all login options - white pastel solid with more padding */}
+          <div className="w-full rounded-2xl bg-[#f0f4f8] p-8 flex flex-col items-center">
             <SignUp 
               forceRedirectUrl="/dashboard"
               appearance={{
@@ -85,10 +85,10 @@ export default function SignUpPage() {
                   socialButtonsProviderIcon: 'w-6 h-6',
                   socialButtonsBlockButtonArrow: 'hidden',
                   
-                  // Divider centered
+                  // Divider centered with more spacing
                   dividerLine: 'bg-slate-300',
                   dividerText: 'text-slate-400 text-xs bg-[#f0f4f8] px-4',
-                  dividerRow: 'my-5 w-full flex items-center justify-center',
+                  dividerRow: 'my-6 w-full flex items-center justify-center',
                   
                   // Form fields - highlighted label on pastel
                   formFieldLabel: 'text-slate-600 font-semibold text-sm mb-2 block w-full text-center',
@@ -110,23 +110,24 @@ export default function SignUpPage() {
                     hover:border-slate-300
                   `,
                   
-                  // Continue button on pastel
+                  // Continue button - rounded, matching pastel theme
                   formButtonPrimary: `
-                    bg-slate-700 
-                    text-white 
+                    bg-slate-200 
+                    text-slate-600 
                     font-semibold 
-                    rounded-xl 
+                    rounded-full 
                     h-12 
-                    border border-slate-600 
+                    border border-slate-300 
                     w-full
                     transition-all 
                     duration-300 
                     ease-out
-                    hover:bg-slate-800 
-                    hover:border-slate-700
+                    hover:bg-slate-300 
+                    hover:border-slate-400
+                    hover:text-slate-700
                     hover:scale-[1.02]
-                    hover:shadow-lg
-                    hover:shadow-slate-400/30
+                    hover:shadow-md
+                    hover:shadow-slate-300/50
                     active:scale-[0.98]
                   `,
                   
@@ -146,9 +147,9 @@ export default function SignUpPage() {
                   alertText: 'text-slate-600 text-center',
                   formFieldErrorText: 'text-red-500 text-xs mt-1 text-center',
                   
-                  // Layout ALL centered
-                  main: 'gap-4 w-full flex flex-col items-center',
-                  form: 'w-full gap-4 flex flex-col items-center',
+                  // Layout ALL centered with more gaps
+                  main: 'gap-5 w-full flex flex-col items-center',
+                  form: 'w-full gap-5 flex flex-col items-center',
                   formFieldRow: 'w-full flex flex-col items-center',
                   socialButtons: 'w-full flex flex-col items-center',
                 },
@@ -161,7 +162,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Footer link */}
-          <p className="mt-8 text-white/40 text-sm">
+          <p className="mt-10 text-white/40 text-sm">
             Already have an account?{' '}
             <Link 
               href="/sign-in" 
