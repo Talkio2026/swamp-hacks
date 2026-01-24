@@ -1,10 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap';
-import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 
 const NAV_LINKS = [
@@ -64,15 +62,14 @@ export function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="relative h-10 w-[120px] flex-shrink-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-xl"
+          className="flex-shrink-0 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-xl"
         >
-          <Image
-            src="/talkio-logo-white.svg"
-            alt="Talkio"
-            fill
-            className="object-contain object-left"
-            priority
-          />
+          <span 
+            className="text-2xl font-normal text-white"
+            style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+          >
+            Talkio
+          </span>
         </Link>
 
         {/* Desktop nav - centered */}

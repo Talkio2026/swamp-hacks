@@ -38,7 +38,7 @@ export function Hero() {
           },
         });
       }
-    }, 1000);
+    }, 1500);
 
     return () => clearInterval(interval);
   }, []);
@@ -117,7 +117,13 @@ export function Hero() {
             >
               <span className="whitespace-nowrap">Turn every sales call into</span>
               <br />
-              <span className="inline-block overflow-hidden align-bottom h-[1.2em]">
+              <span 
+                className="inline-block overflow-hidden align-bottom h-[1.2em]"
+                style={{
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+                }}
+              >
                 <span
                   ref={rotatingTextRef}
                   className="inline-block"
@@ -126,7 +132,7 @@ export function Hero() {
                 </span>
               </span>
             </h1>
-            <p className="hero-subhead mt-6 text-base text-slate-200 sm:text-lg">
+            <p className="hero-subhead mt-6 text-base text-slate-200 sm:text-lg font-[family-name:var(--font-inter)] font-light">
               Post-call AI analysis that generates summaries, tracks context, and surfaces next actions—automatically.
             </p>
 
