@@ -7,6 +7,7 @@ import { Features } from './components/Features'
 import { HowItWorks } from './components/HowItWorks'
 import { ForReps } from './components/ForReps'
 import { Footer } from './components/Footer'
+import { Chatbot } from '@/components/ui/chatbot'
 import { useEffect, useRef } from 'react'
 
 export function LandingPage() {
@@ -34,25 +35,26 @@ export function LandingPage() {
       </div>
 
       {/* Extended photo background: covers navbar + hero + ProductSummary with smooth fade */}
-      <div
+      <div 
         className="relative overflow-visible"
         style={{ backgroundImage: "url('/photos/2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }}
       >
         {/* Gradient overlay: darkens top, fades to bluish-black at bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-[#0a1628]/70 via-60% to-[#0a1628]" aria-hidden />
-        <div className="relative z-10">
-          <Navbar />
+      <div className="relative z-10">
+        <Navbar />
           <Hero />
           <ProductSummary />
         </div>
       </div>
 
       <main ref={mainRef} className="relative">
-        <Features />
-        <HowItWorks />
-        <ForReps />
-      </main>
-      <Footer />
+          <Features />
+          <HowItWorks />
+          <ForReps />
+        </main>
+        <Footer />
+      <Chatbot />
     </div>
   )
 }
