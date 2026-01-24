@@ -29,7 +29,10 @@ export function ForManagers() {
       ref={sectionRef}
       className="relative bg-[#9AAFC2] px-6 py-20 lg:px-8 lg:py-28"
     >
-      <div className="mx-auto max-w-[1280px]">
+      {/* Frosted glass top transition */}
+      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#E9EDF1]/80 to-transparent" aria-hidden />
+      
+      <div className="mx-auto max-w-[1280px] relative z-10">
         <div className="manager-content grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div className="order-2 lg:order-1 rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md p-6 shadow-lg">
             <div className="space-y-3">
