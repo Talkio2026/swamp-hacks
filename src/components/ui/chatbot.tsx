@@ -157,11 +157,7 @@ export function Chatbot() {
         }),
       });
 
-      // #region agent log
-      const rawText = await response.text();
-      fetch('http://127.0.0.1:7242/ingest/e04a3cda-9882-48bd-9028-74165ea5ab43',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatbot.tsx:fetchResponse',message:'Raw response from /api/chat',data:{status:response.status,ok:response.ok,contentType:response.headers.get('content-type'),textPreview:rawText.substring(0,200)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,D'})}).catch(()=>{});
-      const data = JSON.parse(rawText);
-      // #endregion
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to get response');
