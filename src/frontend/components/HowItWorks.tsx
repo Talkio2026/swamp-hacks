@@ -62,16 +62,48 @@ export function HowItWorks() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#7D9AB3] px-6 py-20 lg:px-8 lg:py-28"
+      className="relative bg-[#0f1d2e] px-6 py-24 lg:px-8 lg:py-32"
     >
-      {/* Frosted glass top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#F3F5F8]/80 to-transparent" aria-hidden />
+      {/* Top curved bulge */}
+      <div className="absolute top-0 left-0 right-0 overflow-hidden" aria-hidden>
+        <svg
+          viewBox="0 0 1440 80"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-16 lg:h-20"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0 80V40C240 80 480 0 720 0C960 0 1200 80 1440 40V80H0Z"
+            fill="#0a1628"
+          />
+        </svg>
+      </div>
       
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      {/* Bottom curved bulge */}
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden" aria-hidden>
+        <svg
+          viewBox="0 0 1440 80"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-16 lg:h-20"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0 0V40C240 0 480 80 720 80C960 80 1200 0 1440 40V0H0Z"
+            fill="#0a1628"
+          />
+        </svg>
+      </div>
+
+      {/* Spotlight hint */}
+      <div className="absolute top-1/2 left-0 w-[250px] h-[250px] bg-white/[0.03] rounded-full blur-[60px]" aria-hidden />
+      
+      <div className="mx-auto max-w-[1280px] relative">
         <h2 className="how-heading text-center text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
           How it works
         </h2>
-        <p className="mt-4 text-center text-sm text-white/90 max-w-2xl mx-auto">
+        <p className="mt-4 text-center text-sm text-white/60 max-w-2xl mx-auto">
           Simple, automated workflow. No manual data entry, no real-time disruption.
         </p>
 
