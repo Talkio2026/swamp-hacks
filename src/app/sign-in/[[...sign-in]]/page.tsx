@@ -130,11 +130,15 @@ export default function SignInPage() {
                     active:scale-[0.98]
                   `,
                   
-                  // Footer elements
-                  footerAction: 'hidden',
-                  footerActionText: 'hidden',
-                  footerActionLink: 'hidden',
-                  footer: 'hidden',
+                  // Footer elements - hide all
+                  footerAction: '!hidden',
+                  footerActionText: '!hidden',
+                  footerActionLink: '!hidden',
+                  footer: '!hidden',
+                  footerPages: '!hidden',
+                  footerPagesLink: '!hidden',
+                  badge: '!hidden',
+                  dividerRow: 'hidden',
                   
                   // Other elements on pastel
                   identityPreview: 'bg-white border border-slate-200 rounded-xl',
