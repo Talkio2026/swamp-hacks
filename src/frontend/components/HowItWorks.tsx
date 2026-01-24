@@ -68,7 +68,7 @@ export function HowItWorks() {
         <h2 className="how-heading text-center text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
           How it works
         </h2>
-        <p className="mt-4 text-center text-sm text-slate-400 max-w-2xl mx-auto">
+        <p className="mt-4 text-center text-sm text-slate-300 max-w-2xl mx-auto">
           Simple, automated workflow. No manual data entry, no real-time disruption.
         </p>
 
@@ -81,7 +81,7 @@ export function HowItWorks() {
               <h3 className="text-base font-semibold text-white">
                 {step.title}
               </h3>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-slate-300">
                 {step.description}
               </p>
             </div>

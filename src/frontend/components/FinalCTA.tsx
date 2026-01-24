@@ -39,7 +39,7 @@ export function FinalCTA() {
         >
           Turn call recordings into structured intelligence
         </h2>
-        <p className="mt-4 text-base text-slate-400">
+        <p className="mt-4 text-base text-slate-300">
           Start analyzing sales calls with AI-powered post-call summaries and next-action tracking.
         </p>
         <div className="mt-10">

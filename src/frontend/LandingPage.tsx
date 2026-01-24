@@ -6,7 +6,6 @@ import { ProductSummary } from './components/ProductSummary'
 import { Features } from './components/Features'
 import { HowItWorks } from './components/HowItWorks'
 import { ForReps } from './components/ForReps'
-import { ForManagers } from './components/ForManagers'
 import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
 import { useEffect, useRef } from 'react'
@@ -27,14 +26,14 @@ export function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#162d3d]">
       {/* Extended photo background: covers navbar + hero + ProductSummary with smooth fade */}
       <div
         className="relative overflow-visible"
         style={{ backgroundImage: "url('/photos/2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }}
       >
         {/* Gradient overlay: darkens top, fades to ocean color at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 via-60% to-[#1e3a5f]/90" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 via-60% to-[#162d3d]" aria-hidden />
         <div className="relative z-10">
           <Navbar />
           <Hero />
@@ -42,11 +41,23 @@ export function LandingPage() {
         </div>
       </div>
 
-      <main ref={mainRef} className="relative">
+      <main ref={mainRef} className="relative bg-[#162d3d]">
+        {/* Grainy texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-40 pointer-events-none mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+          aria-hidden 
+        />
+        {/* Top blur transition overlay */}
+        <div 
+          className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#162d3d] to-transparent pointer-events-none" 
+          aria-hidden 
+        />
         <Features />
         <HowItWorks />
         <ForReps />
-        <ForManagers />
         <FinalCTA />
       </main>
       <Footer />
