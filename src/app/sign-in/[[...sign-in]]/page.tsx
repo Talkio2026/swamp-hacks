@@ -34,7 +34,7 @@ export default function SignInPage() {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4">
         {/* Glass card container */}
-        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8 text-center">
+        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8 text-center flex flex-col items-center">
           {/* Logo */}
           <Link href="/" className="inline-block mb-6">
             <span 
@@ -50,13 +50,14 @@ export default function SignInPage() {
           <p className="text-white/50 text-sm mb-8">Sign in to continue to your dashboard</p>
 
           {/* Clerk SignIn */}
-          <SignIn 
-            forceRedirectUrl="/dashboard"
-            appearance={{
-              elements: {
-                rootBox: 'w-full flex justify-center',
-                card: 'bg-transparent shadow-none p-0 w-full border-none',
-                cardBox: 'shadow-none bg-transparent w-full',
+          <div className="w-full flex justify-center">
+            <SignIn 
+              forceRedirectUrl="/dashboard"
+              appearance={{
+                elements: {
+                  rootBox: 'w-full',
+                  card: 'bg-transparent shadow-none p-0 w-full border-none',
+                  cardBox: 'shadow-none bg-transparent w-full',
                 header: 'hidden',
                 headerTitle: 'hidden',
                 headerSubtitle: 'hidden',
@@ -153,7 +154,8 @@ export default function SignInPage() {
                 socialButtonsVariant: 'blockButton',
               },
             }}
-          />
+            />
+          </div>
 
           {/* Footer link */}
           <p className="mt-8 text-white/40 text-sm">
