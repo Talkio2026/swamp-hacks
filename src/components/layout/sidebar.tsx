@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
 import {
   LayoutDashboard,
+  Users,
   Phone,
   BookOpen,
   Settings,
@@ -17,6 +18,7 @@ import { useState } from 'react'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Calls', href: '/calls', icon: Phone },
   { name: 'Live Copilot', href: '/copilot', icon: Mic },
   { name: 'Playbooks', href: '/playbooks', icon: BookOpen },
