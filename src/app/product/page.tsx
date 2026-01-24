@@ -162,38 +162,38 @@ export default function ProductPage() {
             {/* Content Sections */}
             <div className="flex-1 max-w-[900px] lg:pb-0 pb-24">
               {/* Page Title */}
-              <div className="product-title mb-16 pt-8">
-                <h1 className="text-[56px] lg:text-[64px] font-bold tracking-[-0.02em] text-white/95 leading-[1.1]">
+              <div className="product-title mb-10 pt-6">
+                <h1 className="text-[40px] lg:text-[48px] font-bold tracking-[-0.02em] text-white/95 leading-[1.1]">
                   Introduction
                 </h1>
-                <p className="mt-5 text-[26px] lg:text-[30px] font-medium text-white/50 leading-[1.3]">
+                <p className="mt-3 text-[18px] lg:text-[20px] font-medium text-white/50 leading-[1.4]">
                   Introduction to the Talkio Post-Call Intelligence Platform
                 </p>
               </div>
 
               {/* Overview */}
-              <section id="product-overview" className="scroll-mt-32 mb-20">
-                <h2 className="text-[32px] lg:text-[36px] font-bold tracking-[-0.01em] text-white/90 mb-6">
+              <section id="product-overview" className="scroll-mt-32 mb-12">
+                <h2 className="text-[24px] lg:text-[28px] font-bold tracking-[-0.01em] text-white/90 mb-4">
                   Overview
                 </h2>
-                <div className="space-y-6">
-                  <p className="text-[20px] lg:text-[22px] text-white/55 leading-[1.8]">
+                <div className="space-y-3">
+                  <p className="text-[15px] lg:text-[16px] text-white/55 leading-[1.7]">
                     Talkio is a <span className="text-white/80 font-medium">post-call AI analysis platform</span> that transforms your sales conversations into actionable intelligence.
                   </p>
-                  <p className="text-[20px] lg:text-[22px] text-white/55 leading-[1.8]">
+                  <p className="text-[15px] lg:text-[16px] text-white/55 leading-[1.7]">
                     No more manual note-taking or forgotten follow-ups. Every call is automatically processed to give you:
                   </p>
-                  <ul className="space-y-3 text-[20px] lg:text-[22px] text-white/55 leading-[1.8] pl-1">
-                    <li className="flex items-start gap-4">
-                      <span className="text-white/30 mt-1">—</span>
+                  <ul className="space-y-1.5 text-[15px] lg:text-[16px] text-white/55 leading-[1.7] pl-1">
+                    <li className="flex items-start gap-3">
+                      <span className="text-white/30 mt-0.5">—</span>
                       <span>Structured summaries with key discussion points</span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="text-white/30 mt-1">—</span>
+                    <li className="flex items-start gap-3">
+                      <span className="text-white/30 mt-0.5">—</span>
                       <span>Automatically extracted action items</span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="text-white/30 mt-1">—</span>
+                    <li className="flex items-start gap-3">
+                      <span className="text-white/30 mt-0.5">—</span>
                       <span>Persistent context across all client interactions</span>
                     </li>
                   </ul>
@@ -201,27 +201,27 @@ export default function ProductPage() {
               </section>
 
               {/* How It Works */}
-              <section id="product-how-it-works" className="scroll-mt-32 mb-20">
-                <h2 className="text-[32px] lg:text-[36px] font-bold tracking-[-0.01em] text-white/90 mb-6">
+              <section id="product-how-it-works" className="scroll-mt-32 mb-12">
+                <h2 className="text-[24px] lg:text-[28px] font-bold tracking-[-0.01em] text-white/90 mb-4">
                   How It Works
                 </h2>
-                <div className="space-y-6">
-                  <p className="text-[20px] lg:text-[22px] text-white/55 leading-[1.8]">
+                <div className="space-y-3">
+                  <p className="text-[15px] lg:text-[16px] text-white/55 leading-[1.7]">
                     Talkio operates entirely post-call, meaning there's no real-time overhead during your conversations.
                   </p>
-                  <div className="space-y-6 mt-10">
+                  <div className="space-y-4 mt-5">
                     {[
                       { step: '01', title: 'Call Recording', desc: 'Calls are captured via Twilio VoIP with automatic transcription and speaker separation. Both parties are clearly identified in the transcript.' },
                       { step: '02', title: 'AI Analysis', desc: 'After the call ends, our AI processes the transcript to extract key information—summaries, sentiment, objections, and next steps.' },
                       { step: '03', title: 'Structured Output', desc: 'You receive clean, organized data: summaries, action items, and context—all searchable and linked to the client record.' },
                     ].map((item) => (
-                      <div key={item.step} className="flex gap-6">
-                        <div className="text-[18px] font-medium text-white/25 flex-shrink-0 w-8">
+                      <div key={item.step} className="flex gap-4">
+                        <div className="text-[14px] font-medium text-white/25 flex-shrink-0 w-6">
                           {item.step}
                         </div>
                         <div>
-                          <div className="text-[20px] font-semibold text-white/80 mb-2">{item.title}</div>
-                          <p className="text-[18px] lg:text-[20px] text-white/50 leading-[1.7]">{item.desc}</p>
+                          <div className="text-[15px] font-semibold text-white/80 mb-1">{item.title}</div>
+                          <p className="text-[14px] lg:text-[15px] text-white/50 leading-[1.6]">{item.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -230,11 +230,11 @@ export default function ProductPage() {
               </section>
 
               {/* Key Features */}
-              <section id="product-key-features" className="scroll-mt-32 mb-20">
-                <h2 className="text-[32px] lg:text-[36px] font-bold tracking-[-0.01em] text-white/90 mb-6">
+              <section id="product-key-features" className="scroll-mt-32 mb-12">
+                <h2 className="text-[24px] lg:text-[28px] font-bold tracking-[-0.01em] text-white/90 mb-4">
                   Key Features
                 </h2>
-                <div className="grid gap-8 sm:grid-cols-2 mt-10">
+                <div className="grid gap-5 sm:grid-cols-2 mt-5">
                   {[
                     { name: 'Smart Summaries', desc: 'AI-generated call summaries highlighting key discussion points, decisions made, and outcomes.' },
                     { name: 'Action Tracking', desc: 'Automatic extraction of follow-up tasks with suggested dates and clear intent.' },
@@ -244,56 +244,56 @@ export default function ProductPage() {
                     { name: 'Secure Storage', desc: 'All call data encrypted and securely stored. Full compliance with data regulations.' },
                   ].map((feature) => (
                     <div key={feature.name}>
-                      <div className="text-[18px] font-semibold text-white/80 mb-2">{feature.name}</div>
-                      <p className="text-[17px] lg:text-[18px] text-white/45 leading-[1.7]">{feature.desc}</p>
+                      <div className="text-[15px] font-semibold text-white/80 mb-1">{feature.name}</div>
+                      <p className="text-[14px] text-white/45 leading-[1.6]">{feature.desc}</p>
                     </div>
                   ))}
                 </div>
               </section>
 
               {/* Use Cases */}
-              <section id="product-use-cases" className="scroll-mt-32 mb-20">
-                <h2 className="text-[32px] lg:text-[36px] font-bold tracking-[-0.01em] text-white/90 mb-6">
+              <section id="product-use-cases" className="scroll-mt-32 mb-12">
+                <h2 className="text-[24px] lg:text-[28px] font-bold tracking-[-0.01em] text-white/90 mb-4">
                   Use Cases
                 </h2>
-                <div className="grid gap-12 lg:grid-cols-2 mt-10">
+                <div className="grid gap-8 lg:grid-cols-2 mt-5">
                   <div>
-                    <div className="text-[20px] font-semibold text-white/80 mb-4">For Sales Reps</div>
-                    <ul className="space-y-3 text-[17px] lg:text-[18px] text-white/50 leading-[1.7]">
-                      <li className="flex items-start gap-4">
+                    <div className="text-[15px] font-semibold text-white/80 mb-2">For Sales Reps</div>
+                    <ul className="space-y-1.5 text-[14px] text-white/50 leading-[1.6]">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Focus on the conversation, not note-taking
                       </li>
-                      <li className="flex items-start gap-4">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Never miss a follow-up action or deadline
                       </li>
-                      <li className="flex items-start gap-4">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Quick context refresh before every call
                       </li>
-                      <li className="flex items-start gap-4">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Build stronger client relationships with full history
                       </li>
                     </ul>
                   </div>
                   <div>
-                    <div className="text-[20px] font-semibold text-white/80 mb-4">For Managers</div>
-                    <ul className="space-y-3 text-[17px] lg:text-[18px] text-white/50 leading-[1.7]">
-                      <li className="flex items-start gap-4">
+                    <div className="text-[15px] font-semibold text-white/80 mb-2">For Managers</div>
+                    <ul className="space-y-1.5 text-[14px] text-white/50 leading-[1.6]">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Visibility into all team call activity
                       </li>
-                      <li className="flex items-start gap-4">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Track deal progress and outcomes at scale
                       </li>
-                      <li className="flex items-start gap-4">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Identify coaching opportunities from real calls
                       </li>
-                      <li className="flex items-start gap-4">
+                      <li className="flex items-start gap-3">
                         <span className="text-white/25 mt-0.5">—</span>
                         Ensure follow-ups are happening on schedule
                       </li>
@@ -303,26 +303,26 @@ export default function ProductPage() {
               </section>
 
               {/* Integration */}
-              <section id="product-integration" className="scroll-mt-32 mb-20">
-                <h2 className="text-[32px] lg:text-[36px] font-bold tracking-[-0.01em] text-white/90 mb-6">
+              <section id="product-integration" className="scroll-mt-32 mb-12">
+                <h2 className="text-[24px] lg:text-[28px] font-bold tracking-[-0.01em] text-white/90 mb-4">
                   Integration
                 </h2>
-                <div className="space-y-6">
-                  <p className="text-[20px] lg:text-[22px] text-white/55 leading-[1.8]">
+                <div className="space-y-3">
+                  <p className="text-[15px] lg:text-[16px] text-white/55 leading-[1.7]">
                     Talkio is built on <span className="text-white/80 font-medium">Twilio</span> for reliable VoIP and call recording. Setup is seamless with no complex configuration required.
                   </p>
-                  <div className="grid gap-8 sm:grid-cols-3 mt-10">
+                  <div className="grid gap-5 sm:grid-cols-3 mt-5">
                     <div>
-                      <div className="text-[18px] font-semibold text-white/80 mb-1">Twilio VoIP</div>
-                      <div className="text-[16px] text-white/40">Call capture & recording</div>
+                      <div className="text-[15px] font-semibold text-white/80 mb-0.5">Twilio VoIP</div>
+                      <div className="text-[13px] text-white/40">Call capture & recording</div>
                     </div>
                     <div>
-                      <div className="text-[18px] font-semibold text-white/80 mb-1">AI Processing</div>
-                      <div className="text-[16px] text-white/40">Gemini-powered analysis</div>
+                      <div className="text-[15px] font-semibold text-white/80 mb-0.5">AI Processing</div>
+                      <div className="text-[13px] text-white/40">Gemini-powered analysis</div>
                     </div>
                     <div>
-                      <div className="text-[18px] font-semibold text-white/80 mb-1">Cloud Storage</div>
-                      <div className="text-[16px] text-white/40">Secure & scalable</div>
+                      <div className="text-[15px] font-semibold text-white/80 mb-0.5">Cloud Storage</div>
+                      <div className="text-[13px] text-white/40">Secure & scalable</div>
                     </div>
                   </div>
                 </div>
