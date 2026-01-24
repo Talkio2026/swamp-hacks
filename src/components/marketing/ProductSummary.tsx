@@ -2,90 +2,87 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
-import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 const CORE_FEATURES = [
   {
-    number: '01',
-    title: 'Post-Call AI Analysis',
-    description: 'After every call ends, AI instantly processes the recording and transcript to generate structured insights—not just text blobs.',
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-      </svg>
-    ),
+    title: 'Post-Call AI',
+    description: 'AI processes recordings instantly.',
+    icon: '/icons/analytics.svg',
+    x: 50, y: 8,
+    // Path: center -> up -> right -> up
+    path: 'M50,50 L50,30 L65,30 L65,8 L50,8',
   },
   {
-    number: '02',
-    title: 'Context That Grows',
-    description: 'Every call builds on the last. Client history is preserved across all interactions, giving reps full conversation context every time.',
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-      </svg>
-    ),
+    title: 'Context Memory',
+    description: 'History preserved across calls.',
+    icon: '/icons/context.svg',
+    x: 86, y: 29,
+    // Path: center -> right -> up -> right -> up
+    path: 'M50,50 L68,50 L68,40 L86,40 L86,29',
   },
   {
-    number: '03',
-    title: 'Next Actions, Tracked',
-    description: 'AI extracts what should happen next—including follow-up dates, times, and intent. No more manually tracking next steps.',
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    title: 'Action Tracking',
+    description: 'Follow-ups with dates tracked.',
+    icon: '/icons/data-table.svg',
+    x: 86, y: 71,
+    // Path: center -> right -> down -> right -> down
+    path: 'M50,50 L68,50 L68,60 L86,60 L86,71',
   },
   {
-    number: '04',
     title: 'Manager Visibility',
-    description: 'Track all calls with full visibility into outcomes, follow-ups, and rep activity—organized by client and organization.',
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
+    description: 'Track all calls in one place.',
+    icon: '/icons/visibility.svg',
+    x: 50, y: 92,
+    // Path: center -> down -> left -> down
+    path: 'M50,50 L50,70 L35,70 L35,92 L50,92',
   },
   {
-    number: '05',
-    title: 'Twilio VoIP Integration',
-    description: 'Seamless call capture with recordings, transcripts, and metadata. All data flows automatically through webhooks after each call.',
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-      </svg>
-    ),
+    title: 'Twilio VoIP',
+    description: 'Seamless call capture.',
+    icon: '/icons/phonecall.svg',
+    x: 14, y: 71,
+    // Path: center -> left -> down -> left -> down
+    path: 'M50,50 L32,50 L32,60 L14,60 L14,71',
   },
   {
-    number: '06',
-    title: 'Organization Hierarchy',
-    description: 'Clean data separation by organization and client. No data mixing, complete context preservation, and clear ownership across all calls.',
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-      </svg>
-    ),
+    title: 'Org Hierarchy',
+    description: 'Clean data separation.',
+    icon: '/icons/organization.svg',
+    x: 14, y: 29,
+    // Path: center -> left -> up -> left -> up
+    path: 'M50,50 L32,50 L32,40 L14,40 L14,29',
   },
 ];
-
 
 export function ProductSummary() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Core features animation
-      gsap.from('.core-feature', {
+      gsap.from('.cpu-center', {
         scrollTrigger: {
-          trigger: '.core-features-container',
+          trigger: '.cpu-board',
           start: 'top 80%',
           toggleActions: 'play none none reverse',
         },
-        y: 32,
+        scale: 0,
         opacity: 0,
-        duration: 0.55,
-        stagger: 0.1,
-        ease: 'power3.out',
+        duration: 0.6,
+        ease: 'back.out(1.7)',
+      });
+      gsap.from('.cpu-chip', {
+        scrollTrigger: {
+          trigger: '.cpu-board',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.12,
+        ease: 'back.out(1.7)',
+        delay: 0.4,
       });
     }, sectionRef);
 
@@ -95,43 +92,196 @@ export function ProductSummary() {
   return (
     <section
       ref={sectionRef}
-      className="relative px-6 py-20 lg:px-8 lg:py-28"
+      className="relative px-4 py-16 lg:px-8 lg:py-24 overflow-hidden"
     >
-      <div className="mx-auto max-w-[1280px]">
-        {/* Core Features Grid */}
-        <div className="core-features-container">
-          <div className="grid gap-6 sm:grid-cols-2">
-            {CORE_FEATURES.map((feature) => (
-              <div
-                key={feature.number}
-                className="core-feature group"
-              >
-                <div className={cn(
-                  "flex gap-4 p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-lg transition-all duration-300",
-                  "hover:border-white/20 hover:bg-white/10 hover:shadow-xl hover:-translate-y-1"
-                )}>
-                  <div className="flex-shrink-0">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-white shadow-md">
-                      {feature.icon}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-xs font-bold text-white/50">{feature.number}</span>
-                      <h4 className="text-base font-semibold text-white">
-                        {feature.title}
-                      </h4>
-                    </div>
-                    <p className="text-sm text-white/70">
-                      {feature.description}
-                    </p>
+      <div className="mx-auto max-w-[1100px] relative z-10">
+        {/* CPU Board */}
+        <div className="cpu-board relative h-[600px] sm:h-[650px] lg:h-[700px]">
+          
+          {/* Animated zig-zag circuit lines SVG */}
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden
+          >
+            <defs>
+              {/* Glow filter */}
+              <filter id="lineGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            {CORE_FEATURES.map((feature, i) => (
+              <g key={i}>
+                {/* Static background path */}
+                <path
+                  d={feature.path}
+                  stroke="#3b82f6"
+                  strokeOpacity="0.15"
+                  strokeWidth="0.5"
+                  fill="none"
+                  strokeLinejoin="round"
+                />
+                {/* Glow path */}
+                <path
+                  d={feature.path}
+                  stroke="#60a5fa"
+                  strokeOpacity="0.1"
+                  strokeWidth="1.5"
+                  fill="none"
+                  strokeLinejoin="round"
+                  filter="url(#lineGlow)"
+                />
+                {/* Animated dotted path */}
+                <path
+                  d={feature.path}
+                  stroke="#60a5fa"
+                  strokeOpacity="0.9"
+                  strokeWidth="0.4"
+                  strokeDasharray="1.5 2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                  className="animate-circuit"
+                  style={{
+                    animationDelay: `${i * 0.15}s`,
+                  }}
+                />
+                {/* Corner nodes */}
+                <circle
+                  cx={feature.x}
+                  cy={feature.y}
+                  r="1"
+                  fill="#60a5fa"
+                  fillOpacity="0.6"
+                />
+              </g>
+            ))}
+
+            {/* Junction nodes at turns */}
+            {/* Top path turns */}
+            <circle cx="50" cy="30" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="65" cy="30" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="65" cy="8" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            {/* Top-right path turns */}
+            <circle cx="68" cy="50" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="68" cy="40" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="86" cy="40" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            {/* Bottom-right path turns */}
+            <circle cx="68" cy="60" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="86" cy="60" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            {/* Bottom path turns */}
+            <circle cx="50" cy="70" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="35" cy="70" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="35" cy="92" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            {/* Bottom-left path turns */}
+            <circle cx="32" cy="50" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="32" cy="60" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="14" cy="60" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            {/* Top-left path turns */}
+            <circle cx="32" cy="40" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            <circle cx="14" cy="40" r="0.8" fill="#3b82f6" fillOpacity="0.5" />
+            {/* Center node */}
+            <circle cx="50" cy="50" r="1.5" fill="#60a5fa" fillOpacity="0.8" />
+          </svg>
+
+          {/* CSS for animated lines */}
+          <style jsx>{`
+            .animate-circuit {
+              animation: flowCircuit 1.2s linear infinite;
+            }
+            @keyframes flowCircuit {
+              0% {
+                stroke-dashoffset: 0;
+              }
+              100% {
+                stroke-dashoffset: -8;
+              }
+            }
+          `}</style>
+
+          {/* Center CPU core */}
+          <div className="cpu-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+            <div className="relative">
+              {/* Outer glow rings */}
+              <div className="absolute inset-0 rounded-2xl bg-blue-500/20 blur-xl scale-150" />
+              <div className="absolute inset-0 rounded-2xl bg-blue-400/10 blur-2xl scale-[2]" />
+              
+              {/* Main chip */}
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-blue-500/50 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+                <div className="text-center">
+                  <div className="text-blue-400 font-bold text-sm sm:text-base tracking-wider">TALKIO</div>
+                  <div className="text-blue-300/50 text-[8px] sm:text-[10px] mt-0.5">AI ENGINE</div>
+                  <div className="mt-2 w-6 h-6 sm:w-8 sm:h-8 mx-auto rounded bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-400 animate-pulse" />
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
+
+          {/* Feature chips at positions */}
+          {CORE_FEATURES.map((feature, i) => (
+            <div
+              key={i}
+              className="cpu-chip absolute -translate-x-1/2 -translate-y-1/2"
+              style={{
+                left: `${feature.x}%`,
+                top: `${feature.y}%`,
+              }}
+            >
+              <FeatureChip feature={feature} />
+            </div>
+          ))}
+
         </div>
       </div>
     </section>
+  );
+}
+
+function FeatureChip({ feature }: { feature: typeof CORE_FEATURES[0] }) {
+  return (
+    <div className="group w-[160px] sm:w-[190px] lg:w-[220px]">
+      <div className="relative">
+        {/* Glow effect */}
+        <div className="absolute inset-0 rounded-xl bg-blue-500/20 blur-lg scale-110 group-hover:bg-blue-400/30 group-hover:scale-125 transition-all duration-300" />
+        
+        {/* Card */}
+        <div className="relative flex flex-col items-center p-4 sm:p-5 rounded-xl border border-blue-500/30 bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-md shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 group-hover:border-blue-400/50 group-hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] group-hover:scale-105">
+          
+          {/* Icon */}
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mb-3">
+            <Image
+              src={feature.icon}
+              alt={feature.title}
+              fill
+              className="object-contain"
+            />
+          </div>
+
+          {/* Title */}
+          <h4 className="text-sm sm:text-base font-semibold text-blue-100 text-center leading-tight">
+            {feature.title}
+          </h4>
+
+          {/* Description */}
+          <p className="text-[10px] sm:text-xs text-blue-300/60 text-center leading-tight mt-1">
+            {feature.description}
+          </p>
+
+          {/* Corner accents */}
+          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-blue-400/50 rounded-tl" />
+          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-blue-400/50 rounded-tr" />
+          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-blue-400/50 rounded-bl" />
+          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-blue-400/50 rounded-br" />
+        </div>
+      </div>
+    </div>
   );
 }
