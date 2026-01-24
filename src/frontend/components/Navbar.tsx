@@ -6,7 +6,7 @@ import { gsap } from '@/lib/gsap';
 import { ChevronDown } from 'lucide-react';
 
 const NAV_LINKS = [
-  { label: 'Product', href: '#features', hasDropdown: true },
+  { label: 'Product', href: '/product', hasDropdown: false },
   { label: 'Dashboard', href: '/sign-up', hasDropdown: false },
   { label: 'Contact Us', href: 'mailto:contact@talkio.com', hasDropdown: false },
 ] as const;
