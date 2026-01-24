@@ -7,7 +7,9 @@ import { cn } from '@/lib/utils';
 const CORE_FEATURES = [
   {
     number: '01',
-    title: 'Post-Call AI Analysis',
+    title: (
+      <>Post-Call <span className="bg-amber-400/90 text-slate-900 px-2 py-1 rounded font-bold italic">AI Analysis</span></>
+    ),
     description: 'After every call ends, AI instantly processes the recording and transcript to generate structured insights—not just text blobs.',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -17,7 +19,9 @@ const CORE_FEATURES = [
   },
   {
     number: '02',
-    title: 'Context That Grows',
+    title: (
+      <>Context That <span className="bg-amber-400/90 text-slate-900 px-2 py-1 rounded font-bold italic">Grows</span></>
+    ),
     description: 'Every call builds on the last. Client history is preserved across all interactions, giving reps full conversation context every time.',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -27,7 +31,9 @@ const CORE_FEATURES = [
   },
   {
     number: '03',
-    title: 'Next Actions, Tracked',
+    title: (
+      <>Next Actions, <span className="bg-amber-400/90 text-slate-900 px-2 py-1 rounded font-bold italic">Tracked</span></>
+    ),
     description: 'AI extracts what should happen next—including follow-up dates, times, and intent. No more manually tracking next steps.',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -37,7 +43,9 @@ const CORE_FEATURES = [
   },
   {
     number: '04',
-    title: 'Manager Visibility',
+    title: (
+      <>Manager <span className="bg-amber-400/90 text-slate-900 px-2 py-1 rounded font-bold italic">Visibility</span></>
+    ),
     description: 'Track all calls with full visibility into outcomes, follow-ups, and rep activity—organized by client and organization.',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -48,7 +56,9 @@ const CORE_FEATURES = [
   },
   {
     number: '05',
-    title: 'Twilio VoIP Integration',
+    title: (
+      <>Twilio <span className="bg-amber-400/90 text-slate-900 px-2 py-1 rounded font-bold italic">VoIP</span> Integration</>
+    ),
     description: 'Seamless call capture with recordings, transcripts, and metadata. All data flows automatically through webhooks after each call.',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -58,7 +68,9 @@ const CORE_FEATURES = [
   },
   {
     number: '06',
-    title: 'Organization Hierarchy',
+    title: (
+      <>Organization <span className="bg-amber-400/90 text-slate-900 px-2 py-1 rounded font-bold italic">Hierarchy</span></>
+    ),
     description: 'Clean data separation by organization and client. No data mixing, complete context preservation, and clear ownership across all calls.',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -107,11 +119,11 @@ export function ProductSummary() {
                 className="core-feature group"
               >
                 <div className={cn(
-                  "flex gap-4 p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-lg transition-all duration-300",
-                  "hover:border-white/20 hover:bg-white/10 hover:shadow-xl hover:-translate-y-1"
+                  "flex gap-4 p-6 rounded-2xl bg-slate-800/60 border border-white/[0.03] shadow-md transition-all duration-300",
+                  "hover:bg-slate-800/80 hover:border-white/[0.06] hover:shadow-lg hover:-translate-y-1"
                 )}>
                   <div className="flex-shrink-0">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-white shadow-md">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-700/80 text-white">
                       {feature.icon}
                     </div>
                   </div>
