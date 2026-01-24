@@ -139,7 +139,6 @@ export default function SignInPage() {
                   footerPages: '!hidden',
                   footerPagesLink: '!hidden',
                   badge: '!hidden',
-                  dividerRow: 'hidden',
                   
                   // Other elements on pastel
                   identityPreview: 'bg-white border border-slate-200 rounded-xl',
