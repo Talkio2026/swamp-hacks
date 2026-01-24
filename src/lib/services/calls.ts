@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { CallStatus, RiskLevel, Prisma } from '@/generated/prisma'
+import { CallStatus, RiskLevel, Prisma } from '@prisma/client'
 import { AuthSession } from '@/lib/auth'
 
 export interface CreateCallInput {

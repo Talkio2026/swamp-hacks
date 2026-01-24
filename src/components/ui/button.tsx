@@ -11,20 +11,20 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-md cursor-pointer'
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 cursor-pointer'
     
     const variants = {
-      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-      secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-      outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-      ghost: 'hover:bg-accent hover:text-accent-foreground',
-      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      default: 'bg-[#4F46E5] text-white hover:bg-[#4338CA] shadow-sm',
+      secondary: 'bg-[#EEF2FF] text-[#1E1B4B] hover:bg-[#E0E7FF]',
+      outline: 'border border-[#E0E7FF] bg-white text-[#4338CA] hover:bg-[#F5F7FA] hover:text-[#4F46E5]',
+      ghost: 'text-[#4338CA] hover:bg-[#EEF2FF] hover:text-[#4F46E5]',
+      destructive: 'bg-[#EF4444] text-white hover:bg-[#DC2626] shadow-sm',
     }
     
     const sizes = {
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4 text-sm',
-      lg: 'h-12 px-6 text-base',
+      sm: 'h-7 px-2.5 text-[11px] rounded-lg',
+      md: 'h-8 px-3 text-[12px] rounded-lg',
+      lg: 'h-9 px-4 text-[12px] rounded-lg',
     }
 
     return (
@@ -37,7 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <>
             <svg
-              className="mr-2 h-4 w-4 animate-spin"
+              className="mr-1.5 h-3.5 w-3.5 animate-spin"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

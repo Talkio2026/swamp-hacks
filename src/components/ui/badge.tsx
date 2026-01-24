@@ -6,18 +6,18 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 export function Badge({ className, variant = 'default', ...props }: BadgeProps) {
   const variants = {
-    default: 'bg-primary text-primary-foreground',
-    secondary: 'bg-secondary text-secondary-foreground',
-    outline: 'border border-input bg-background text-foreground',
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    destructive: 'bg-red-100 text-red-800',
+    default: 'bg-[#EEF2FF] text-[#4F46E5]',
+    secondary: 'bg-[#F5F7FA] text-[#4338CA]',
+    outline: 'border border-[#E0E7FF] bg-white text-[#4338CA]',
+    success: 'bg-[#D1FAE5] text-[#10B981]',
+    warning: 'bg-[#FEF3C7] text-[#F59E0B]',
+    destructive: 'bg-[#FEE2E2] text-[#EF4444]',
   }
 
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium',
         variants[variant],
         className
       )}
@@ -81,7 +81,7 @@ export function RoleBadge({ role }: { role: 'ADMIN' | 'MANAGER' | 'REP' }) {
   } as const
   
   return (
-    <Badge variant={variants[role]} className="text-[10px]">
+    <Badge variant={variants[role]} className="text-[9px]">
       {role}
     </Badge>
   )

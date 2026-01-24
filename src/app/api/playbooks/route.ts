@@ -4,7 +4,7 @@ import { getAuthSession, requireRole } from '@/lib/auth'
 import { createPlaybook, listPlaybooks } from '@/lib/services/playbooks'
 import { createApiError } from '@/lib/utils'
 import { PlaybookConfigSchema } from '@/lib/llm/schemas'
-import { Role } from '@/generated/prisma'
+import { Role } from '@prisma/client'
 
 // Validation schema for creating a playbook
 const CreatePlaybookSchema = z.object({

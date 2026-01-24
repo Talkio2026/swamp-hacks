@@ -1,27 +1,30 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
 import {
   Phone,
   BookOpen,
   Settings,
-  ChevronLeft,
-  ChevronRight,
   Users,
   FileText,
   GraduationCap,
+  LayoutDashboard,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
 const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Calls', href: '/calls', icon: Phone },
   { name: 'Sales Training', href: '/training', icon: GraduationCap },
   { name: 'Playbooks', href: '/playbooks', icon: BookOpen },
-  { name: 'Docs', href: '/docs', icon: FileText },
+  { name: 'Docs', href: '/product', icon: FileText },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
@@ -32,77 +35,116 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'flex flex-col border-r bg-card transition-all duration-300',
-        collapsed ? 'w-16' : 'w-64'
+        'relative z-20 flex flex-col border-r border-[#E0E7FF] bg-white transition-all duration-500 ease-in-out',
+        collapsed ? 'w-16' : 'w-60'
       )}
     >
       {/* Logo & Org Switcher */}
       <div className="flex h-16 items-center justify-between border-b px-4">
-        {!collapsed && (
-          <Link href="/clients" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">T</span>
+        {!collapsed ? (
+          <>
+            <Link href="/dashboard" className="flex items-center transition-all duration-500 ease-in-out">
+              <div className="transition-opacity duration-500 ease-in-out opacity-100">
+                <Image
+                  src="/talkio-logo.svg"
+                  alt="Talkio"
+                  width={120}
+                  height={36}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </Link>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="h-7 w-7 rounded-md flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-100 transition-colors flex-shrink-0 ml-2"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="w-full flex items-center justify-center transition-all duration-500 ease-in-out hover:opacity-80"
+            aria-label="Expand sidebar"
+          >
+            <div className="relative w-8 h-8 transition-opacity duration-500 ease-in-out opacity-100 cursor-pointer">
+              <div className="h-full w-full rounded-lg bg-black flex items-center justify-center">
+                <span className="text-white font-bold text-sm italic" style={{ fontFamily: "'Playfair Display', 'Georgia', serif" }}>T</span>
+              </div>
             </div>
-            <span className="font-semibold text-lg">Talkio</span>
-          </Link>
+          </button>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-md hover:bg-accent transition-colors cursor-pointer"
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </button>
       </div>
 
       {/* Organization Switcher */}
-      {!collapsed && (
-        <div className="p-4 border-b">
+      <div className={cn(
+        "overflow-hidden transition-all duration-500 ease-in-out",
+        collapsed ? "max-h-0 opacity-0" : "max-h-32 opacity-100"
+      )}>
+        <div className="p-3 border-b border-[#E0E7FF]">
           <OrganizationSwitcher
             appearance={{
               elements: {
                 rootBox: 'w-full',
-                organizationSwitcherTrigger: 'w-full justify-between',
+                organizationSwitcherTrigger: 'w-full justify-between bg-[#F5F7FA] border border-[#E0E7FF] text-black hover:bg-gray-50 rounded-lg text-[11px] px-2.5 py-2 font-medium',
+                organizationSwitcherTriggerIcon: 'text-black',
+                organizationPreviewTextContainer: 'text-black font-medium',
+                organizationPreviewSecondaryIdentifier: 'text-gray-600 font-medium',
               },
             }}
           />
         </div>
-      )}
+      </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className={cn(
+        "flex-1 px-2 overflow-y-auto transition-all duration-500 ease-in-out",
+        collapsed ? "py-3 space-y-4" : "py-3 space-y-3"
+      )}>
         {navigation.map((item) => {
-          const isActive = pathname.startsWith(item.href)
+          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                'flex items-center rounded-lg transition-all duration-500 ease-in-out',
+                collapsed 
+                  ? 'justify-center px-0 py-3 gap-0' 
+                  : 'gap-3 px-3 py-2.5',
                 isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'bg-gray-100 text-black font-semibold'
+                  : 'text-black font-medium hover:bg-gray-50',
               )}
               title={collapsed ? item.name : undefined}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && <span>{item.name}</span>}
+              <item.icon className={cn(
+                "flex-shrink-0 transition-all duration-500 ease-in-out",
+                collapsed ? "h-5 w-5" : "h-5 w-5"
+              )} />
+              {!collapsed && (
+                <span className="text-base transition-opacity duration-500 ease-in-out opacity-100">
+                  {item.name}
+                </span>
+              )}
             </Link>
           )
         })}
       </nav>
 
       {/* Bottom section */}
-      {!collapsed && (
-        <div className="p-4 border-t">
-          <p className="text-xs text-muted-foreground text-center">
-            Talkio v1.0.0
+      <div className={cn(
+        "overflow-hidden transition-all duration-500 ease-in-out",
+        collapsed ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
+      )}>
+        <div className="px-4 py-3 border-t border-[#E0E7FF]">
+          <p className="text-[10px] text-gray-400 font-medium">
+            v1.0.0
           </p>
         </div>
-      )}
+      </div>
     </aside>
   )
 }

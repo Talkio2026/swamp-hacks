@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { getAuthSession } from '@/lib/auth'
 import { getCallById, updateCall, deleteCall } from '@/lib/services/calls'
 import { createApiError } from '@/lib/utils'
-import { CallStatus, RiskLevel } from '@/generated/prisma'
+import { CallStatus, RiskLevel } from '@prisma/client'
 
 // Validation schema for updating a call
 const UpdateCallSchema = z.object({

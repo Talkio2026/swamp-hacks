@@ -3,7 +3,6 @@
 import { UserButton } from '@clerk/nextjs'
 import { RoleBadge } from '@/components/ui/badge'
 import { Bell } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 interface HeaderProps {
   title: React.ReactNode
@@ -14,15 +13,15 @@ interface HeaderProps {
 
 export function Header({ title, description, role, actions }: HeaderProps) {
   return (
-    <header className="mx-4 mt-4 mb-0 h-14 rounded-2xl border border-border/60 bg-card shadow-sm flex items-center justify-between px-6">
+    <header className="h-14 border-b border-[#E0E7FF] bg-white flex items-center justify-between px-6">
       <div className="flex items-center gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold">{title}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-[14px] font-bold text-black">{title}</h1>
             {role && <RoleBadge role={role} />}
           </div>
           {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-[11px] text-gray-600 mt-1 font-medium">{description}</p>
           )}
         </div>
       </div>
@@ -30,20 +29,17 @@ export function Header({ title, description, role, actions }: HeaderProps) {
       <div className="flex items-center gap-3">
         {actions}
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="relative h-9 w-9 rounded-full p-0"
-        >
-          <Bell className="h-5 w-5" />
-          {/* Notification dot */}
-          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
-        </Button>
+        <button className="relative h-8 w-8 rounded-lg flex items-center justify-center text-black hover:text-gray-700 hover:bg-gray-100 transition-colors">
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-black" />
+        </button>
+
+        <div className="w-px h-5 bg-[#E0E7FF] mx-1" />
 
         <UserButton
           appearance={{
             elements: {
-              avatarBox: 'h-9 w-9 rounded-full',
+              avatarBox: 'h-8 w-8 rounded-lg',
             },
           }}
         />

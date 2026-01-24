@@ -117,7 +117,6 @@ export default function TrainingPage() {
       }
 
       recognition.onerror = (event) => {
-        console.error('[Speech] Recognition error:', event.error)
         if (event.error !== 'no-speech') {
           setError(`Speech recognition error: ${event.error}`)
         }
@@ -129,7 +128,7 @@ export default function TrainingPage() {
           try {
             recognition.start()
           } catch (e) {
-            console.log('[Speech] Could not restart recognition:', e)
+            // Recognition restart failed, will retry on next user interaction
           }
         }
       }
@@ -158,7 +157,8 @@ export default function TrainingPage() {
       })
 
       if (!response.ok) {
-        console.error('[TTS] Failed to generate speech')
+        const errorText = await response.text().catch(() => 'Failed to generate speech')
+        setError(`TTS Error: ${errorText}`)
         setIsSpeaking(false)
         return
       }
@@ -174,14 +174,14 @@ export default function TrainingPage() {
         }
         
         audio.onerror = () => {
-          console.error('[TTS] Audio playback error')
+          setError('Failed to play audio. Please check your audio settings.')
           setIsSpeaking(false)
         }
         
         await audio.play()
       }
     } catch (err) {
-      console.error('[TTS] Error:', err)
+      setError(err instanceof Error ? `TTS Error: ${err.message}` : 'Failed to generate speech')
       setIsSpeaking(false)
     }
   }, [ttsEnabled, isMuted])
@@ -226,8 +226,7 @@ export default function TrainingPage() {
         await playTTS(data.response, selectedScenario.voiceId)
       }
     } catch (err) {
-      console.error('[Training] Response error:', err)
-      setError('Failed to get AI response. Please try again.')
+      setError(err instanceof Error ? `Failed to get AI response: ${err.message}` : 'Failed to get AI response. Please try again.')
     } finally {
       setIsProcessing(false)
     }
@@ -270,7 +269,6 @@ export default function TrainingPage() {
         recognitionRef.current?.start()
         setIsListening(true)
       } catch (e) {
-        console.error('[Speech] Could not start recognition:', e)
         setError('Could not start microphone. Please check permissions.')
       }
     }
@@ -323,8 +321,7 @@ export default function TrainingPage() {
         throw new Error('No evaluation returned')
       }
     } catch (err) {
-      console.error('[Training] Evaluation error:', err)
-      setError('Failed to generate evaluation. Please try again.')
+      setError(err instanceof Error ? `Failed to generate evaluation: ${err.message}` : 'Failed to generate evaluation. Please try again.')
       setSessionState('active')
     }
   }

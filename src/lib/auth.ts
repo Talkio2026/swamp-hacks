@@ -1,6 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { db } from './db'
-import { Role } from '@/generated/prisma'
+import { Role } from '@prisma/client'
 
 export type AuthSession = {
   userId: string

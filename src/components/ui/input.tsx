@@ -15,7 +15,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-[11px] font-medium text-[#4338CA] leading-none"
           >
             {label}
           </label>
@@ -24,15 +24,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           type={type}
           id={inputId}
           className={cn(
-            'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-destructive focus-visible:ring-destructive',
+            'flex h-9 w-full rounded-lg border border-[#E0E7FF] bg-white px-3 py-2 text-[13px] text-[#1E1B4B] placeholder:text-[#A5B4FC] focus:outline-none focus:border-[#4F46E5] focus:ring-2 focus:ring-[#EEF2FF] disabled:cursor-not-allowed disabled:opacity-40 transition-all',
+            error && 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#FEE2E2]',
             className
           )}
           ref={ref}
           {...props}
         />
         {error && (
-          <p className="text-sm text-destructive">{error}</p>
+          <p className="text-[10px] text-[#EF4444]">{error}</p>
         )}
       </div>
     )

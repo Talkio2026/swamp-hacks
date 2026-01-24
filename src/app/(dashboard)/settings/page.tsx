@@ -175,6 +175,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <UserProfile 
+                routing="hash"
                 appearance={{
                   elements: {
                     rootBox: 'w-full',

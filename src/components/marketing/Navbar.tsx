@@ -69,7 +69,7 @@ export function Navbar() {
 
         <div className="hidden md:flex md:justify-end">
           <Link
-            href="/sign-up"
+            href="/sign-in"
             className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
           >
             Dashboard
@@ -119,7 +119,7 @@ export function Navbar() {
             </Link>
           ))}
           <Link
-            href="/sign-up"
+            href="/sign-in"
             onClick={() => setMobileOpen(false)}
             className="mt-2 inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white hover:bg-slate-800"
           >

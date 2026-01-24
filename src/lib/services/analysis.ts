@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { CallStatus, RiskLevel, StageStatus } from '@/generated/prisma'
+import { CallStatus, RiskLevel, StageStatus } from '@prisma/client'
 import { callLLM, CallAnalysisSchema, type CallAnalysisResult, type PlaybookConfig } from '@/lib/llm'
 import { getAnalysisSystemPrompt, getAnalysisPrompt } from '@/lib/llm/prompts'
 
