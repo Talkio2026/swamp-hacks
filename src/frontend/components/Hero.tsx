@@ -115,17 +115,18 @@ export function Hero() {
               id="hero-heading"
               className="hero-heading text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl lg:leading-[1.15]"
             >
-              <span className="block">Turn every sales call into</span>
+              <span className="whitespace-nowrap">Turn every sales call into</span>
+              <br />
               <span 
-                className="inline-block align-bottom h-[1.3em]"
+                className="inline-block overflow-hidden align-bottom h-[1.2em]"
                 style={{
-                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)',
+                  maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
                 }}
               >
                 <span
                   ref={rotatingTextRef}
-                  className="inline-block whitespace-nowrap"
+                  className="inline-block"
                 >
                   {ROTATING_PHRASES[currentIndex]}
                 </span>
