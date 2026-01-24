@@ -34,58 +34,117 @@ export default function SignInPage() {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4">
         {/* Glass card container */}
-        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8">
+        <div className="w-full max-w-[420px] rounded-3xl bg-white/10 border border-white/20 shadow-2xl shadow-black/20 backdrop-blur-xl p-8 text-center">
           {/* Logo */}
-          <div className="text-center mb-6">
-            <Link href="/">
-              <span 
-                className="text-3xl font-normal text-white"
-                style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
-              >
-                Talkio
-              </span>
-            </Link>
-          </div>
+          <Link href="/" className="inline-block mb-6">
+            <span 
+              className="text-3xl font-normal text-white"
+              style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+            >
+              Talkio
+            </span>
+          </Link>
 
           {/* Welcome text */}
-          <div className="text-center mb-8">
-            <h1 className="text-xl font-semibold text-white mb-1">Welcome back</h1>
-            <p className="text-white/50 text-sm">Sign in to continue to your dashboard</p>
-          </div>
+          <h1 className="text-xl font-semibold text-white mb-1">Welcome back</h1>
+          <p className="text-white/50 text-sm mb-8">Sign in to continue to your dashboard</p>
 
-          {/* Clerk SignIn with glass styling */}
+          {/* Clerk SignIn */}
           <SignIn 
             forceRedirectUrl="/dashboard"
             appearance={{
               elements: {
-                rootBox: 'w-full flex justify-center',
-                card: 'bg-transparent shadow-none p-0 gap-4 w-full',
+                rootBox: 'w-full',
+                card: 'bg-transparent shadow-none p-0 w-full border-none',
+                cardBox: 'shadow-none bg-transparent',
+                header: 'hidden',
                 headerTitle: 'hidden',
                 headerSubtitle: 'hidden',
-                header: 'hidden',
-                socialButtonsBlockButton: 'bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all duration-300 rounded-xl h-11',
+                
+                // Social buttons with glass effect and hover
+                socialButtonsBlockButton: `
+                  bg-white/10 
+                  border border-white/20 
+                  text-white 
+                  rounded-xl 
+                  h-12
+                  transition-all 
+                  duration-300 
+                  ease-out
+                  hover:bg-white/20 
+                  hover:border-white/30 
+                  hover:scale-[1.02]
+                  hover:shadow-lg
+                  hover:shadow-white/10
+                  active:scale-[0.98]
+                `,
                 socialButtonsBlockButtonText: 'text-white/90 font-medium text-sm',
-                socialButtonsProviderIcon: 'brightness-0 invert opacity-80',
+                socialButtonsProviderIcon: 'w-5 h-5',
                 socialButtonsBlockButtonArrow: 'hidden',
+                
+                // Divider
                 dividerLine: 'bg-white/20',
-                dividerText: 'text-white/40 text-xs',
-                dividerRow: 'my-4',
-                formFieldLabel: 'text-white/70 text-sm font-medium',
-                formFieldInput: 'bg-white/10 border border-white/20 text-white placeholder:text-white/30 focus:border-white/40 focus:ring-0 rounded-xl h-11 backdrop-blur-sm transition-all duration-300',
-                formButtonPrimary: 'bg-white/20 hover:bg-white/30 text-white font-medium transition-all duration-300 rounded-xl h-11 border border-white/20 w-full',
-                footerActionLink: 'text-white/70 hover:text-white transition-colors',
+                dividerText: 'text-white/40 text-xs bg-transparent',
+                dividerRow: 'my-6',
+                
+                // Form fields with glass effect
+                formFieldLabel: 'text-white/70 text-sm font-medium text-left mb-1.5',
+                formFieldInput: `
+                  bg-white/10 
+                  border border-white/20 
+                  text-white 
+                  placeholder:text-white/30 
+                  rounded-xl 
+                  h-12
+                  transition-all 
+                  duration-300
+                  focus:bg-white/15
+                  focus:border-white/40 
+                  focus:ring-0
+                  focus:shadow-lg
+                  focus:shadow-white/5
+                  hover:border-white/30
+                `,
+                
+                // Primary button with cool hover
+                formButtonPrimary: `
+                  bg-white/20 
+                  text-white 
+                  font-medium 
+                  rounded-xl 
+                  h-12 
+                  border border-white/20 
+                  w-full
+                  transition-all 
+                  duration-300 
+                  ease-out
+                  hover:bg-white/30 
+                  hover:border-white/40
+                  hover:scale-[1.02]
+                  hover:shadow-lg
+                  hover:shadow-white/10
+                  active:scale-[0.98]
+                `,
+                
+                // Footer elements
+                footerAction: 'hidden',
+                footerActionText: 'hidden',
+                footerActionLink: 'hidden',
+                footer: 'hidden',
+                
+                // Other elements
                 identityPreview: 'bg-white/10 border border-white/20 rounded-xl',
                 identityPreviewText: 'text-white',
-                identityPreviewEditButton: 'text-white/70 hover:text-white',
-                formFieldInputShowPasswordButton: 'text-white/50 hover:text-white',
-                otpCodeFieldInput: 'bg-white/10 border border-white/20 text-white rounded-xl',
-                formResendCodeLink: 'text-white/70 hover:text-white',
+                identityPreviewEditButton: 'text-white/70 hover:text-white transition-colors',
+                formFieldInputShowPasswordButton: 'text-white/50 hover:text-white transition-colors',
+                otpCodeFieldInput: 'bg-white/10 border border-white/20 text-white rounded-xl focus:border-white/40',
+                formResendCodeLink: 'text-white/70 hover:text-white transition-colors',
                 alertText: 'text-white/80',
-                formFieldErrorText: 'text-red-300 text-xs',
-                footer: 'hidden',
-                footerAction: 'hidden',
+                formFieldErrorText: 'text-red-300 text-xs mt-1',
+                
+                // Layout
                 main: 'gap-4 w-full',
-                form: 'w-full gap-4',
+                form: 'w-full gap-5',
                 formFieldRow: 'w-full',
               },
               layout: {
@@ -96,9 +155,12 @@ export default function SignInPage() {
           />
 
           {/* Footer link */}
-          <p className="mt-6 text-center text-white/40 text-sm">
+          <p className="mt-8 text-white/40 text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/sign-up" className="text-white/70 hover:text-white transition-colors">
+            <Link 
+              href="/sign-up" 
+              className="text-white/70 hover:text-white transition-all duration-300 hover:underline underline-offset-4"
+            >
               Sign up
             </Link>
           </p>
