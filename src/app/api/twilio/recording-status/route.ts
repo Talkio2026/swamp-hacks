@@ -101,6 +101,28 @@ async function processTranscription(recordingSid: string, callSid: string, diale
 
   console.log(`[Recording Status] Creating transcript for recording: ${recordingSid}`);
 
+  // If phone number not provided in webhook, fetch it from Twilio call details
+  let phoneNumber = dialedPhoneNumber;
+  console.log(`[Recording Status] Initial phone number from webhook: ${phoneNumber}`);
+  
+  if (!phoneNumber) {
+    try {
+      console.log(`[Recording Status] Fetching call details for callSid: ${callSid}`);
+      const callDetails = await twilioClient.calls(callSid).fetch();
+      console.log(`[Recording Status] Call details - To: ${callDetails.to}, From: ${callDetails.from}, Direction: ${callDetails.direction}`);
+      
+      // Use "to" for outbound calls (we're calling the client)
+      // Use "from" for inbound calls (client is calling us)
+      phoneNumber = callDetails.direction === 'outbound-api' || callDetails.direction === 'outbound-dial' 
+        ? callDetails.to 
+        : callDetails.from;
+      
+      console.log(`[Recording Status] Using phone number: ${phoneNumber} (direction: ${callDetails.direction})`);
+    } catch (fetchError) {
+      console.error(`[Recording Status] Failed to fetch call details:`, fetchError);
+    }
+  }
+
   try {
     // Create transcript using Twilio Conversational Intelligence
     const transcript = await twilioClient.intelligence.v2.transcripts.create({
@@ -230,13 +252,18 @@ async function processTranscription(recordingSid: string, callSid: string, diale
     let callNumber = 1;
     
     try {
-      if (dialedPhoneNumber) {
+      if (phoneNumber) {
         // Normalize the phone number for matching
-        const normalizedPhone = normalizePhoneNumber(dialedPhoneNumber);
-        console.log(`[Recording Status] Looking up client by phone: ${dialedPhoneNumber} -> ${normalizedPhone}`);
+        const normalizedPhone = normalizePhoneNumber(phoneNumber);
+        console.log(`[Recording Status] Looking up client by phone: ${phoneNumber} -> normalized: ${normalizedPhone}`);
+        
+        // Also log all clients in DB for debugging
+        const allClients = await Client.find({}, { clientId: 1, clientName: 1, contactPhone: 1 });
+        console.log(`[Recording Status] Clients in database:`, allClients.map(c => `${c.clientId}: ${c.contactPhone}`).join(', '));
         
         // Find client by phone number
         const matchedClient = await Client.findOne({ contactPhone: normalizedPhone });
+        console.log(`[Recording Status] Match result:`, matchedClient ? `Found ${matchedClient.clientId}` : 'No match');
         
         if (matchedClient) {
           // Increment call count and get call number

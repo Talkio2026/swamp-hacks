@@ -206,3 +206,44 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+// DELETE /api/clients - Delete a client
+export async function DELETE(request: NextRequest) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(request.url);
+    const clientId = searchParams.get("clientId");
+
+    if (!clientId) {
+      return NextResponse.json(
+        { error: "Missing required parameter: clientId" },
+        { status: 400 }
+      );
+    }
+
+    const client = await Client.findOne({ clientId });
+
+    if (!client) {
+      return NextResponse.json(
+        { error: "Client not found" },
+        { status: 404 }
+      );
+    }
+
+    await Client.deleteOne({ clientId });
+
+    console.log(`[API] Deleted client: ${clientId}`);
+
+    return NextResponse.json({
+      message: "Client deleted successfully",
+      clientId,
+    });
+  } catch (error) {
+    console.error("[API] DELETE /api/clients error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete client", details: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
+  }
+}
