@@ -1,0 +1,248 @@
+// Sales Call Copilot - Prisma Schema
+// All tables include orgId for multi-tenant isolation
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// CORE ENTITIES
+// ============================================
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique // Clerk user ID
+  email     String
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  role      Role     @default(REP)
+  orgId     String   // Clerk organization ID
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  calls     Call[]   @relation("RepCalls")
+  
+  @@index([orgId])
+  @@index([clerkId])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  REP
+}
+
+model Call {
+  id          String     @id @default(cuid())
+  orgId       String     // Tenant isolation
+  repId       String     // User who owns this call
+  rep         User       @relation("RepCalls", fields: [repId], references: [id])
+  
+  // Call metadata
+  title       String
+  prospect    String?    // Prospect/lead name
+  company     String?    // Prospect company
+  phoneNumber String?
+  duration    Int?       // Duration in seconds
+  callDate    DateTime   @default(now())
+  
+  // Content
+  transcript  String?    @db.Text
+  audioUrl    String?    // URL to audio in DO Spaces
+  
+  // Processing status
+  status      CallStatus @default(PENDING)
+  errorMessage String?
+  
+  // Analysis results (denormalized for quick access)
+  riskLevel   RiskLevel?
+  summary     String?    @db.Text
+  nextSteps   String?    @db.Text
+  
+  // Playbook used for analysis
+  playbookId  String?
+  playbook    Playbook?  @relation(fields: [playbookId], references: [id])
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  // Relations
+  analysis    CallAnalysis?
+  stages      CallStage[]
+  objections  Objection[]
+  
+  @@index([orgId])
+  @@index([repId])
+  @@index([status])
+  @@index([callDate])
+}
+
+enum CallStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// ============================================
+// ANALYSIS ENTITIES
+// ============================================
+
+model CallAnalysis {
+  id              String   @id @default(cuid())
+  callId          String   @unique
+  call            Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  orgId           String   // Tenant isolation
+  
+  // Scores (0-100)
+  overallScore    Int?
+  openingScore    Int?
+  discoveryScore  Int?
+  presentationScore Int?
+  closingScore    Int?
+  
+  // AI-generated insights
+  strengths       Json?    // Array of strength strings
+  improvements    Json?    // Array of improvement strings
+  coachingTips    Json?    // Array of coaching suggestions
+  
+  // Raw AI response (for debugging)
+  rawResponse     Json?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([orgId])
+}
+
+model CallStage {
+  id          String    @id @default(cuid())
+  callId      String
+  call        Call      @relation(fields: [callId], references: [id], onDelete: Cascade)
+  orgId       String    // Tenant isolation
+  
+  stageName   String    // e.g., "Introduction", "Discovery", "Pitch", "Close"
+  stageOrder  Int       // Order in the call
+  startTime   Int?      // Timestamp in seconds
+  endTime     Int?      // Timestamp in seconds
+  status      StageStatus @default(DETECTED)
+  notes       String?   @db.Text
+  
+  createdAt   DateTime  @default(now())
+  
+  @@index([callId])
+  @@index([orgId])
+}
+
+enum StageStatus {
+  DETECTED
+  SKIPPED
+  INCOMPLETE
+}
+
+model Objection {
+  id                String   @id @default(cuid())
+  callId            String
+  call              Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  orgId             String   // Tenant isolation
+  
+  type              String   // e.g., "price", "timing", "competition", "authority"
+  quote             String   @db.Text // Exact quote from transcript
+  timestamp         Int?     // Timestamp in seconds
+  
+  // AI-suggested response
+  suggestedResponse String?  @db.Text
+  
+  // How the rep actually handled it
+  handledWell       Boolean?
+  handlingNotes     String?  @db.Text
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([callId])
+  @@index([orgId])
+  @@index([type])
+}
+
+// ============================================
+// PLAYBOOK ENTITIES
+// ============================================
+
+model Playbook {
+  id          String   @id @default(cuid())
+  orgId       String   // Tenant isolation
+  
+  name        String
+  description String?  @db.Text
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  
+  // Playbook configuration (JSON structure)
+  stages      Json     // Array of stage definitions
+  questions   Json?    // Required discovery questions
+  objections  Json?    // Known objections and responses
+  doSay       Json?    // Recommended phrases
+  dontSay     Json?    // Phrases to avoid
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  calls       Call[]
+  
+  @@index([orgId])
+  @@index([isDefault, orgId])
+}
+
+// ============================================
+// AUDIT & SETTINGS
+// ============================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  orgId     String   // Tenant isolation
+  userId    String   // Who performed the action
+  
+  action    String   // e.g., "call.created", "playbook.updated"
+  resource  String   // e.g., "call", "playbook"
+  resourceId String?
+  details   Json?    // Additional context
+  ipAddress String?
+  
+  createdAt DateTime @default(now())
+  
+  @@index([orgId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model OrgSettings {
+  id                  String   @id @default(cuid())
+  orgId               String   @unique // Tenant isolation
+  
+  // Data retention
+  dataRetentionDays   Int      @default(365)
+  
+  // Feature flags
+  enableLiveCopilot   Boolean  @default(true)
+  enableVoicePlayback Boolean  @default(false)
+  
+  // Default playbook
+  defaultPlaybookId   String?
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
