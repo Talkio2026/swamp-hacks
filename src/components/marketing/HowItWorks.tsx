@@ -180,9 +180,6 @@ export function HowItWorks() {
           <div className="steps-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-4 relative">
             {STEPS.map((step, index) => (
               <div key={step.number} className="step-card flex flex-col relative">
-                {/* Step marker dot */}
-                <div className="absolute -top-3 left-0 w-4 h-4 rounded-full bg-white/20 border-2 border-white/40 hidden lg:block" />
-                
                 <div className="mb-4 text-4xl font-bold text-white/20">
                   {step.number}
                 </div>
