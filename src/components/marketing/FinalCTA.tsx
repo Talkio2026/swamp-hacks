@@ -32,7 +32,10 @@ export function FinalCTA() {
       className="relative bg-[#F3F5F8] px-6 py-20 lg:px-8 lg:py-28"
       aria-labelledby="cta-heading"
     >
-      <div className="cta-block mx-auto max-w-[1280px] text-center">
+      {/* Frosted glass top transition */}
+      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#9AAFC2]/80 to-transparent" aria-hidden />
+      
+      <div className="cta-block mx-auto max-w-[1280px] text-center relative z-10">
         <h2
           id="cta-heading"
           className="text-xl font-bold tracking-tight text-[#5a7a94] sm:text-2xl lg:text-3xl"

@@ -6,6 +6,7 @@ import { ProductSummary } from './components/ProductSummary'
 import { Features } from './components/Features'
 import { HowItWorks } from './components/HowItWorks'
 import { ForReps } from './components/ForReps'
+import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
 import { useEffect, useRef } from 'react'
 
@@ -25,21 +26,14 @@ export function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a1628]">
-      {/* Spotlight overlay effects */}
-      <div className="fixed inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-white/[0.03] rounded-full blur-[120px]" />
-        <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-[#1e3a5f]/30 rounded-full blur-[80px]" />
-      </div>
-
+    <div className="min-h-screen bg-[#162d3d]">
       {/* Extended photo background: covers navbar + hero + ProductSummary with smooth fade */}
       <div
-        className="relative overflow-visible"
+        className="relative overflow-visible shadow-2xl shadow-[#1e3a5f]/40"
         style={{ backgroundImage: "url('/photos/2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }}
       >
-        {/* Gradient overlay: darkens top, fades to bluish-black at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-[#0a1628]/70 via-60% to-[#0a1628]" aria-hidden />
+        {/* Gradient overlay: darkens top, fades to ocean color at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 via-60% to-[#162d3d]" aria-hidden />
         <div className="relative z-10">
           <Navbar />
           <Hero />
@@ -47,10 +41,24 @@ export function LandingPage() {
         </div>
       </div>
 
-      <main ref={mainRef} className="relative">
+      <main ref={mainRef} className="relative bg-[#162d3d]">
+        {/* Grainy texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-40 pointer-events-none mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+          aria-hidden 
+        />
+        {/* Top blur transition overlay */}
+        <div 
+          className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#162d3d] to-transparent pointer-events-none" 
+          aria-hidden 
+        />
         <Features />
         <HowItWorks />
         <ForReps />
+        <FinalCTA />
       </main>
       <Footer />
     </div>

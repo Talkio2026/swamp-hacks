@@ -97,7 +97,10 @@ export function ProductSummary() {
       ref={sectionRef}
       className="relative px-6 py-20 lg:px-8 lg:py-28"
     >
-      <div className="mx-auto max-w-[1280px]">
+      {/* Frosted glass bottom transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-transparent to-[#f8fafc]/90" aria-hidden />
+      
+      <div className="mx-auto max-w-[1280px] relative z-10">
         {/* Core Features Grid */}
         <div className="core-features-container">
           <div className="grid gap-6 sm:grid-cols-2">
@@ -107,22 +110,22 @@ export function ProductSummary() {
                 className="core-feature group"
               >
                 <div className={cn(
-                  "flex gap-4 p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-lg transition-all duration-300",
-                  "hover:border-white/20 hover:bg-white/10 hover:shadow-xl hover:-translate-y-1"
+                  "flex gap-4 p-6 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md shadow-lg transition-all duration-300",
+                  "hover:border-white/40 hover:bg-white/15 hover:-translate-y-1"
                 )}>
                   <div className="flex-shrink-0">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-white shadow-md">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white shadow-lg">
                       {feature.icon}
                     </div>
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-xs font-bold text-white/50">{feature.number}</span>
+                      <span className="text-xs font-bold text-white/70">{feature.number}</span>
                       <h4 className="text-base font-semibold text-white">
                         {feature.title}
                       </h4>
                     </div>
-                    <p className="text-sm text-white/70">
+                    <p className="text-sm text-white/80">
                       {feature.description}
                     </p>
                   </div>
