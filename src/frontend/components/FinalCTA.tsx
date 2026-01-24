@@ -29,23 +29,23 @@ export function FinalCTA() {
     <section
       ref={sectionRef}
       id="cta"
-      className="px-6 py-14 lg:px-8 lg:py-20"
+      className="relative bg-[#F3F5F8] px-6 py-20 lg:px-8 lg:py-28"
       aria-labelledby="cta-heading"
     >
       <div className="cta-block mx-auto max-w-[1280px] text-center">
         <h2
           id="cta-heading"
-          className="text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl"
+          className="text-xl font-bold tracking-tight text-[#5a7a94] sm:text-2xl lg:text-3xl"
         >
           Turn call recordings into structured intelligence
         </h2>
-        <p className="mt-4 text-base text-slate-300">
+        <p className="mt-4 text-base text-[#7D9AB3]">
           Start analyzing sales calls with AI-powered post-call summaries and next-action tracking.
         </p>
         <div className="mt-10">
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center rounded-xl bg-white px-7 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="inline-flex items-center justify-center rounded-full bg-[#7D9AB3] px-8 py-3.5 text-sm font-medium text-white transition-all hover:bg-[#8FA7BB] hover:shadow-lg hover:shadow-[#7D9AB3]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7D9AB3] focus-visible:ring-offset-2"
           >
             Request Demo
           </Link>
