@@ -72,7 +72,7 @@ export function Navbar() {
         {/* Dashboard button - right side */}
         <Link
           href="/dashboard"
-          className="hidden lg:inline-flex items-center justify-center rounded-xl bg-white px-5 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          className="hidden lg:inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
         >
           Dashboard
         </Link>
