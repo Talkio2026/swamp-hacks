@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Lekton:ital,wght@0,400;0,700;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+}
+
 :root {
   /* Enterprise color palette - neutral/blue */
   --background: 0 0% 100%;
@@ -53,7 +59,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Lekton', ui-monospace, monospace;
 }
 
 * {
@@ -62,6 +68,7 @@
 
 body {
   @apply bg-background text-foreground;
+  font-family: 'Lekton', monospace;
 }
 
 /* Custom scrollbar */
@@ -81,4 +88,91 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Chatbot animations */
+@keyframes chatbot-open {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes chatbot-close {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+}
+
+[data-state="open"].chatbot-content {
+  animation: chatbot-open 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-state="closed"].chatbot-content {
+  animation: chatbot-close 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth page transitions */
+@keyframes page-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: page-fade-in 0.4s ease-out;
+}
+
+/* View Transitions API support */
+::view-transition-old(root) {
+  animation: 0.3s ease-out both fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 0.3s ease-out both fade-in;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Hide Clerk branding and footers only */
+.cl-footer,
+.cl-footerAction,
+.cl-footerPages,
+.cl-signIn-root > .cl-card > footer,
+.cl-signUp-root > .cl-card > footer,
+.cl-internal-b3fm6y {
+  display: none !important;
+}
+
+/* Clerk card transparent background */
+.cl-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.cl-cardBox {
+  box-shadow: none !important;
 }

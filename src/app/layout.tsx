@@ -1,11 +1,19 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Lora } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
+import { Providers } from '@/components/providers'
 import './globals.css'
 
 const inter = Inter({
   subsets: ['latin'],
+  weight: ['100', '300', '400', '500', '600', '700'],
   variable: '--font-inter',
+})
+
+const lora = Lora({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  variable: '--font-lora',
 })
 
 export const metadata: Metadata = {
@@ -20,9 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${inter.variable} font-sans antialiased`}>
-          {children}
+      <html lang="en" className="scroll-smooth">
+        <body className={`${inter.variable} ${lora.variable} font-sans antialiased`}>
+          <Providers>{children}</Providers>
         </body>
       </html>
     </ClerkProvider>
