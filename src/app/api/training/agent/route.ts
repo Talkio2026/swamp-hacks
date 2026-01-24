@@ -60,12 +60,26 @@ export async function POST(request: NextRequest) {
 }
 
 async function createElevenLabsAgent(scenario: TrainingScenario): Promise<ElevenLabsAgent> {
+  // Build enhanced prompt with critical role-play instructions
+  const enhancedPrompt = `ROLE: You are ${scenario.persona.name} in a sales training simulation.
+A real human is practicing their sales skills by speaking to you.
+
+CRITICAL RULES:
+- You are ONLY ${scenario.persona.name}. NEVER speak as or simulate the Sales Rep.
+- Respond only when the user (Sales Rep) speaks to you.
+- Give ONE response at a time - your next line of dialogue only.
+- Speak naturally as ${scenario.persona.name} would in a real phone conversation.
+- Keep responses concise (1-3 sentences typically).
+- Stay in character based on the persona below.
+
+${scenario.systemPrompt}`
+
   const agentConfig = {
     name: `Training: ${scenario.persona.name}`,
     conversation_config: {
       agent: {
         prompt: {
-          prompt: scenario.systemPrompt,
+          prompt: enhancedPrompt,
         },
         first_message: getFirstMessage(scenario),
         language: 'en',

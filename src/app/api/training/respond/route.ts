@@ -35,29 +35,42 @@ export async function POST(request: NextRequest) {
       .map(turn => `${turn.role === 'user' ? 'Sales Rep' : scenario.persona.name}: ${turn.content}`)
       .join('\n')
 
-    const prompt = `${scenario.systemPrompt}
+    const prompt = `ROLE: You are playing ${scenario.persona.name} in a sales training simulation.
+A real human user is practicing their sales skills by talking to you.
+
+CRITICAL RULES - FOLLOW EXACTLY:
+- You are ONLY ${scenario.persona.name}. NEVER generate the Sales Rep's dialogue.
+- Respond with ONLY ONE response - your next line of dialogue as ${scenario.persona.name}.
+- The human user will type their response as the Sales Rep. DO NOT simulate their side.
+- DO NOT continue the conversation. DO NOT write multiple exchanges.
+- DO NOT write "Sales Rep:", "Rep:", or any prefix for the user's lines.
+- NO actions in brackets [like this], NO asterisks *like this*, NO stage directions.
+- Just speak naturally as ${scenario.persona.name} would in a real phone call.
+- Keep responses to 1-3 sentences.
+
+${scenario.systemPrompt}
 
 CONVERSATION SO FAR:
 ${conversationHistory}
 
-Now respond as ${scenario.persona.name}. Stay in character. Be natural and conversational. 
-Respond with just your dialogue - no actions or stage directions.
-Keep responses concise (1-3 sentences typically).`
+Respond now as ${scenario.persona.name} with your next single line of dialogue:`
 
-    // Get AI provider
+    // Get AI provider - use Gemini Flash for speed
     const provider = getProvider({ provider: 'gemini' })
     
     let response: string
     try {
       response = await provider.analyze(prompt)
     } catch {
-      // Fallback to OpenRouter
-      const fallbackProvider = getProvider({ provider: 'openrouter', model: 'claude-3-sonnet' })
+      // Fallback to OpenRouter with Claude Haiku (faster than Sonnet)
+      const fallbackProvider = getProvider({ provider: 'openrouter', model: 'claude-3-haiku' })
       response = await fallbackProvider.analyze(prompt)
     }
 
-    // Clean up the response (remove any "Name:" prefix if present)
+    // Clean up the response
     let cleanResponse = response.trim()
+    
+    // Remove any "Name:" prefix if present
     const namePrefix = `${scenario.persona.name}:`
     if (cleanResponse.startsWith(namePrefix)) {
       cleanResponse = cleanResponse.slice(namePrefix.length).trim()
@@ -67,6 +80,40 @@ Keep responses concise (1-3 sentences typically).`
     if (cleanResponse.startsWith('"') && cleanResponse.endsWith('"')) {
       cleanResponse = cleanResponse.slice(1, -1)
     }
+    
+    // CRITICAL: Strip out any Sales Rep lines the AI might have generated
+    // Split by common patterns and take only the first response
+    const salesRepPatterns = [
+      '\nSales Rep:',
+      '\n\nSales Rep:',
+      '\nRep:',
+      '\n\nRep:',
+      '\nYou:',
+      '\n\nYou:',
+      '\n[Sales Rep]',
+      '\n\n[Sales Rep]',
+    ]
+    
+    for (const pattern of salesRepPatterns) {
+      const idx = cleanResponse.indexOf(pattern)
+      if (idx !== -1) {
+        cleanResponse = cleanResponse.slice(0, idx).trim()
+      }
+    }
+    
+    // Also strip any continuation after the prospect's name appears again
+    const prospectContinuation = `\n${scenario.persona.name}:`
+    const contIdx = cleanResponse.indexOf(prospectContinuation)
+    if (contIdx !== -1) {
+      cleanResponse = cleanResponse.slice(0, contIdx).trim()
+    }
+    
+    // Remove any action descriptions in brackets or asterisks
+    cleanResponse = cleanResponse
+      .replace(/\[.*?\]/g, '')
+      .replace(/\*.*?\*/g, '')
+      .replace(/\(.*?\)/g, '')
+      .trim()
 
     return NextResponse.json({
       response: cleanResponse,

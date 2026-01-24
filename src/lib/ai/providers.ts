@@ -78,7 +78,7 @@ export class OpenRouterProvider implements LLMProvider {
           },
         ],
         temperature: 0.3,  // Lower temperature for more consistent analysis
-        max_tokens: 2000,
+        max_tokens: 1700,  // Reduced from 2000 - most evaluations need less
       }),
     })
 

@@ -24,11 +24,12 @@ import {
   GraduationCap,
   Phone,
   PhoneOff,
+  Send,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TRAINING_SCENARIOS, TrainingScenario } from '@/lib/training/scenarios'
 
-type SessionState = 'selecting' | 'preparing' | 'active' | 'evaluating' | 'results'
+type SessionState = 'selecting' | 'active' | 'evaluating' | 'results'
 
 interface ConversationTurn {
   role: 'user' | 'assistant'
@@ -55,24 +56,29 @@ interface EvaluationResult {
   recommendedPractice: string
 }
 
+// Check if browser supports speech recognition
+const SpeechRecognition = typeof window !== 'undefined' 
+  ? (window.SpeechRecognition || window.webkitSpeechRecognition)
+  : null
+
 export default function TrainingPage() {
   const [sessionState, setSessionState] = useState<SessionState>('selecting')
   const [selectedScenario, setSelectedScenario] = useState<TrainingScenario | null>(null)
   const [conversation, setConversation] = useState<ConversationTurn[]>([])
   const [isListening, setIsListening] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [agentId, setAgentId] = useState<string | null>(null)
-  const [mode, setMode] = useState<'voice' | 'text' | 'mock'>('mock')
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const [textInput, setTextInput] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null)
   const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [interimTranscript, setInterimTranscript] = useState('')
+  const [ttsEnabled, setTtsEnabled] = useState(true)
   
   const conversationRef = useRef<HTMLDivElement>(null)
-  const wsRef = useRef<WebSocket | null>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // Auto-scroll conversation
   useEffect(() => {
@@ -81,51 +87,153 @@ export default function TrainingPage() {
     }
   }, [conversation])
 
-  // Cleanup on unmount
+  // Initialize speech recognition
   useEffect(() => {
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close()
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition()
+      recognition.continuous = true
+      recognition.interimResults = true
+      recognition.lang = 'en-US'
+
+      recognition.onresult = (event) => {
+        let interim = ''
+        let final = ''
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript
+          if (event.results[i].isFinal) {
+            final += transcript
+          } else {
+            interim += transcript
+          }
+        }
+
+        setInterimTranscript(interim)
+
+        if (final) {
+          handleUserInput(final.trim())
+          setInterimTranscript('')
+        }
       }
-      if (audioContextRef.current) {
-        audioContextRef.current.close()
+
+      recognition.onerror = (event) => {
+        console.error('[Speech] Recognition error:', event.error)
+        if (event.error !== 'no-speech') {
+          setError(`Speech recognition error: ${event.error}`)
+        }
+      }
+
+      recognition.onend = () => {
+        // Restart if still in active session and listening
+        if (sessionState === 'active' && isListening) {
+          try {
+            recognition.start()
+          } catch (e) {
+            console.log('[Speech] Could not restart recognition:', e)
+          }
+        }
+      }
+
+      recognitionRef.current = recognition
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
       }
     }
-  }, [])
+  }, [sessionState, isListening])
 
-  const handleSelectScenario = async (scenario: TrainingScenario) => {
-    setSelectedScenario(scenario)
-    setSessionState('preparing')
-    setError(null)
+  // Play TTS audio
+  const playTTS = useCallback(async (text: string, voiceId?: string) => {
+    if (!ttsEnabled || isMuted) return
 
     try {
-      // Create/get the training agent
-      const response = await fetch('/api/training/agent', {
+      setIsSpeaking(true)
+      
+      const response = await fetch('/api/training/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenarioId: scenario.id }),
+        body: JSON.stringify({ text, voiceId }),
+      })
+
+      if (!response.ok) {
+        console.error('[TTS] Failed to generate speech')
+        setIsSpeaking(false)
+        return
+      }
+
+      const data = await response.json()
+      
+      if (data.audio) {
+        const audio = new Audio(`data:audio/mpeg;base64,${data.audio}`)
+        audioRef.current = audio
+        
+        audio.onended = () => {
+          setIsSpeaking(false)
+        }
+        
+        audio.onerror = () => {
+          console.error('[TTS] Audio playback error')
+          setIsSpeaking(false)
+        }
+        
+        await audio.play()
+      }
+    } catch (err) {
+      console.error('[TTS] Error:', err)
+      setIsSpeaking(false)
+    }
+  }, [ttsEnabled, isMuted])
+
+  // Handle user input (from speech or text)
+  const handleUserInput = useCallback(async (input: string) => {
+    if (!input.trim() || isProcessing || !selectedScenario) return
+
+    setIsProcessing(true)
+
+    // Add user message
+    const userTurn: ConversationTurn = {
+      role: 'user',
+      content: input.trim(),
+      timestamp: Date.now(),
+    }
+    
+    setConversation(prev => [...prev, userTurn])
+
+    try {
+      // Get AI response
+      const response = await fetch('/api/training/respond', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scenarioId: selectedScenario.id,
+          conversation: [...conversation, userTurn],
+        }),
       })
 
       const data = await response.json()
+      
+      if (data.response) {
+        // Add AI response
+        setConversation(prev => [...prev, {
+          role: 'assistant',
+          content: data.response,
+          timestamp: Date.now(),
+        }])
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to prepare training session')
+        // Speak the response using ElevenLabs TTS
+        await playTTS(data.response, selectedScenario.voiceId)
       }
-
-      setMode(data.mode)
-      if (data.agentId) {
-        setAgentId(data.agentId)
-      }
-
-      // Ready to start
-      setSessionState('selecting')
     } catch (err) {
-      console.error('Error preparing session:', err)
-      setError(err instanceof Error ? err.message : 'Failed to prepare session')
-      setMode('text') // Fallback to text mode
+      console.error('[Training] Response error:', err)
+      setError('Failed to get AI response. Please try again.')
+    } finally {
+      setIsProcessing(false)
     }
-  }
+  }, [isProcessing, selectedScenario, conversation, playTTS])
 
+  // Start session
   const startSession = useCallback(async () => {
     if (!selectedScenario) return
 
@@ -134,179 +242,62 @@ export default function TrainingPage() {
     setSessionStartTime(Date.now())
     setError(null)
 
-    if (mode === 'voice' && agentId) {
-      // Connect to ElevenLabs WebSocket
-      try {
-        const urlResponse = await fetch('/api/training/signed-url', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ agentId }),
-        })
-
-        const { signedUrl } = await urlResponse.json()
-
-        if (signedUrl) {
-          wsRef.current = new WebSocket(signedUrl)
-          
-          wsRef.current.onopen = () => {
-            console.log('[Training] WebSocket connected')
-            setIsListening(true)
-            startRecording()
-          }
-
-          wsRef.current.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-            handleWebSocketMessage(data)
-          }
-
-          wsRef.current.onerror = (error) => {
-            console.error('[Training] WebSocket error:', error)
-            setError('Voice connection failed. Switching to text mode.')
-            setMode('text')
-          }
-
-          wsRef.current.onclose = () => {
-            console.log('[Training] WebSocket closed')
-            setIsListening(false)
-          }
-        }
-      } catch (err) {
-        console.error('[Training] Failed to connect voice:', err)
-        setMode('text')
-      }
-    } else {
-      // Text or mock mode - add the AI's first message
-      const firstMessage = getFirstMessage(selectedScenario)
-      setConversation([{
-        role: 'assistant',
-        content: firstMessage,
-        timestamp: Date.now(),
-      }])
-    }
-  }, [selectedScenario, mode, agentId])
-
-  const handleWebSocketMessage = (data: Record<string, unknown>) => {
-    switch (data.type) {
-      case 'user_transcript':
-        // User's speech was transcribed
-        if (data.text) {
-          setConversation(prev => [...prev, {
-            role: 'user',
-            content: data.text as string,
-            timestamp: Date.now(),
-          }])
-        }
-        break
-      case 'agent_response':
-        // Agent's text response
-        if (data.text) {
-          setConversation(prev => [...prev, {
-            role: 'assistant',
-            content: data.text as string,
-            timestamp: Date.now(),
-          }])
-        }
-        break
-      case 'audio':
-        // Play audio response
-        if (!isMuted && data.audio) {
-          playAudio(data.audio as string)
-        }
-        break
-    }
-  }
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      audioContextRef.current = new AudioContext({ sampleRate: 16000 })
-      
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
-      mediaRecorderRef.current = mediaRecorder
-
-      mediaRecorder.ondataavailable = async (event) => {
-        if (event.data.size > 0 && wsRef.current?.readyState === WebSocket.OPEN) {
-          const arrayBuffer = await event.data.arrayBuffer()
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
-          wsRef.current.send(JSON.stringify({
-            type: 'audio',
-            audio: base64,
-          }))
-        }
-      }
-
-      mediaRecorder.start(100) // Send audio every 100ms
-    } catch (err) {
-      console.error('[Training] Failed to start recording:', err)
-      setError('Microphone access denied. Please allow microphone access and try again.')
-    }
-  }
-
-  const playAudio = (base64Audio: string) => {
-    const audio = new Audio(`data:audio/mpeg;base64,${base64Audio}`)
-    audio.play()
-  }
-
-  const handleTextSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!textInput.trim() || isProcessing) return
-
-    const userMessage = textInput.trim()
-    setTextInput('')
-    setIsProcessing(true)
-
-    // Add user message
-    setConversation(prev => [...prev, {
-      role: 'user',
-      content: userMessage,
+    // Add the prospect's first message
+    const firstMessage = getFirstMessage(selectedScenario)
+    setConversation([{
+      role: 'assistant',
+      content: firstMessage,
       timestamp: Date.now(),
     }])
 
-    try {
-      // In mock/text mode, use our AI to generate response
-      const response = await fetch('/api/training/respond', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          scenarioId: selectedScenario?.id,
-          conversation: [...conversation, { role: 'user', content: userMessage }],
-        }),
-      })
+    // Speak the first message
+    await playTTS(firstMessage, selectedScenario.voiceId)
+  }, [selectedScenario, playTTS])
 
-      const data = await response.json()
-      
-      if (data.response) {
-        setConversation(prev => [...prev, {
-          role: 'assistant',
-          content: data.response,
-          timestamp: Date.now(),
-        }])
+  // Toggle microphone
+  const toggleMicrophone = () => {
+    if (!SpeechRecognition) {
+      setError('Speech recognition is not supported in your browser. Please use Chrome.')
+      return
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop()
+      setIsListening(false)
+      setInterimTranscript('')
+    } else {
+      try {
+        recognitionRef.current?.start()
+        setIsListening(true)
+      } catch (e) {
+        console.error('[Speech] Could not start recognition:', e)
+        setError('Could not start microphone. Please check permissions.')
       }
-    } catch (err) {
-      console.error('[Training] Response error:', err)
-      // Fallback to simple mock response
-      setTimeout(() => {
-        setConversation(prev => [...prev, {
-          role: 'assistant',
-          content: getMockResponse(userMessage, selectedScenario),
-          timestamp: Date.now(),
-        }])
-      }, 1000)
-    } finally {
-      setIsProcessing(false)
     }
   }
 
+  // Handle text submit
+  const handleTextSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!textInput.trim() || isProcessing) return
+    
+    handleUserInput(textInput.trim())
+    setTextInput('')
+  }
+
+  // End session
   const endSession = async () => {
-    // Stop voice session if active
-    if (wsRef.current) {
-      wsRef.current.close()
+    // Stop listening
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
     }
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop()
+    setIsListening(false)
+
+    // Stop any playing audio
+    if (audioRef.current) {
+      audioRef.current.pause()
     }
 
-    setIsListening(false)
     setSessionState('evaluating')
 
     // Get evaluation
@@ -338,13 +329,14 @@ export default function TrainingPage() {
     }
   }
 
+  // Reset session
   const resetSession = () => {
     setSessionState('selecting')
     setSelectedScenario(null)
     setConversation([])
     setEvaluation(null)
     setError(null)
-    setAgentId(null)
+    setInterimTranscript('')
   }
 
   return (
@@ -356,7 +348,7 @@ export default function TrainingPage() {
           sessionState === 'active' ? (
             <Button variant="destructive" onClick={endSession}>
               <PhoneOff className="h-4 w-4 mr-2" />
-              End Session
+              End & Analyze
             </Button>
           ) : sessionState === 'results' ? (
             <Button onClick={resetSession}>
@@ -374,7 +366,7 @@ export default function TrainingPage() {
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-2">Choose a Training Scenario</h2>
               <p className="text-muted-foreground">
-                Practice with AI-powered prospects in realistic sales situations
+                Practice with AI-powered prospects. You speak, they respond with realistic voice.
               </p>
             </div>
 
@@ -392,7 +384,7 @@ export default function TrainingPage() {
                     'cursor-pointer transition-all hover:shadow-lg hover:border-primary',
                     selectedScenario?.id === scenario.id && 'border-primary ring-2 ring-primary/20'
                   )}
-                  onClick={() => handleSelectScenario(scenario)}
+                  onClick={() => setSelectedScenario(scenario)}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
@@ -461,44 +453,32 @@ export default function TrainingPage() {
                       <div>
                         <CardTitle className="text-lg flex items-center gap-2">
                           <MessageSquare className="h-5 w-5" />
-                          Conversation
+                          Call with {selectedScenario.persona.name}
                         </CardTitle>
                         <CardDescription>
-                          {selectedScenario.persona.name} - {selectedScenario.persona.title}
+                          {selectedScenario.persona.title} at {selectedScenario.persona.company}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
-                        {mode === 'voice' && (
-                          <>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => setIsMuted(!isMuted)}
-                            >
-                              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                            </Button>
-                            <div className={cn(
-                              'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm',
-                              isListening ? 'bg-green-100 text-green-700' : 'bg-muted'
-                            )}>
-                              {isListening ? (
-                                <>
-                                  <Mic className="h-4 w-4" />
-                                  Listening...
-                                </>
-                              ) : (
-                                <>
-                                  <MicOff className="h-4 w-4" />
-                                  Mic Off
-                                </>
-                              )}
-                            </div>
-                          </>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setIsMuted(!isMuted)}
+                          title={isMuted ? 'Unmute AI voice' : 'Mute AI voice'}
+                        >
+                          {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                        </Button>
+                        {isSpeaking && (
+                          <Badge variant="secondary" className="animate-pulse">
+                            <Volume2 className="h-3 w-3 mr-1" />
+                            Speaking...
+                          </Badge>
                         )}
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col min-h-0 p-4 pt-0">
+                    {/* Conversation */}
                     <div 
                       ref={conversationRef}
                       className="flex-1 overflow-y-auto space-y-4 mb-4"
@@ -520,37 +500,69 @@ export default function TrainingPage() {
                             )}
                           >
                             <p className="text-sm font-medium mb-1">
-                              {turn.role === 'user' ? 'You' : selectedScenario.persona.name}
+                              {turn.role === 'user' ? 'You (Sales Rep)' : selectedScenario.persona.name}
                             </p>
                             <p>{turn.content}</p>
                           </div>
                         </div>
                       ))}
+                      
+                      {/* Interim transcript (what you're saying) */}
+                      {interimTranscript && (
+                        <div className="flex justify-end">
+                          <div className="max-w-[80%] rounded-lg px-4 py-2 bg-primary/50 text-primary-foreground italic">
+                            <p className="text-sm">{interimTranscript}...</p>
+                          </div>
+                        </div>
+                      )}
+                      
                       {isProcessing && (
                         <div className="flex justify-start">
-                          <div className="bg-muted rounded-lg px-4 py-2">
+                          <div className="bg-muted rounded-lg px-4 py-2 flex items-center gap-2">
                             <Loader2 className="h-4 w-4 animate-spin" />
+                            <span className="text-sm">Thinking...</span>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* Text Input (for text/mock mode) */}
-                    {(mode === 'text' || mode === 'mock') && (
+                    {/* Input Controls */}
+                    <div className="space-y-3">
+                      {/* Microphone Button */}
+                      <div className="flex justify-center">
+                        <Button
+                          size="lg"
+                          variant={isListening ? 'destructive' : 'default'}
+                          onClick={toggleMicrophone}
+                          disabled={isProcessing || isSpeaking}
+                          className="rounded-full h-16 w-16"
+                        >
+                          {isListening ? (
+                            <MicOff className="h-6 w-6" />
+                          ) : (
+                            <Mic className="h-6 w-6" />
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-center text-sm text-muted-foreground">
+                        {isListening ? 'Listening... Click to stop' : 'Click to speak'}
+                      </p>
+
+                      {/* Text Input (fallback) */}
                       <form onSubmit={handleTextSubmit} className="flex gap-2">
                         <input
                           type="text"
                           value={textInput}
                           onChange={(e) => setTextInput(e.target.value)}
-                          placeholder="Type your response..."
+                          placeholder="Or type your response..."
                           className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                          disabled={isProcessing}
+                          disabled={isProcessing || isSpeaking}
                         />
-                        <Button type="submit" disabled={isProcessing || !textInput.trim()}>
-                          <Zap className="h-4 w-4" />
+                        <Button type="submit" disabled={isProcessing || !textInput.trim() || isSpeaking}>
+                          <Send className="h-4 w-4" />
                         </Button>
                       </form>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -769,7 +781,7 @@ export default function TrainingPage() {
             </div>
 
             {/* Key Moments */}
-            {evaluation.keyMoments.length > 0 && (
+            {evaluation.keyMoments && evaluation.keyMoments.length > 0 && (
               <Card className="mt-6">
                 <CardHeader>
                   <CardTitle>Key Moments</CardTitle>
@@ -815,7 +827,7 @@ export default function TrainingPage() {
   )
 }
 
-// Helper functions
+// Helper function for first message
 function getFirstMessage(scenario: TrainingScenario): string {
   switch (scenario.category) {
     case 'cold-call':
@@ -833,18 +845,10 @@ function getFirstMessage(scenario: TrainingScenario): string {
   }
 }
 
-function getMockResponse(userMessage: string, scenario: TrainingScenario | null): string {
-  if (!scenario) return "I'm not sure what you mean."
-  
-  // Simple mock responses based on scenario type
-  const responses = [
-    "That's interesting. Tell me more about that.",
-    "Hmm, I see. But what about the price?",
-    "We've heard that before from other vendors.",
-    "How would that actually work for our team?",
-    "I need to think about that one.",
-    "Can you give me a specific example?",
-  ]
-  
-  return responses[Math.floor(Math.random() * responses.length)]
+// TypeScript declarations for Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition
+    webkitSpeechRecognition: typeof SpeechRecognition
+  }
 }

@@ -35,15 +35,15 @@ export async function POST(request: NextRequest) {
     // Build evaluation prompt
     const evaluationPrompt = buildEvaluationPrompt(scenario, conversation, duration)
 
-    // Get AI provider
+    // Get AI provider - use Gemini Flash for speed
     const provider = getProvider({ provider: 'gemini' })
     
     let response: string
     try {
       response = await provider.analyze(evaluationPrompt)
     } catch {
-      // Fallback to OpenRouter
-      const fallbackProvider = getProvider({ provider: 'openrouter', model: 'claude-3-sonnet' })
+      // Fallback to OpenRouter with Claude Haiku (faster than Sonnet)
+      const fallbackProvider = getProvider({ provider: 'openrouter', model: 'claude-3-haiku' })
       response = await fallbackProvider.analyze(evaluationPrompt)
     }
 
