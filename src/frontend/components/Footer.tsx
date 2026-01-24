@@ -30,13 +30,13 @@ export function Footer() {
     <footer
       ref={footerRef}
       id="footer"
-      className="bg-[#162d3d] border-t border-white/10 px-6 py-12 lg:px-8"
+      className="relative bg-[#7D9AB3] px-6 py-12 lg:px-8"
       role="contentinfo"
     >
       <div className="footer-inner mx-auto max-w-[1280px] flex flex-col items-center">
         <Link
           href="/"
-          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
+          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#7D9AB3] rounded-sm"
         >
           <Image
             src="/talkio-logo-white.svg"
@@ -45,7 +45,7 @@ export function Footer() {
             className="object-contain"
           />
         </Link>
-        <p className="mt-3 text-sm text-slate-500">
+        <p className="mt-3 text-sm text-white/80">
           © 2026 Talkio. All rights reserved.
         </p>
       </div>

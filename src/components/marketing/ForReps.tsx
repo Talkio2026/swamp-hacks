@@ -27,15 +27,12 @@ export function ForReps() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#f8fafc] px-6 py-20 lg:px-8 lg:py-28"
+      className="relative bg-[#E9EDF1] px-6 py-20 lg:px-8 lg:py-28"
     >
-      {/* Frosted glass top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#1e3a5f]/80 to-transparent" aria-hidden />
-      
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px]">
         <div className="rep-content grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div>
-            <div className="inline-flex items-center rounded-full border border-[#1e3a5f]/20 bg-[#1e3a5f]/10 px-3 py-1 text-xs font-medium text-[#1e3a5f]">
+            <div className="inline-flex items-center rounded-full border border-[#7D9AB3]/30 bg-[#7D9AB3]/15 px-3 py-1 text-xs font-medium text-[#5a7a94]">
               For Sales Reps
             </div>
             <h2 className="mt-4 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
@@ -46,7 +43,7 @@ export function ForReps() {
             </p>
             <ul className="mt-6 space-y-3">
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-[#1e3a5f] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-[#7D9AB3] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-sm text-slate-700">
@@ -54,7 +51,7 @@ export function ForReps() {
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-[#1e3a5f] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-[#7D9AB3] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-sm text-slate-700">
@@ -62,7 +59,7 @@ export function ForReps() {
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-[#1e3a5f] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-[#7D9AB3] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-sm text-slate-700">
@@ -72,28 +69,28 @@ export function ForReps() {
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-[#1e3a5f]/20 bg-slate-50 p-6 shadow-lg">
+          <div className="rounded-2xl border border-[#9AAFC2]/30 bg-white p-6 shadow-lg">
             <div className="space-y-4">
-              <div className="rounded-lg border border-slate-200 bg-white p-4">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Summary</div>
+              <div className="rounded-lg border border-[#CAD5DF] bg-[#F3F5F8] p-4">
+                <div className="text-xs font-medium text-[#7D9AB3] uppercase tracking-wide">Call Summary</div>
                 <div className="mt-2 text-sm text-slate-700">
                   Discussed Q1 budget concerns. Client interested in annual plan but needs CFO approval. Pricing objection on enterprise tier.
                 </div>
               </div>
-              <div className="rounded-lg border border-[#1e3a5f]/30 bg-[#1e3a5f]/10 p-4">
-                <div className="text-xs font-medium text-[#1e3a5f] uppercase tracking-wide">Next Action</div>
+              <div className="rounded-lg border border-[#9AAFC2]/40 bg-[#9AAFC2]/15 p-4">
+                <div className="text-xs font-medium text-[#5a7a94] uppercase tracking-wide">Next Action</div>
                 <div className="mt-2 space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-700">Follow-up call scheduled</span>
-                    <span className="font-medium text-[#1e3a5f]">Jan 28, 2:00 PM</span>
+                    <span className="font-medium text-[#5a7a94]">Jan 28, 2:00 PM</span>
                   </div>
                   <div className="text-xs text-slate-600">
                     Intent: Present revised pricing with CFO on call
                   </div>
                 </div>
               </div>
-              <div className="rounded-lg border border-slate-200 bg-white p-4">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Key Points</div>
+              <div className="rounded-lg border border-[#CAD5DF] bg-white p-4">
+                <div className="text-xs font-medium text-[#7D9AB3] uppercase tracking-wide">Key Points</div>
                 <ul className="mt-2 space-y-1 text-xs text-slate-600">
                   <li>• Budget approval needed by Feb 1</li>
                   <li>• Competitor comparison requested</li>

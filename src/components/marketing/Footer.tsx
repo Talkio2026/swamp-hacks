@@ -30,16 +30,13 @@ export function Footer() {
     <footer
       ref={footerRef}
       id="footer"
-      className="relative bg-[#1e3a5f] px-6 py-12 lg:px-8"
+      className="relative bg-[#7D9AB3] px-6 py-12 lg:px-8"
       role="contentinfo"
     >
-      {/* Frosted glass top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#f8fafc]/80 to-transparent" aria-hidden />
-      
-      <div className="footer-inner mx-auto max-w-[1280px] flex flex-col items-center relative z-10">
+      <div className="footer-inner mx-auto max-w-[1280px] flex flex-col items-center">
         <Link
           href="/"
-          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1e3a5f] rounded-sm"
+          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#7D9AB3] rounded-sm"
         >
           <Image
             src="/talkio-logo-white.svg"
@@ -48,7 +45,7 @@ export function Footer() {
             className="object-contain"
           />
         </Link>
-        <p className="mt-3 text-sm text-white/70">
+        <p className="mt-3 text-sm text-white/80">
           © 2026 Talkio. All rights reserved.
         </p>
       </div>

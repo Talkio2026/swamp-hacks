@@ -95,12 +95,9 @@ export function ProductSummary() {
   return (
     <section
       ref={sectionRef}
-      className="relative px-6 py-20 lg:px-8 lg:py-28"
+      className="relative bg-[#D4E0EA] px-6 py-20 lg:px-8 lg:py-28"
     >
-      {/* Frosted glass bottom transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-transparent to-[#f8fafc]/90" aria-hidden />
-      
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px]">
         {/* Core Features Grid */}
         <div className="core-features-container">
           <div className="grid gap-6 sm:grid-cols-2">
@@ -110,22 +107,22 @@ export function ProductSummary() {
                 className="core-feature group"
               >
                 <div className={cn(
-                  "flex gap-4 p-6 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md shadow-lg transition-all duration-300",
-                  "hover:border-white/40 hover:bg-white/15 hover:-translate-y-1"
+                  "flex gap-4 p-6 rounded-2xl border border-[#9AAFC2]/40 bg-white/80 shadow-md transition-all duration-300",
+                  "hover:border-[#7D9AB3]/60 hover:bg-white hover:shadow-lg hover:-translate-y-1"
                 )}>
                   <div className="flex-shrink-0">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white shadow-lg">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#7D9AB3] text-white shadow-md">
                       {feature.icon}
                     </div>
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-xs font-bold text-white/70">{feature.number}</span>
-                      <h4 className="text-base font-semibold text-white">
+                      <span className="text-xs font-bold text-[#7D9AB3]">{feature.number}</span>
+                      <h4 className="text-base font-semibold text-[#5a7a94]">
                         {feature.title}
                       </h4>
                     </div>
-                    <p className="text-sm text-white/80">
+                    <p className="text-sm text-[#7D9AB3]">
                       {feature.description}
                     </p>
                   </div>

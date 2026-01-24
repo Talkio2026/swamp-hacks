@@ -62,29 +62,26 @@ export function HowItWorks() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#1e3a5f] px-6 py-20 lg:px-8 lg:py-28"
+      className="relative bg-[#7D9AB3] px-6 py-20 lg:px-8 lg:py-28"
     >
-      {/* Frosted glass top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#f8fafc]/80 to-transparent" aria-hidden />
-      
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px]">
         <h2 className="how-heading text-center text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
           How it works
         </h2>
-        <p className="mt-4 text-center text-sm text-white/80 max-w-2xl mx-auto">
+        <p className="mt-4 text-center text-sm text-white/90 max-w-2xl mx-auto">
           Simple, automated workflow. No manual data entry, no real-time disruption.
         </p>
 
         <div className="steps-grid mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step) => (
             <div key={step.number} className="step-card flex flex-col">
-              <div className="mb-4 text-4xl font-bold text-white/30">
+              <div className="mb-4 text-4xl font-bold text-white/40">
                 {step.number}
               </div>
               <h3 className="text-base font-semibold text-white">
                 {step.title}
               </h3>
-              <p className="mt-2 text-sm text-white/70">
+              <p className="mt-2 text-sm text-white/80">
                 {step.description}
               </p>
             </div>

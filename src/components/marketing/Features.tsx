@@ -98,20 +98,17 @@ export function Features() {
     <section
       ref={sectionRef}
       id="features"
-      className="relative bg-[#f8fafc] px-6 py-20 lg:px-8 lg:py-28"
+      className="relative bg-[#F3F5F8] px-6 py-20 lg:px-8 lg:py-28"
       aria-labelledby="features-heading"
     >
-      {/* Frosted glass top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#1e3a5f]/80 to-transparent" aria-hidden />
-      
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px]">
         <h2
           id="features-heading"
-          className="features-heading text-center text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl"
+          className="features-heading text-center text-xl font-bold tracking-tight text-[#5a7a94] sm:text-2xl lg:text-3xl"
         >
           Everything you need to understand and act on sales calls
         </h2>
-        <p className="mt-4 text-center text-sm text-slate-700 max-w-3xl mx-auto">
+        <p className="mt-4 text-center text-sm text-[#7D9AB3] max-w-3xl mx-auto">
           Twilio VoIP captures every call. AI processes it after it ends—extracting summaries, tracking context across conversations, and surfacing clear next actions. No real-time overhead. Just structured intelligence that helps reps stay on top of deals and managers see what matters.
         </p>
         <div className="features-grid mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -119,15 +116,15 @@ export function Features() {
             <article
               key={title}
               className={cn(
-                'feature-card group flex flex-col rounded-2xl border border-[#1e3a5f]/10 bg-white/80 backdrop-blur-sm p-6 shadow-md transition-all duration-300',
-                'hover:border-[#1e3a5f]/25 hover:bg-white hover:shadow-xl hover:shadow-[#1e3a5f]/8 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-[#1e3a5f] focus-within:ring-offset-2'
+                'feature-card group flex flex-col rounded-2xl border border-[#CAD5DF] bg-white/90 backdrop-blur-sm p-6 shadow-md transition-all duration-300',
+                'hover:border-[#9AAFC2] hover:bg-white hover:shadow-xl hover:shadow-[#7D9AB3]/15 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-[#7D9AB3] focus-within:ring-offset-2'
               )}
             >
               <div className="mb-4 flex items-start justify-between">
-                <span className="rounded-lg bg-[#1e3a5f]/10 p-2 text-[#1e3a5f]">{icon}</span>
+                <span className="rounded-lg bg-[#E9EDF1] p-2 text-[#7D9AB3]">{icon}</span>
               </div>
-              <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-              <p className="mt-2 flex-1 text-sm text-slate-700">{body}</p>
+              <h3 className="text-base font-semibold text-[#5a7a94]">{title}</h3>
+              <p className="mt-2 flex-1 text-sm text-[#7D9AB3]">{body}</p>
             </article>
           ))}
         </div>
