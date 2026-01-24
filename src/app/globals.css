@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Lekton:ital,wght@0,400;0,700;1,400&display=swap');
+}
+
 :root {
   /* Enterprise color palette - neutral/blue */
   --background: 0 0% 100%;
@@ -53,7 +57,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Lekton', ui-monospace, monospace;
 }
 
 * {
@@ -62,6 +66,7 @@
 
 body {
   @apply bg-background text-foreground;
+  font-family: 'Lekton', monospace;
 }
 
 /* Custom scrollbar */
