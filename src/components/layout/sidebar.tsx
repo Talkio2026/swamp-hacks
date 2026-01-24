@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
 import {
@@ -37,11 +38,14 @@ export function Sidebar() {
       {/* Logo & Org Switcher */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!collapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">T</span>
-            </div>
-            <span className="font-semibold text-lg">Talkio</span>
+          <Link href="/dashboard" className="relative h-8 w-[100px]">
+            <Image
+              src="/talkio-logo.svg"
+              alt="Talkio"
+              fill
+              className="object-contain object-left"
+              priority
+            />
           </Link>
         )}
         <button
