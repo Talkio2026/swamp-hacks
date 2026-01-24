@@ -32,7 +32,7 @@ export function LandingPage() {
       
       {/* Extended photo background: covers hero + ProductSummary with smooth fade */}
       <div
-        className="relative overflow-visible"
+        className="relative overflow-visible shadow-2xl shadow-[#1e3a5f]/40"
         style={{ backgroundImage: "url('/photos/2.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed' }}
       >
         {/* Gradient overlay: darkens top, fades to ocean color at bottom */}
