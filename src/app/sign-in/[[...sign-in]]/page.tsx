@@ -49,111 +49,114 @@ export default function SignInPage() {
           <h1 className="text-xl font-semibold text-white mb-1">Welcome back</h1>
           <p className="text-white/50 text-sm mb-8">Sign in to continue to your dashboard</p>
 
-          {/* Clerk SignIn */}
-          <div className="w-full flex justify-center">
+          {/* Inner box containing all login options - white pastel solid */}
+          <div className="w-full rounded-2xl bg-[#f0f4f8] p-6 flex flex-col items-center">
             <SignIn 
               forceRedirectUrl="/dashboard"
               appearance={{
                 elements: {
-                  rootBox: 'w-full',
-                  card: 'bg-transparent shadow-none p-0 w-full border-none',
-                  cardBox: 'shadow-none bg-transparent w-full',
-                header: 'hidden',
-                headerTitle: 'hidden',
-                headerSubtitle: 'hidden',
-                
-                // Social buttons with glass effect and hover animation
-                socialButtonsBlockButton: `
-                  bg-white/15 
-                  border border-white/25 
-                  text-white 
-                  rounded-xl 
-                  h-12
-                  transition-all 
-                  duration-300 
-                  ease-out
-                  hover:bg-white/25 
-                  hover:border-white/40 
-                  hover:scale-[1.03]
-                  hover:shadow-xl
-                  hover:shadow-white/15
-                  active:scale-[0.98]
-                `,
-                socialButtonsBlockButtonText: 'text-white font-bold text-sm tracking-wide',
-                socialButtonsProviderIcon: 'w-5 h-5',
-                socialButtonsBlockButtonArrow: 'hidden',
-                
-                // Divider centered
-                dividerLine: 'bg-white/20',
-                dividerText: 'text-white/50 text-xs bg-transparent px-3',
-                dividerRow: 'my-6 flex items-center justify-center',
-                
-                // Form fields centered with highlighted label
-                formFieldLabel: 'text-white font-semibold text-sm text-left mb-2 block',
-                formFieldInput: `
-                  bg-white/10 
-                  border border-white/20 
-                  text-white 
-                  placeholder:text-white/40 
-                  rounded-xl 
-                  h-12
-                  transition-all 
-                  duration-300
-                  focus:bg-white/15
-                  focus:border-white/40 
-                  focus:ring-0
-                  focus:shadow-lg
-                  focus:shadow-white/10
-                  hover:border-white/30
-                `,
-                
-                // Primary button centered with cool hover
-                formButtonPrimary: `
-                  bg-white/20 
-                  text-white 
-                  font-semibold 
-                  rounded-xl 
-                  h-12 
-                  border border-white/25 
-                  w-full
-                  transition-all 
-                  duration-300 
-                  ease-out
-                  hover:bg-white/30 
-                  hover:border-white/40
-                  hover:scale-[1.03]
-                  hover:shadow-xl
-                  hover:shadow-white/15
-                  active:scale-[0.98]
-                `,
-                
-                // Footer elements
-                footerAction: 'hidden',
-                footerActionText: 'hidden',
-                footerActionLink: 'hidden',
-                footer: 'hidden',
-                
-                // Other elements
-                identityPreview: 'bg-white/10 border border-white/20 rounded-xl',
-                identityPreviewText: 'text-white',
-                identityPreviewEditButton: 'text-white/70 hover:text-white transition-colors',
-                formFieldInputShowPasswordButton: 'text-white/50 hover:text-white transition-colors',
-                otpCodeFieldInput: 'bg-white/10 border border-white/20 text-white rounded-xl focus:border-white/40',
-                formResendCodeLink: 'text-white/70 hover:text-white transition-colors',
-                alertText: 'text-white/80',
-                formFieldErrorText: 'text-red-300 text-xs mt-1',
-                
-                // Layout centered
-                main: 'gap-5 w-full flex flex-col items-center',
-                form: 'w-full gap-5',
-                formFieldRow: 'w-full',
-                socialButtons: 'w-full',
-              },
-              layout: {
-                socialButtonsPlacement: 'top',
-                socialButtonsVariant: 'blockButton',
-              },
-            }}
+                  rootBox: 'w-full flex justify-center',
+                  card: 'bg-transparent shadow-none p-0 w-full border-none flex flex-col items-center',
+                  cardBox: 'shadow-none bg-transparent w-full flex flex-col items-center',
+                  header: 'hidden',
+                  headerTitle: 'hidden',
+                  headerSubtitle: 'hidden',
+                  
+                  // Google button - HIGHLIGHTED on pastel bg
+                  socialButtonsBlockButton: `
+                    bg-white 
+                    border-2 border-slate-200 
+                    text-slate-700 
+                    rounded-xl 
+                    h-14
+                    shadow-md
+                    shadow-slate-200/50
+                    transition-all 
+                    duration-300 
+                    ease-out
+                    hover:bg-slate-50 
+                    hover:border-slate-300 
+                    hover:scale-[1.03]
+                    hover:shadow-lg
+                    hover:shadow-slate-300/50
+                    active:scale-[0.98]
+                  `,
+                  socialButtonsBlockButtonText: 'text-slate-700 font-bold text-sm tracking-wide',
+                  socialButtonsProviderIcon: 'w-6 h-6',
+                  socialButtonsBlockButtonArrow: 'hidden',
+                  
+                  // Divider centered
+                  dividerLine: 'bg-slate-300',
+                  dividerText: 'text-slate-400 text-xs bg-[#f0f4f8] px-4',
+                  dividerRow: 'my-5 w-full flex items-center justify-center',
+                  
+                  // Form fields - highlighted label on pastel
+                  formFieldLabel: 'text-slate-600 font-semibold text-sm mb-2 block w-full text-center',
+                  formFieldInput: `
+                    bg-white 
+                    border border-slate-200 
+                    text-slate-700 
+                    text-center
+                    placeholder:text-slate-400 
+                    rounded-xl 
+                    h-12
+                    transition-all 
+                    duration-300
+                    focus:bg-white
+                    focus:border-slate-400 
+                    focus:ring-0
+                    focus:shadow-md
+                    focus:shadow-slate-200/50
+                    hover:border-slate-300
+                  `,
+                  
+                  // Continue button on pastel
+                  formButtonPrimary: `
+                    bg-slate-700 
+                    text-white 
+                    font-semibold 
+                    rounded-xl 
+                    h-12 
+                    border border-slate-600 
+                    w-full
+                    transition-all 
+                    duration-300 
+                    ease-out
+                    hover:bg-slate-800 
+                    hover:border-slate-700
+                    hover:scale-[1.02]
+                    hover:shadow-lg
+                    hover:shadow-slate-400/30
+                    active:scale-[0.98]
+                  `,
+                  
+                  // Footer elements
+                  footerAction: 'hidden',
+                  footerActionText: 'hidden',
+                  footerActionLink: 'hidden',
+                  footer: 'hidden',
+                  
+                  // Other elements on pastel
+                  identityPreview: 'bg-white border border-slate-200 rounded-xl',
+                  identityPreviewText: 'text-slate-700 text-center',
+                  identityPreviewEditButton: 'text-slate-500 hover:text-slate-700 transition-colors',
+                  formFieldInputShowPasswordButton: 'text-slate-400 hover:text-slate-600 transition-colors',
+                  otpCodeFieldInput: 'bg-white border border-slate-200 text-slate-700 rounded-xl focus:border-slate-400 text-center',
+                  formResendCodeLink: 'text-slate-500 hover:text-slate-700 transition-colors',
+                  alertText: 'text-slate-600 text-center',
+                  formFieldErrorText: 'text-red-500 text-xs mt-1 text-center',
+                  
+                  // Layout ALL centered
+                  main: 'gap-4 w-full flex flex-col items-center',
+                  form: 'w-full gap-4 flex flex-col items-center',
+                  formFieldRow: 'w-full flex flex-col items-center',
+                  socialButtons: 'w-full flex flex-col items-center',
+                },
+                layout: {
+                  socialButtonsPlacement: 'top',
+                  socialButtonsVariant: 'blockButton',
+                },
+              }}
             />
           </div>
 
