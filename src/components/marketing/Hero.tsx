@@ -75,7 +75,7 @@ export function Hero() {
       {/* Smooth gradient transition to next section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[#2c4a6a]/30 to-[#2c4a6a]/60 blur-2xl z-20" />
       
-      <div className="mx-auto max-w-[1280px] relative z-10 px-6 lg:px-8 py-20 w-full">
+      <div className="mx-auto max-w-[1280px] relative px-6 lg:px-8 py-20 w-full">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left: Text Content */}
           <div className="max-w-2xl">

@@ -32,7 +32,7 @@ export function ForReps() {
       {/* Spotlight hint */}
       <div className="absolute bottom-20 right-1/4 w-[350px] h-[350px] bg-white/[0.02] rounded-full blur-[100px]" aria-hidden />
       
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative">
         <div className="rep-content grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div>
             <div className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/80">

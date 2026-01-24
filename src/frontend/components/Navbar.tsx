@@ -53,7 +53,7 @@ export function Navbar() {
   return (
     <header
       ref={headerRef}
-      className="navbar fixed top-4 left-0 right-0 z-50 w-full px-4 lg:px-8"
+      className="navbar fixed top-4 left-0 right-0 z-[100] w-full px-4 lg:px-8"
     >
       <nav
         className="mx-auto max-w-[1280px] rounded-full bg-white/10 border border-white/20 shadow-lg shadow-black/10 backdrop-blur-xl px-8 py-4 flex items-center justify-between gap-6"

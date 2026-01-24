@@ -99,7 +99,7 @@ export function HowItWorks() {
       {/* Spotlight hint */}
       <div className="absolute top-1/2 left-0 w-[250px] h-[250px] bg-white/[0.03] rounded-full blur-[60px]" aria-hidden />
       
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative">
         <h2 className="how-heading text-center text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
           How it works
         </h2>

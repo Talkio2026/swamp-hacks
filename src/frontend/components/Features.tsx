@@ -104,7 +104,7 @@ export function Features() {
       {/* Spotlight hint */}
       <div className="absolute top-20 right-1/4 w-[300px] h-[300px] bg-white/[0.02] rounded-full blur-[80px]" aria-hidden />
       
-      <div className="mx-auto max-w-[1280px] relative z-10">
+      <div className="mx-auto max-w-[1280px] relative">
         <h2
           id="features-heading"
           className="features-heading text-center text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl"
