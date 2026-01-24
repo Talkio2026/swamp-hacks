@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap';
 import { cn } from '@/lib/utils';
@@ -20,30 +21,12 @@ export function Navbar() {
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      // 1) Initial page load: fade in, y -10 → 0, 0.4s, power2.out
       gsap.from(el, {
         opacity: 0,
         y: -10,
         duration: 0.4,
         ease: 'power2.out',
       });
-
-      // 2) On scroll: subtle box-shadow when scrolled > 40px, smooth scrub
-      gsap.fromTo(
-        el,
-        { boxShadow: '0 0 0 rgba(0, 0, 0, 0)' },
-        {
-          boxShadow:
-            '0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: document.body,
-            start: '0 0',
-            end: '40 0',
-            scrub: true,
-          },
-        }
-      );
     }, headerRef);
 
     return () => ctx.revert();
@@ -52,26 +35,32 @@ export function Navbar() {
   return (
     <header
       ref={headerRef}
-      className="navbar sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80"
+      className="navbar sticky top-4 z-50 w-full px-4 lg:px-8"
     >
       <nav
-        className="mx-auto flex max-w-[1200px] items-center justify-between gap-6 px-6 py-4 md:grid md:grid-cols-[1fr_auto_1fr] md:justify-between lg:px-8"
+        className="mx-auto max-w-[1280px] rounded-2xl bg-white/40 border border-purple-200/30 shadow-sm backdrop-blur-xl px-6 py-4 flex items-center justify-between gap-6"
         aria-label="Main navigation"
       >
         <Link
           href="/"
-          className="text-xl font-semibold text-slate-900 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 rounded-sm"
+          className="relative h-10 w-[120px] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-sm"
         >
-          Talkio
+          <Image
+            src="/talkio-logo.svg"
+            alt="Talkio"
+            fill
+            className="object-contain object-left"
+            priority
+          />
         </Link>
 
         {/* Desktop nav - centered */}
-        <div className="hidden md:flex md:items-center md:justify-center md:gap-8">
+        <div className="hidden md:flex md:items-center md:justify-center md:gap-8 flex-1">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={label}
               href={href}
-              className="text-slate-600 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 rounded-sm"
+              className="text-slate-600 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 rounded-sm"
             >
               {label}
             </Link>
@@ -81,9 +70,9 @@ export function Navbar() {
         <div className="hidden md:flex md:justify-end">
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
           >
-            Request Demo
+            Dashboard
           </Link>
         </div>
 
@@ -91,7 +80,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setMobileOpen((o) => !o)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-purple-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 md:hidden"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
         >
@@ -114,17 +103,17 @@ export function Navbar() {
         role="region"
         aria-label="Mobile menu"
         className={cn(
-          'border-t border-slate-200 bg-white md:hidden',
+          'mt-2 mx-auto max-w-[1280px] rounded-2xl bg-white/70 border border-purple-200/30 shadow-lg backdrop-blur-xl p-4 md:hidden',
           mobileOpen ? 'block' : 'hidden'
         )}
       >
-        <div className="mx-auto max-w-[1200px] flex flex-col gap-1 px-6 py-4">
+        <div className="flex flex-col gap-1">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={label}
               href={href}
               onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-4 py-3 text-slate-600 hover:bg-violet-50 hover:text-slate-900"
+              className="rounded-lg px-4 py-3 text-slate-600 hover:bg-purple-50 hover:text-slate-900"
             >
               {label}
             </Link>
@@ -134,7 +123,7 @@ export function Navbar() {
             onClick={() => setMobileOpen(false)}
             className="mt-2 inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white hover:bg-slate-800"
           >
-            Request Demo
+            Dashboard
           </Link>
         </div>
       </div>
