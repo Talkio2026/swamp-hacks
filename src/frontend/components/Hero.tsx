@@ -8,6 +8,11 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // #region agent log
+    console.log('[DEBUG Frontend Hero.tsx:10] Hero mounted', { sectionExists: !!sectionRef.current });
+    fetch('http://127.0.0.1:7242/ingest/a4918017-0b21-4e17-ac77-6519ee12f785',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'frontend/Hero.tsx:10',message:'Hero mounted',data:{sectionExists:!!sectionRef.current},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+    // #endregion
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       tl.from('.hero-heading', {
@@ -32,22 +37,39 @@ export function Hero() {
         );
     }, sectionRef);
 
+    // #region agent log
+    if (sectionRef.current) {
+      const section = sectionRef.current;
+      const rect = section.getBoundingClientRect();
+      const styles = window.getComputedStyle(section);
+      const navbar = document.querySelector('header.navbar');
+      const navbarRect = navbar ? navbar.getBoundingClientRect() : null;
+      const gapBetween = navbarRect ? rect.top - navbarRect.bottom : null;
+      const debugData = {
+        heroTop: rect.top,
+        heroHeight: rect.height,
+        heroPaddingTop: styles.paddingTop,
+        heroMarginTop: styles.marginTop,
+        heroBg: styles.backgroundImage,
+        navbarTop: navbarRect?.top,
+        navbarBottom: navbarRect?.bottom,
+        navbarHeight: navbarRect?.height,
+        gapBetween
+      };
+      console.log('[DEBUG Frontend Hero.tsx:40] Gap analysis', debugData);
+      fetch('http://127.0.0.1:7242/ingest/a4918017-0b21-4e17-ac77-6519ee12f785',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'frontend/Hero.tsx:40',message:'Hero dimensions',data:debugData,timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H2,H5'})}).catch(()=>{});
+    }
+    // #endregion
+
     return () => ctx.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen w-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: 'url(/photos/2.jpg)' }}
+      className="relative h-screen w-full"
       aria-labelledby="hero-heading"
     >
-      {/* Subtle overlay to improve text legibility */}
-      <div
-        className="absolute inset-0 bg-black/30"
-        aria-hidden
-      />
-
       <div className="relative z-10 flex flex-col justify-center h-full px-6 pt-24 pb-12 lg:px-8 lg:pt-32 lg:pb-16">
         <div className="mx-auto max-w-[1280px] w-full">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">

@@ -29,10 +29,13 @@ export function FinalCTA() {
     <section
       ref={sectionRef}
       id="cta"
-      className="bg-gradient-to-br from-purple-50/40 to-white px-6 py-14 lg:px-8 lg:py-20"
+      className="relative bg-[#f8fafc] px-6 py-20 lg:px-8 lg:py-28"
       aria-labelledby="cta-heading"
     >
-      <div className="cta-block mx-auto max-w-[1280px] text-center">
+      {/* Frosted glass top transition */}
+      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#1e3a5f]/80 to-transparent" aria-hidden />
+      
+      <div className="cta-block mx-auto max-w-[1280px] text-center relative z-10">
         <h2
           id="cta-heading"
           className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl"
@@ -45,7 +48,7 @@ export function FinalCTA() {
         <div className="mt-10">
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-7 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center rounded-full bg-[#1e3a5f] px-8 py-3.5 text-sm font-medium text-white transition-all hover:bg-[#2c4a6a] hover:shadow-lg hover:shadow-[#1e3a5f]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a5f] focus-visible:ring-offset-2"
           >
             Request Demo
           </Link>

@@ -23,6 +23,22 @@ export function Navbar() {
     const el = headerRef.current;
     if (!el) return;
 
+    // #region agent log
+    const rect = el.getBoundingClientRect();
+    const styles = window.getComputedStyle(el);
+    const debugData = {
+      top:rect.top,
+      bottom:rect.bottom,
+      height:rect.height,
+      marginTop:styles.marginTop,
+      marginBottom:styles.marginBottom,
+      topStyle:styles.top,
+      position:styles.position
+    };
+    console.log('[DEBUG Navbar.tsx:24] Navbar position', debugData);
+    fetch('http://127.0.0.1:7242/ingest/a4918017-0b21-4e17-ac77-6519ee12f785',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Navbar.tsx:24',message:'Navbar dimensions',data:debugData,timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H4'})}).catch(()=>{});
+    // #endregion
+
     const ctx = gsap.context(() => {
       // Initial page load: fade in, y -10 → 0
       gsap.from(el, {
@@ -42,7 +58,7 @@ export function Navbar() {
       className="navbar sticky top-4 z-50 w-full px-4 lg:px-8"
     >
       <nav
-        className="mx-auto max-w-[1280px] rounded-full bg-white/40 border border-purple-200/30 shadow-sm backdrop-blur-xl px-8 py-4 flex items-center justify-between gap-6"
+        className="mx-auto max-w-[1280px] rounded-full bg-white/60 border border-[#2c4a6a]/20 shadow-lg shadow-[#1e3a5f]/5 backdrop-blur-xl px-8 py-4 flex items-center justify-between gap-6"
         aria-label="Main navigation"
       >
         {/* Logo */}
@@ -79,7 +95,7 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-8 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                className="inline-flex items-center justify-center rounded-full bg-[#1e3a5f] px-8 py-2.5 text-[15px] font-medium text-white transition-all hover:bg-[#2c4a6a] hover:shadow-lg hover:shadow-[#1e3a5f]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a5f] focus-visible:ring-offset-2"
               >
                 Dashboard
               </Link>
@@ -89,7 +105,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setMobileOpen((o) => !o)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-[#FCE5FC] hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E7C6FF] lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-slate-600 hover:bg-[#1e3a5f]/10 hover:text-[#1e3a5f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a5f] lg:hidden"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
         >
@@ -112,7 +128,7 @@ export function Navbar() {
           id="mobile-nav"
           role="region"
           aria-label="Mobile menu"
-          className="lg:hidden mt-2 mx-auto max-w-[1280px] rounded-[32px] bg-white/70 border border-purple-200/30 shadow-lg backdrop-blur-xl p-6"
+          className="lg:hidden mt-2 mx-auto max-w-[1280px] rounded-[32px] bg-white/80 border border-[#2c4a6a]/20 shadow-xl shadow-[#1e3a5f]/10 backdrop-blur-xl p-6"
         >
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map(({ label, href, hasDropdown }) => (
@@ -120,7 +136,7 @@ export function Navbar() {
                 key={label}
                 href={href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between rounded-2xl px-4 py-3 text-slate-600 hover:bg-purple-50 hover:text-slate-900"
+                className="flex items-center justify-between rounded-2xl px-4 py-3 text-slate-600 hover:bg-[#1e3a5f]/5 hover:text-slate-900"
               >
                 <span>{label}</span>
                 {hasDropdown && (
@@ -128,11 +144,11 @@ export function Navbar() {
                 )}
               </Link>
             ))}
-            <div className="mt-3 pt-3 border-t border-purple-200/40 flex flex-col gap-2">
+            <div className="mt-3 pt-3 border-t border-[#2c4a6a]/20 flex flex-col gap-2">
               <Link
                 href="/sign-up"
                 onClick={() => setMobileOpen(false)}
-                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-medium text-white hover:bg-slate-800"
+                className="inline-flex items-center justify-center rounded-full bg-[#1e3a5f] px-6 py-3 text-sm font-medium text-white hover:bg-[#2c4a6a] hover:shadow-lg hover:shadow-[#1e3a5f]/20"
               >
                 Dashboard
               </Link>

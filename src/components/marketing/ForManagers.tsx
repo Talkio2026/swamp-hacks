@@ -27,29 +27,32 @@ export function ForManagers() {
   return (
     <section
       ref={sectionRef}
-      className="bg-white px-6 py-14 lg:px-8 lg:py-20"
+      className="relative bg-[#1e3a5f] px-6 py-20 lg:px-8 lg:py-28"
     >
-      <div className="mx-auto max-w-[1280px]">
+      {/* Frosted glass top transition */}
+      <div className="absolute top-0 left-0 right-0 h-32 backdrop-blur-2xl bg-gradient-to-b from-[#f8fafc]/80 to-transparent" aria-hidden />
+      
+      <div className="mx-auto max-w-[1280px] relative z-10">
         <div className="manager-content grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1 rounded-2xl border border-purple-200/60 bg-gradient-to-br from-purple-50/50 to-white p-6 shadow-lg">
+          <div className="order-2 lg:order-1 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 shadow-lg">
             <div className="space-y-3">
               {[
                 { rep: 'Sarah Chen', calls: 12, pending: 3, status: 'active' },
                 { rep: 'Mike Ross', calls: 8, pending: 1, status: 'active' },
                 { rep: 'Lisa Park', calls: 15, pending: 5, status: 'needs-attention' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-4">
+                <div key={i} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4">
                   <div>
-                    <div className="font-medium text-sm text-slate-900">{item.rep}</div>
-                    <div className="text-xs text-slate-500">{item.calls} calls this week</div>
+                    <div className="font-medium text-sm text-white">{item.rep}</div>
+                    <div className="text-xs text-white/60">{item.calls} calls this week</div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <div className="text-xs text-slate-500">Pending</div>
-                      <div className="text-sm font-medium text-slate-900">{item.pending}</div>
+                      <div className="text-xs text-white/60">Pending</div>
+                      <div className="text-sm font-medium text-white">{item.pending}</div>
                     </div>
                     {item.status === 'needs-attention' && (
-                      <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      <div className="h-2 w-2 rounded-full bg-orange-400" />
                     )}
                   </div>
                 </div>
@@ -58,38 +61,38 @@ export function ForManagers() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <div className="inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-900">
+            <div className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-medium text-white">
               For Managers
             </div>
-            <h2 className="mt-4 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
+            <h2 className="mt-4 text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
               See what's happening. Coach where it matters.
             </h2>
-            <p className="mt-4 text-sm text-slate-600">
+            <p className="mt-4 text-sm text-white/80">
               Get complete visibility into every call without micromanaging. Track outcomes, spot patterns, and step in when deals need attention.
             </p>
             <ul className="mt-6 space-y-3">
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-slate-700">
-                  <strong>Call tracking log</strong> organized by rep, client, and organization
+                <span className="text-sm text-white/90">
+                  <strong className="text-white">Call tracking log</strong> organized by rep, client, and organization
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-slate-700">
-                  <strong>Follow-up visibility</strong> with scheduled dates and intent
+                <span className="text-sm text-white/90">
+                  <strong className="text-white">Follow-up visibility</strong> with scheduled dates and intent
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-slate-700">
-                  <strong>Deal progression tracking</strong> with outcomes and timestamps
+                <span className="text-sm text-white/90">
+                  <strong className="text-white">Deal progression tracking</strong> with outcomes and timestamps
                 </span>
               </li>
             </ul>
