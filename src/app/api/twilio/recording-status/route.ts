@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Twilio from "twilio";
-import { mkdir, writeFile } from "fs/promises";
-import { join } from "path";
+import connectToDatabase from "@/lib/mongodb";
+import Transcript from "@/lib/models/Transcript";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -173,6 +173,23 @@ async function processTranscription(recordingSid: string, callSid: string) {
     // Sort conversation by start time
     conversation.sort((a, b) => a.start - b.start);
 
+    // Merge consecutive messages from the same speaker
+    const mergedConversation: ConversationEntry[] = [];
+    for (const entry of conversation) {
+      const lastEntry = mergedConversation[mergedConversation.length - 1];
+      
+      if (lastEntry && lastEntry.speaker === entry.speaker) {
+        // Same speaker - merge text and extend end time
+        lastEntry.text = `${lastEntry.text} ${entry.text}`;
+        lastEntry.end = entry.end;
+      } else {
+        // Different speaker - add as new entry
+        mergedConversation.push({ ...entry });
+      }
+    }
+
+    console.log(`[Recording Status] Merged ${conversation.length} sentences into ${mergedConversation.length} conversation turns`);
+
     // Calculate overall sentiment
     const avgScore = sentimentCount > 0 ? totalSentimentScore / sentimentCount : 0;
     const getLabel = (score: number) => score > 0.1 ? "positive" : score < -0.1 ? "negative" : "neutral";
@@ -187,26 +204,34 @@ async function processTranscription(recordingSid: string, callSid: string) {
 
     console.log(`[Recording Status] Sentiment analysis: overall=${overallSentiment}`);
 
-    // Build output JSON
+    // Build output object
     const output: TranscriptOutput = {
       callSid,
       recordingSid,
       transcriptSid: transcript.sid,
       createdAt: new Date().toISOString(),
       sentiment: overallSentiment,
-      conversation,
+      conversation: mergedConversation,
     };
 
-    // Ensure transcripts directory exists
-    const transcriptsDir = join(process.cwd(), "transcripts");
-    await mkdir(transcriptsDir, { recursive: true });
+    // Connect to MongoDB and save transcript
+    await connectToDatabase();
+    
+    // Use upsert to update if exists or create if not
+    const savedTranscript = await Transcript.findOneAndUpdate(
+      { callSid },
+      {
+        callSid,
+        recordingSid,
+        transcriptSid: transcript.sid,
+        sentiment: overallSentiment,
+        conversation: mergedConversation,
+      },
+      { upsert: true, new: true }
+    );
 
-    // Write JSON file
-    const filePath = join(transcriptsDir, `${callSid}.json`);
-    await writeFile(filePath, JSON.stringify(output, null, 2), "utf-8");
-
-    console.log(`[Recording Status] Transcript saved: ${filePath}`);
-    console.log(`[Recording Status] Summary: ${conversation.length} messages, sentiment: ${overallSentiment}`);
+    console.log(`[Recording Status] Transcript saved to MongoDB: ${savedTranscript._id}`);
+    console.log(`[Recording Status] Summary: ${mergedConversation.length} conversation turns (from ${conversation.length} sentences), sentiment: ${overallSentiment}`);
   } catch (error) {
     console.error(`[Recording Status] Error processing transcription:`, error);
     throw error;
