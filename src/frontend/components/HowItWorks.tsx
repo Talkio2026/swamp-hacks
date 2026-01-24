@@ -177,16 +177,16 @@ export function HowItWorks() {
             }
           `}</style>
 
-          <div className="steps-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-4 relative">
+          <div className="steps-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-4 relative lg:-mt-4">
             {STEPS.map((step, index) => (
               <div key={step.number} className="step-card flex flex-col relative">
-                <div className="mb-4 text-4xl font-bold text-white/20">
+                <div className="mb-2 text-4xl font-bold text-white/20">
                   {step.number}
                 </div>
-                <h3 className="text-base font-semibold text-white">
+                <h3 className="text-base font-semibold text-white -mt-1">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-sm text-white/60">
+                <p className="mt-6 text-sm text-white/60">
                   {step.description}
                 </p>
                 
