@@ -42,5 +42,8 @@ next-env.d.ts
 
 /src/generated/prisma
 
+# transcripts (call recordings data)
+/transcripts
+
 # cursor
 .cursor/
