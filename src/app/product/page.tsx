@@ -112,7 +112,7 @@ export default function ProductPage() {
       </header>
 
       {/* Main Content */}
-      <main className="relative pt-24 px-6 lg:px-8 pb-20">
+      <main className="relative pt-24 px-6 lg:px-8 pb-20" style={{ fontFamily: "'Inter', sans-serif" }}>
         <div className="mx-auto max-w-[1280px]">
           {/* Header */}
           <div className="product-title text-center mb-12 pt-8">
