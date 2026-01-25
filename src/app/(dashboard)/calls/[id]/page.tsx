@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   ArrowLeft, 
-  Play,
   Loader2,
   MessageSquare,
   Clock,
@@ -20,8 +19,28 @@ import {
   TrendingUp,
   AlertCircle,
   ShieldAlert,
+  Calendar,
+  X,
+  Check,
 } from 'lucide-react'
 import { cn, formatDuration } from '@/lib/utils'
+
+// Calendar event creation API
+async function createCalendarEvent(params: {
+  clientName: string
+  meetingType: 'call' | 'demo' | 'meeting'
+  date: string
+  time: string
+  duration: number
+  description?: string
+}): Promise<{ success: boolean; event?: { htmlLink: string }; error?: string; needsAuth?: boolean }> {
+  const res = await fetch('/api/calendar/event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  })
+  return res.json()
+}
 
 // Helper function to parse structured insight content
 function parseInsightContent(content: string): { title: string; sections: { label: string; text: string }[] } {
@@ -148,6 +167,15 @@ interface ConversationEntry {
   end: number
 }
 
+interface ScheduledMeeting {
+  detected: boolean
+  date?: string        // YYYY-MM-DD format
+  time?: string        // HH:MM 24-hour format  
+  duration?: number    // minutes
+  type?: 'call' | 'demo' | 'meeting'
+  notes?: string       // What was agreed to be discussed
+}
+
 interface AnalysisResult {
   summary: string
   keyPoints: string[]
@@ -160,6 +188,7 @@ interface AnalysisResult {
   suggestedFollowUpDate?: string
   currentStage: string
   stageConfidence: number
+  scheduledMeeting?: ScheduledMeeting
   analyzedAt: string
   modelUsed: string
   processingTimeMs: number
@@ -243,6 +272,50 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
   const [expandedSection, setExpandedSection] = useState<string | null>('summary')
+  
+  // Google Calendar integration state
+  const [showCalendarPrompt, setShowCalendarPrompt] = useState(true)
+  const [calendarLoading, setCalendarLoading] = useState(false)
+  const [calendarSuccess, setCalendarSuccess] = useState(false)
+  const [calendarEventUrl, setCalendarEventUrl] = useState<string | null>(null)
+  const [calendarError, setCalendarError] = useState<string | null>(null)
+
+  // Handle adding meeting to Google Calendar
+  const handleAddToCalendar = async () => {
+    const scheduledMeeting = call?.analysis?.scheduledMeeting
+    if (!scheduledMeeting?.detected || !scheduledMeeting.date || !scheduledMeeting.time || !call) return
+    
+    setCalendarLoading(true)
+    setCalendarError(null)
+    
+    try {
+      const result = await createCalendarEvent({
+        clientName: call.clientName,
+        meetingType: scheduledMeeting.type || 'meeting',
+        date: scheduledMeeting.date,
+        time: scheduledMeeting.time,
+        duration: scheduledMeeting.duration || 30,
+        description: scheduledMeeting.notes || `Follow-up ${scheduledMeeting.type || 'meeting'} with ${call.clientName}`,
+      })
+      
+      if (result.needsAuth) {
+        // Redirect to Google OAuth
+        window.location.href = '/api/auth/google'
+        return
+      }
+      
+      if (result.success && result.event) {
+        setCalendarSuccess(true)
+        setCalendarEventUrl(result.event.htmlLink)
+      } else {
+        setCalendarError(result.error || 'Failed to create calendar event')
+      }
+    } catch {
+      setCalendarError('Failed to create calendar event')
+    } finally {
+      setCalendarLoading(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchCall() {
@@ -420,6 +493,115 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         )}
         
+        {/* Google Calendar Integration - Only show if a meeting was detected */}
+        {analysis?.scheduledMeeting?.detected && analysis.scheduledMeeting.date && analysis.scheduledMeeting.time && showCalendarPrompt && (
+          <Card className="mb-6 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <CardContent className="py-4">
+              {calendarSuccess ? (
+                // Success state
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
+                    <Check className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-green-700">Meeting Added to Calendar</p>
+                    <p className="text-xs text-green-600">
+                      {analysis.scheduledMeeting.type === 'demo' ? 'Demo' : analysis.scheduledMeeting.type === 'call' ? 'Call' : 'Meeting'} with {call.clientName} scheduled
+                    </p>
+                  </div>
+                  {calendarEventUrl && (
+                    <a 
+                      href={calendarEventUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline"
+                    >
+                      View in Calendar →
+                    </a>
+                  )}
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    onClick={() => setShowCalendarPrompt(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : calendarError ? (
+                // Error state
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
+                    <X className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-red-700">Failed to Add to Calendar</p>
+                    <p className="text-xs text-red-600">{calendarError}</p>
+                  </div>
+                  <Button 
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAddToCalendar}
+                    disabled={calendarLoading}
+                  >
+                    Try Again
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    onClick={() => setShowCalendarPrompt(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                // Default prompt state
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-white shadow-sm border border-blue-100 flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-gray-900">Schedule Meeting?</p>
+                    <p className="text-xs text-gray-600">
+                      {analysis.scheduledMeeting.type === 'demo' ? 'Demo' : analysis.scheduledMeeting.type === 'call' ? 'Call' : 'Meeting'} on{' '}
+                      <span className="font-medium">{analysis.scheduledMeeting.date}</span> at{' '}
+                      <span className="font-medium">{analysis.scheduledMeeting.time}</span>
+                      {analysis.scheduledMeeting.duration && ` (${analysis.scheduledMeeting.duration} min)`}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setShowCalendarPrompt(false)}
+                      className="text-gray-600"
+                    >
+                      No Thanks
+                    </Button>
+                    <Button 
+                      size="sm"
+                      onClick={handleAddToCalendar}
+                      disabled={calendarLoading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      {calendarLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        <>
+                          <Calendar className="h-4 w-4 mr-1" />
+                          Add to Calendar
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Transcript */}
           <div className="lg:col-span-2 space-y-6">
@@ -447,15 +629,11 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
 
             {/* Transcript */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
                   Transcript
                 </CardTitle>
-                <Button variant="ghost" size="sm" disabled>
-                  <Play className="h-4 w-4 mr-1" />
-                  Play Audio
-                </Button>
               </CardHeader>
               <CardContent>
                 {call.conversation.length === 0 ? (

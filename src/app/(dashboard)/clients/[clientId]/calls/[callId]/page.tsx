@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { Loader2, Calendar, Check, X } from 'lucide-react'
 import {
   formatDate,
   formatDateTime,
@@ -24,6 +25,23 @@ import type {
   ContextHistoryApiResponse,
 } from '@/lib/types/clients'
 import { cn } from '@/lib/utils'
+
+// Calendar event creation API
+async function createCalendarEvent(params: {
+  clientName: string
+  meetingType: 'call' | 'demo' | 'meeting'
+  date: string
+  time: string
+  duration: number
+  description?: string
+}): Promise<{ success: boolean; event?: { htmlLink: string }; error?: string; needsAuth?: boolean }> {
+  const res = await fetch('/api/calendar/event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  })
+  return res.json()
+}
 
 async function fetchCallDetail(
   clientId: string,
@@ -177,6 +195,49 @@ export default function CallDetailPage() {
   const [outcomeDraft, setOutcomeDraft] = useState('')
   const [editingNextAction, setEditingNextAction] = useState(false)
   const [nextActionDraft, setNextActionDraft] = useState('')
+  
+  // Google Calendar integration state
+  const [showCalendarPrompt, setShowCalendarPrompt] = useState(true)
+  const [calendarLoading, setCalendarLoading] = useState(false)
+  const [calendarSuccess, setCalendarSuccess] = useState(false)
+  const [calendarEventUrl, setCalendarEventUrl] = useState<string | null>(null)
+  const [calendarError, setCalendarError] = useState<string | null>(null)
+
+  // Handle adding meeting to Google Calendar
+  const handleAddToCalendar = async () => {
+    if (!call?.scheduledMeeting?.detected || !call.scheduledMeeting.date || !call.scheduledMeeting.time) return
+    
+    setCalendarLoading(true)
+    setCalendarError(null)
+    
+    try {
+      const result = await createCalendarEvent({
+        clientName: call.client.name,
+        meetingType: call.scheduledMeeting.type || 'meeting',
+        date: call.scheduledMeeting.date,
+        time: call.scheduledMeeting.time,
+        duration: call.scheduledMeeting.duration || 30,
+        description: call.scheduledMeeting.notes || `Follow-up ${call.scheduledMeeting.type || 'meeting'} with ${call.client.name}`,
+      })
+      
+      if (result.needsAuth) {
+        // Redirect to Google OAuth
+        window.location.href = '/api/auth/google'
+        return
+      }
+      
+      if (result.success && result.event) {
+        setCalendarSuccess(true)
+        setCalendarEventUrl(result.event.htmlLink)
+      } else {
+        setCalendarError(result.error || 'Failed to create calendar event')
+      }
+    } catch {
+      setCalendarError('Failed to create calendar event')
+    } finally {
+      setCalendarLoading(false)
+    }
+  }
 
   const scrollToSegment = useCallback((timestampSeconds: number) => {
     const el = transcriptRef.current
@@ -440,6 +501,117 @@ export default function CallDetailPage() {
             <p className="text-muted-foreground">Call not found.</p>
           ) : null}
         </section>
+
+        {/* Google Calendar Integration - Only show if a meeting was detected */}
+        {call?.scheduledMeeting?.detected && call.scheduledMeeting.date && call.scheduledMeeting.time && showCalendarPrompt && (
+          <section>
+            <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <CardContent className="py-4">
+                {calendarSuccess ? (
+                  // Success state
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
+                      <Check className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm text-green-700">Meeting Added to Calendar</p>
+                      <p className="text-xs text-green-600">
+                        {call.scheduledMeeting.type === 'demo' ? 'Demo' : call.scheduledMeeting.type === 'call' ? 'Call' : 'Meeting'} with {call.client.name} scheduled
+                      </p>
+                    </div>
+                    {calendarEventUrl && (
+                      <a 
+                        href={calendarEventUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        View in Calendar →
+                      </a>
+                    )}
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => setShowCalendarPrompt(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : calendarError ? (
+                  // Error state
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
+                      <X className="h-5 w-5 text-red-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm text-red-700">Failed to Add to Calendar</p>
+                      <p className="text-xs text-red-600">{calendarError}</p>
+                    </div>
+                    <Button 
+                      size="sm"
+                      variant="outline"
+                      onClick={handleAddToCalendar}
+                      disabled={calendarLoading}
+                    >
+                      Try Again
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => setShowCalendarPrompt(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                // Default prompt state
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-white shadow-sm border border-blue-100 flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-gray-900">Schedule Meeting?</p>
+                      <p className="text-xs text-gray-600">
+                        {call.scheduledMeeting.type === 'demo' ? 'Demo' : call.scheduledMeeting.type === 'call' ? 'Call' : 'Meeting'} on{' '}
+                        <span className="font-medium">{formatDate(call.scheduledMeeting.date)}</span> at{' '}
+                        <span className="font-medium">{call.scheduledMeeting.time}</span>
+                        {call.scheduledMeeting.duration && ` (${call.scheduledMeeting.duration} min)`}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => setShowCalendarPrompt(false)}
+                        className="text-gray-600"
+                      >
+                        No Thanks
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={handleAddToCalendar}
+                        disabled={calendarLoading}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        {calendarLoading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <Calendar className="h-4 w-4 mr-1" />
+                            Add to Calendar
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
         {callError && !call ? (
           <div className="flex flex-col items-center justify-center py-16 text-center rounded-lg border bg-card">

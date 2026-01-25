@@ -22,6 +22,16 @@ export interface AnalysisResult {
   currentStage: 'initial_contact' | 'discovery' | 'demo' | 'proposal' | 'negotiation' | 'closing' | 'closed_won' | 'closed_lost'
   stageConfidence: number            // 0-100 confidence in stage assessment
   
+  // Scheduled Meeting (extracted from conversation)
+  scheduledMeeting?: {
+    detected: boolean
+    date?: string                    // YYYY-MM-DD format
+    time?: string                    // HH:MM 24-hour format
+    duration?: number                // minutes
+    type?: 'call' | 'demo' | 'meeting'
+    notes?: string                   // What was agreed to be discussed
+  }
+  
   // Metadata
   analyzedAt: Date
   modelUsed: string

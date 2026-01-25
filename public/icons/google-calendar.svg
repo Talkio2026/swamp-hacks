@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background -->
+  <rect x="40" y="40" width="120" height="120" rx="12" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  
+  <!-- Top colored bar -->
+  <rect x="40" y="40" width="120" height="24" rx="12" ry="12" fill="#4285F4"/>
+  <rect x="40" y="52" width="120" height="12" fill="#4285F4"/>
+  
+  <!-- Calendar rings -->
+  <rect x="70" y="32" width="8" height="24" rx="4" fill="#5F6368"/>
+  <rect x="122" y="32" width="8" height="24" rx="4" fill="#5F6368"/>
+  
+  <!-- Grid lines -->
+  <line x1="80" y1="76" x2="80" y2="148" stroke="#E0E0E0" stroke-width="1"/>
+  <line x1="120" y1="76" x2="120" y2="148" stroke="#E0E0E0" stroke-width="1"/>
+  <line x1="52" y1="100" x2="148" y2="100" stroke="#E0E0E0" stroke-width="1"/>
+  <line x1="52" y1="124" x2="148" y2="124" stroke="#E0E0E0" stroke-width="1"/>
+  
+  <!-- Google colors accent -->
+  <circle cx="100" cy="112" r="18" fill="#4285F4"/>
+  <text x="100" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white"></text>
+</svg>
