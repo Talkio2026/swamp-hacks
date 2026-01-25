@@ -37,7 +37,7 @@ export function Sidebar() {
       className={cn(
         'relative z-20 flex flex-col border-r border-[#E0E7FF] bg-[#F6F5FA] transition-all duration-300 ease-in-out',
         collapsed ? 'w-16' : 'w-60',
-        isModalOpen && 'opacity-5 blur-xl pointer-events-none border-transparent shadow-none'
+        isModalOpen && 'opacity-40 blur-xl pointer-events-none border-transparent shadow-none brightness-[0.3]'
       )}
     >
       {/* Logo & Org Switcher */}
