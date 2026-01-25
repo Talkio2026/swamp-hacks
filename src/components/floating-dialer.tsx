@@ -256,33 +256,56 @@ export function FloatingDialer() {
     }
   }
 
+  // Close all popups
+  const closeAll = () => {
+    if (!isInCall) {
+      setIsOpen(false)
+      setIsContactsOpen(false)
+    }
+  }
+
   return (
     <>
+      {/* Backdrop - closes popups when clicking outside */}
+      {(isOpen || isContactsOpen) && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/5 animate-in fade-in duration-200"
+          onClick={closeAll}
+        />
+      )}
+
       {/* Floating buttons */}
       <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
         {/* Contacts button */}
         <button
           onClick={() => {
-            setIsContactsOpen(true)
+            setIsContactsOpen(!isContactsOpen)
             setIsOpen(false)
           }}
-          className="h-11 w-11 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 bg-white border border-gray-200 hover:bg-gray-50"
+          className={cn(
+            "h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105",
+            isContactsOpen 
+              ? "bg-primary/80 scale-95" 
+              : "bg-primary hover:bg-primary/90"
+          )}
           title="Contacts"
         >
-          <User className="h-5 w-5 text-gray-700" />
+          <User className="h-6 w-6 text-white" />
         </button>
 
         {/* Dialer button */}
         <button
           onClick={() => {
-            setIsOpen(true)
+            setIsOpen(!isOpen)
             setIsContactsOpen(false)
           }}
           className={cn(
-            'h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105',
+            'h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105',
             isInCall 
               ? 'bg-green-500 hover:bg-green-600 animate-pulse shadow-green-500/40' 
-              : 'bg-primary hover:bg-primary/90'
+              : isOpen
+                ? 'bg-primary/80 scale-95'
+                : 'bg-primary hover:bg-primary/90'
           )}
           title="Open Dialer"
         >
@@ -296,7 +319,7 @@ export function FloatingDialer() {
 
       {/* Contacts Popup */}
       {isContactsOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden">
+        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in zoom-in-95 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b bg-muted/30">
             <div className="flex items-center gap-2">
@@ -372,9 +395,9 @@ export function FloatingDialer() {
         </div>
       )}
 
-      {/* Popup */}
+      {/* Dialer Popup */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden">
+        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in zoom-in-95 duration-200">
           {/* Header */}
           <div className={cn(
             "flex items-center justify-between p-4 border-b transition-colors",
