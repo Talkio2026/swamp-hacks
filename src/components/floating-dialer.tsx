@@ -383,7 +383,7 @@ export function FloatingDialer() {
                   type="text"
                   value={contactSearch}
                   onChange={(e) => setContactSearch(e.target.value)}
-                  placeholder="Search contacts..."
+                  placeholder="search"
                   className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-violet-500/30 focus:bg-white outline-none transition-all"
                 />
               </div>
@@ -447,7 +447,7 @@ export function FloatingDialer() {
             {/* Footer */}
             <div className="p-3 border-t border-gray-100 bg-gray-50/50">
               <p className="text-xs text-center text-gray-400">
-                Tap a contact to start calling
+              Select a contact to begin outreach
               </p>
             </div>
           </motion.div>
@@ -534,7 +534,7 @@ export function FloatingDialer() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d+*#]/g, ''))}
                   placeholder="Enter phone number"
-                  className="w-full text-center text-2xl font-mono py-4 px-12 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-500/30 focus:bg-white outline-none transition-all"
+                  className="w-full text-center text-sm font-mono py-4 px-12 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-500/30 focus:bg-white outline-none transition-all"
                   disabled={isInCall}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && phoneNumber && isDeviceReady && !isInCall) {
@@ -635,16 +635,6 @@ export function FloatingDialer() {
                     className="text-xs text-center text-gray-400"
                   >
                     Setting up your browser for calls...
-                  </motion.p>
-                )}
-                {isDeviceReady && !isInCall && (
-                  <motion.p 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xs text-center text-gray-400"
-                  >
-                    Type number and press Enter or click Call
                   </motion.p>
                 )}
               </AnimatePresence>
