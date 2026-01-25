@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Header } from '@/components/layout/header'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Phone, CheckCircle, AlertTriangle, Clock, ArrowUpRight, Users, Zap, BookOpen } from 'lucide-react'
+import { Phone, CheckCircle, AlertTriangle, Clock, ArrowUpRight, Users, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 interface DashboardStats {
@@ -191,19 +191,6 @@ export default function DashboardPage() {
               <h2 className="text-[13px] font-semibold text-[#1E1B4B]">Quick Actions</h2>
             </div>
             <div className="p-2 space-y-1">
-              <Link 
-                href="/calls/new"
-                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#F5F7FA] transition-colors group"
-              >
-                <div className="h-7 w-7 rounded-lg bg-[#EEF2FF] flex items-center justify-center group-hover:bg-[#E0E7FF] transition-colors">
-                  <Zap className="h-3.5 w-3.5 text-[#4F46E5]" />
-                </div>
-                <div>
-                  <p className="text-[12px] font-medium text-[#1E1B4B] group-hover:text-[#4F46E5] transition-colors">New Call</p>
-                  <p className="text-[10px] font-semibold text-[#4338CA]">Record a sales call</p>
-                </div>
-              </Link>
-              
               <Link 
                 href="/clients"
                 className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#F5F7FA] transition-colors group"

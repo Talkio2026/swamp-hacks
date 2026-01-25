@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
 import {
-  Phone,
   BookOpen,
   Settings,
   Users,
@@ -22,7 +21,6 @@ import { useModal } from '@/contexts/modal-context'
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Clients', href: '/clients', icon: Users },
-  { name: 'Calls', href: '/calls', icon: Phone },
   { name: 'Sales Training', href: '/training', icon: GraduationCap },
   { name: 'Playbooks', href: '/playbooks', icon: BookOpen },
   { name: 'Docs', href: '/product', icon: FileText },
