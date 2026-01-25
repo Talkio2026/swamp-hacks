@@ -142,27 +142,34 @@ export default function DashboardPage() {
                     <Link 
                       key={call.id} 
                       href={`/calls/${call.id}`}
-                      className="flex items-center justify-between px-4 py-4 rounded-lg hover:bg-[#F5F7FA] transition-colors group"
+                      className="block px-4 py-4 rounded-lg hover:bg-[#F5F7FA] transition-colors group"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-lg bg-[#EEF2FF] flex items-center justify-center group-hover:bg-[#E0E7FF] transition-colors">
-                          <Phone className="h-5 w-5 text-[#4F46E5]" />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-lg bg-[#EEF2FF] flex items-center justify-center group-hover:bg-[#E0E7FF] transition-colors">
+                            <Phone className="h-5 w-5 text-[#4F46E5]" />
+                          </div>
+                          <div>
+                            <p className="text-[15px] font-medium text-[#1E1B4B] group-hover:text-[#4F46E5] transition-colors">{call.title || call.prospect || call.phoneNumber || 'Unknown Contact'}</p>
+                            <p className="text-[13px] font-medium text-[#6366F1]">
+                              {call.rep.firstName} {call.rep.lastName} · {new Date(call.callDate).toLocaleDateString()}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[15px] font-medium text-[#1E1B4B] group-hover:text-[#4F46E5] transition-colors">{call.title || call.prospect || call.phoneNumber || 'Unknown Contact'}</p>
-                          <p className="text-[13px] font-medium text-[#6366F1]">
-                            {call.rep.firstName} {call.rep.lastName} · {new Date(call.callDate).toLocaleDateString()}
-                          </p>
+                        <div className="flex items-center gap-3">
+                          {call.duration && (
+                            <span className="text-[14px] text-[#A5B4FC] font-mono">
+                              {Math.floor(call.duration / 60)}:{(call.duration % 60).toString().padStart(2, '0')}
+                            </span>
+                          )}
+                          <ArrowUpRight className="h-5 w-5 text-[#C7D2FE] group-hover:text-[#4F46E5] transition-colors" />
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        {call.duration && (
-                          <span className="text-[14px] text-[#A5B4FC] font-mono">
-                            {Math.floor(call.duration / 60)}:{(call.duration % 60).toString().padStart(2, '0')}
-                          </span>
-                        )}
-                        <ArrowUpRight className="h-5 w-5 text-[#C7D2FE] group-hover:text-[#4F46E5] transition-colors" />
-                      </div>
+                      {call.summary && (
+                        <p className="mt-2 ml-14 text-[13px] text-[#64748B] line-clamp-2 leading-relaxed">
+                          {call.summary}
+                        </p>
+                      )}
                     </Link>
                   ))}
                 </div>
