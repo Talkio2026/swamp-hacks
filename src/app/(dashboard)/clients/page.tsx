@@ -516,9 +516,10 @@ export default function ClientsPage() {
         }
       />
       
-      <div className="flex-1 p-6 space-y-6 overflow-auto">
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="flex-1 overflow-auto">
+        <div className="p-6 pb-0 space-y-6">
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -564,16 +565,17 @@ export default function ClientsPage() {
             </CardContent>
           </Card>
         </div>
+        </div>
 
         {/* Client Folders */}
-        <Card>
-          <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-0 shadow-none rounded-none">
+          <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent px-0 pt-6 pb-4">
+            <CardTitle className="flex items-center gap-2 px-8">
               <Folder className="h-5 w-5" />
               All Clients
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -603,13 +605,13 @@ export default function ClientsPage() {
                 </Link>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-0">
                 {clients.map((client) => (
-                  <div key={client.clientId} className="border rounded-lg overflow-hidden">
+                  <div key={client.clientId} className="border-b border-[#E0E7FF] overflow-hidden last:border-b-0">
                     {/* Client Header (Folder) */}
                     <div
                       onClick={() => toggleClient(client.clientId)}
-                      className="w-full flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-between px-8 py-4 bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
                       role="button"
                       tabIndex={0}
                       onKeyDown={(e) => e.key === 'Enter' && toggleClient(client.clientId)}
@@ -680,7 +682,7 @@ export default function ClientsPage() {
                     >
                       <div className="border-t">
                         {client.calls.length === 0 ? (
-                          <div className="p-4 pl-14 text-sm text-muted-foreground">
+                          <div className="px-8 py-4 pl-24 text-sm text-muted-foreground">
                             No calls made yet.
                           </div>
                         ) : (
@@ -688,7 +690,7 @@ export default function ClientsPage() {
                             <Link
                               key={call.callSid}
                               href={`/calls/${call.callSid}`}
-                              className="flex items-center justify-between p-4 pl-14 hover:bg-accent/50 transition-colors border-b last:border-b-0 cursor-pointer"
+                              className="flex items-center justify-between px-8 py-4 pl-24 hover:bg-accent/50 transition-colors border-b border-[#E0E7FF] last:border-b-0 cursor-pointer"
                             >
                               <div className="flex items-center gap-3">
                                 <FileText className="h-4 w-4 text-muted-foreground" />

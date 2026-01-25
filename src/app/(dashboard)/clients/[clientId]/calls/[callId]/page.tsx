@@ -297,6 +297,47 @@ export default function CallDetailPage() {
     setEditingNextAction(true)
   }
 
+  // Calculate deal score color based on percentage (0-100)
+  // Returns a color from red (0%) through orange/yellow (50%) to green (100%)
+  // Uses HSL for smoother color transitions
+  const getDealScoreColor = (percentage: number): string => {
+    const clamped = Math.max(0, Math.min(100, percentage))
+    // HSL: Hue goes from 0 (red) to 120 (green)
+    // Saturation: 100% for vibrant colors
+    // Lightness: 50% for good visibility
+    const hue = (clamped / 100) * 120 // 0 (red) to 120 (green)
+    return `hsl(${hue}, 70%, 45%)`
+  }
+
+  // Calculate deal score based on call outcome and other factors
+  // This is a placeholder - in production, this would come from the API
+  const calculateDealScore = (): number => {
+    if (!call) return 50
+    
+    let score = 50 // Base score
+    
+    // Adjust based on outcome label
+    const outcomeLower = call.outcome.label.toLowerCase()
+    if (outcomeLower.includes('won') || outcomeLower.includes('closed') || outcomeLower.includes('accepted')) {
+      score += 40
+    } else if (outcomeLower.includes('interested') || outcomeLower.includes('demo') || outcomeLower.includes('scheduled')) {
+      score += 25
+    } else if (outcomeLower.includes('follow') || outcomeLower.includes('next')) {
+      score += 15
+    } else if (outcomeLower.includes('rejected') || outcomeLower.includes('lost') || outcomeLower.includes('declined')) {
+      score -= 30
+    }
+    
+    // Adjust based on follow-up status
+    if (call.nextAction.followUpStatus === 'SCHEDULED') {
+      score += 10
+    } else if (call.nextAction.followUpStatus === 'MISSING') {
+      score -= 10
+    }
+    
+    return Math.max(0, Math.min(100, score))
+  }
+
   return (
     <div className="flex h-full flex-col">
       <Header
@@ -437,7 +478,7 @@ export default function CallDetailPage() {
               <div className="space-y-6">
                 {/* Call summary */}
                 <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-violet-50">
                     <CardTitle className="text-base">Call Summary</CardTitle>
                     {canEdit && !editingSummary && (
                       <Button
@@ -530,7 +571,7 @@ export default function CallDetailPage() {
                 {/* Key discussion points */}
                 {!isProcessing && call.keyPoints.length > 0 && (
                   <Card>
-                    <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
+                    <CardHeader className="bg-violet-50">
                       <CardTitle className="text-base">
                         Key Discussion Points
                       </CardTitle>
@@ -560,7 +601,7 @@ export default function CallDetailPage() {
 
                 {/* Transcript */}
                 <Card>
-                  <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
+                  <CardHeader className="bg-violet-50">
                     <CardTitle className="text-base">Transcript</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -649,7 +690,7 @@ export default function CallDetailPage() {
                           'border-l-4 border-l-destructive/50'
                       )}
                     >
-                      <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
+                      <CardHeader className="bg-violet-50">
                         <CardTitle className="text-base">
                           Next Action
                         </CardTitle>
@@ -784,9 +825,51 @@ export default function CallDetailPage() {
                       </CardContent>
                     </Card>
 
+                    {/* Deal Score */}
+                    <Card>
+                      <CardHeader className="bg-violet-50">
+                        <CardTitle className="text-base">Deal Score</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        {isProcessing ? (
+                          <p className="text-sm text-muted-foreground">
+                            Analysis in progress.
+                          </p>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="text-center">
+                              <div
+                                className="text-5xl font-bold mb-2 transition-colors"
+                                style={{ color: getDealScoreColor(calculateDealScore()) }}
+                              >
+                                {calculateDealScore()}%
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                Deal Probability
+                              </p>
+                            </div>
+                            {/* Progress bar with gradient */}
+                            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full transition-all duration-500 ease-out"
+                                style={{
+                                  width: `${calculateDealScore()}%`,
+                                  background: `linear-gradient(to right, hsl(0, 70%, 45%), hsl(${(calculateDealScore() / 100) * 120}, 70%, 45%))`,
+                                }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Low</span>
+                              <span>High</span>
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
                     {/* Call outcome */}
                     <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-violet-50">
                         <CardTitle className="text-base">Call Outcome</CardTitle>
                         {canEdit && !editingOutcome && (
                           <Button

@@ -148,12 +148,14 @@ export default function DashboardPage() {
               ) : error ? (
                 <p className="text-[#4338CA] text-[14px] p-4">{error}</p>
               ) : stats?.recentCalls?.length ? (
-                <div className="space-y-2">
-                  {stats.recentCalls.map((call) => (
+                <div className="space-y-0">
+                  {stats.recentCalls.map((call, index) => (
                     <Link 
                       key={call.id} 
                       href={`/calls/${call.id}`}
-                      className="block px-4 py-4 rounded-lg hover:bg-[#F5F7FA] transition-colors group"
+                      className={`block px-4 py-4 hover:bg-[#F5F7FA] transition-colors group ${
+                        index < stats.recentCalls.length - 1 ? 'border-b border-[#E0E7FF]' : ''
+                      }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
