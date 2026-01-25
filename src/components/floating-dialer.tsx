@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import {
   Phone,
   PhoneOff,
+  PhoneCall,
   Mic,
   MicOff,
   X,
@@ -213,22 +214,33 @@ export function FloatingDialer() {
         className={cn(
           'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105',
           isInCall 
-            ? 'bg-green-500 hover:bg-green-600 animate-pulse' 
+            ? 'bg-green-500 hover:bg-green-600 animate-pulse shadow-green-500/40' 
             : 'bg-primary hover:bg-primary/90'
         )}
         title="Open Dialer"
       >
-        <Phone className="h-6 w-6 text-white" />
+        {isInCall ? (
+          <PhoneCall className="h-6 w-6 text-white" />
+        ) : (
+          <Phone className="h-6 w-6 text-white" />
+        )}
       </button>
 
       {/* Popup */}
       {isOpen && (
         <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+          <div className={cn(
+            "flex items-center justify-between p-4 border-b transition-colors",
+            isInCall ? "bg-green-500/10" : "bg-muted/30"
+          )}>
             <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-primary" />
-              <span className="font-medium">Dialer</span>
+              {isInCall ? (
+                <PhoneCall className="h-4 w-4 text-green-500" />
+              ) : (
+                <Phone className="h-4 w-4 text-primary" />
+              )}
+              <span className="font-medium">{isInCall ? 'On Call' : 'Dialer'}</span>
             </div>
             <button
               onClick={handleClose}
@@ -284,7 +296,7 @@ export function FloatingDialer() {
             </div>
 
             {/* Call controls */}
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-4">
               {isInCall ? (
                 <>
                   {/* Mute button */}
@@ -293,14 +305,16 @@ export function FloatingDialer() {
                     size="lg"
                     onClick={handleToggleMute}
                     className={cn(
-                      'rounded-full h-12 w-12',
-                      isMuted && 'bg-red-500/10 border-red-500/50'
+                      'rounded-full h-14 w-14 shadow-md transition-all',
+                      isMuted 
+                        ? 'bg-red-500/20 border-red-500 hover:bg-red-500/30' 
+                        : 'bg-muted/50 hover:bg-muted'
                     )}
                   >
                     {isMuted ? (
-                      <MicOff className="h-5 w-5 text-red-500" />
+                      <MicOff className="h-6 w-6 text-red-500" />
                     ) : (
-                      <Mic className="h-5 w-5" />
+                      <Mic className="h-6 w-6" />
                     )}
                   </Button>
 
@@ -309,16 +323,16 @@ export function FloatingDialer() {
                     variant="destructive"
                     size="lg"
                     onClick={handleHangup}
-                    className="rounded-full h-12 w-12"
+                    className="rounded-full h-14 w-14 bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/30 transition-all hover:scale-105"
                   >
-                    <PhoneOff className="h-5 w-5" />
+                    <PhoneOff className="h-6 w-6 rotate-[135deg]" />
                   </Button>
                 </>
               ) : (
                 <Button
                   onClick={handleCall}
                   disabled={!phoneNumber || !isDeviceReady || callStatus === 'disconnected'}
-                  className="w-full h-12 text-base rounded-full bg-green-600 hover:bg-green-700"
+                  className="w-full h-14 text-base rounded-full bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all hover:scale-[1.02]"
                 >
                   {!isDeviceReady ? (
                     <>
