@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks(.*)',
   '/api/twilio(.*)',
   '/api/chat(.*)',
+  '/api/embeddings(.*)',
   '/product(.*)',
 ])
 
