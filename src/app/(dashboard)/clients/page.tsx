@@ -513,7 +513,7 @@ export default function ClientsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Total Clients
@@ -524,7 +524,7 @@ export default function ClientsPage() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Clock className="h-4 w-4 text-yellow-500" />
                 Active Deals
@@ -535,7 +535,7 @@ export default function ClientsPage() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
                 Won
@@ -546,7 +546,7 @@ export default function ClientsPage() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <XCircle className="h-4 w-4 text-destructive" />
                 Lost
@@ -560,7 +560,7 @@ export default function ClientsPage() {
 
         {/* Client Folders */}
         <Card>
-          <CardHeader>
+          <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
             <CardTitle className="flex items-center gap-2">
               <Folder className="h-5 w-5" />
               All Clients
@@ -608,11 +608,9 @@ export default function ClientsPage() {
                       onKeyDown={(e) => e.key === 'Enter' && toggleClient(client.clientId)}
                     >
                       <div className="flex items-center gap-3">
-                        {expandedClients.has(client.clientId) ? (
-                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                        ) : (
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                        )}
+                        <div className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ease-in-out ${expandedClients.has(client.clientId) ? 'rotate-90' : 'rotate-0'}`}>
+                          <ChevronRight className="h-5 w-5" />
+                        </div>
                         <Folder className="h-5 w-5 text-primary" />
                         <div className="text-left">
                           <div className="flex items-center gap-2">
@@ -666,7 +664,13 @@ export default function ClientsPage() {
                     </div>
                     
                     {/* Calls (Files in Folder) */}
-                    {expandedClients.has(client.clientId) && (
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        expandedClients.has(client.clientId)
+                          ? 'max-h-[2000px] opacity-100'
+                          : 'max-h-0 opacity-0 pointer-events-none'
+                      }`}
+                    >
                       <div className="border-t">
                         {client.calls.length === 0 ? (
                           <div className="p-4 pl-14 text-sm text-muted-foreground">
@@ -711,7 +715,7 @@ export default function ClientsPage() {
                           ))
                         )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -724,7 +728,7 @@ export default function ClientsPage() {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <Card className="w-full max-w-md mx-4">
-            <CardHeader>
+            <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <Trash2 className="h-5 w-5" />
                 Delete Client
@@ -770,7 +774,7 @@ export default function ClientsPage() {
       {agentModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-            <CardHeader className="flex-shrink-0 border-b">
+            <CardHeader className="flex-shrink-0 border-b bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Bot className="h-5 w-5 text-primary" />

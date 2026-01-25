@@ -25,6 +25,7 @@ import {
   Phone,
   PhoneOff,
   Send,
+  ArrowLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TRAINING_SCENARIOS, TrainingScenario } from '@/lib/training/scenarios'
@@ -348,15 +349,27 @@ export default function TrainingPage() {
         title="Sales Training"
         actions={
           sessionState === 'active' ? (
-            <Button variant="destructive" onClick={endSession}>
-              <PhoneOff className="h-4 w-4 mr-2" />
-              End & Analyze
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={resetSession}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+              <Button variant="destructive" onClick={endSession}>
+                <PhoneOff className="h-4 w-4 mr-2" />
+                End & Analyze
+              </Button>
+            </div>
           ) : sessionState === 'results' ? (
-            <Button onClick={resetSession}>
-              <RotateCcw className="h-4 w-4 mr-2" />
-              New Session
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={resetSession}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Training
+              </Button>
+              <Button onClick={resetSession}>
+                <RotateCcw className="h-4 w-4 mr-2" />
+                New Session
+              </Button>
+            </div>
           ) : null
         }
       />
@@ -379,16 +392,16 @@ export default function TrainingPage() {
             )}
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {TRAINING_SCENARIOS.map((scenario) => (
+              {TRAINING_SCENARIOS.map((scenario, index) => (
                 <Card 
                   key={scenario.id}
-                  className="cursor-pointer transition-all hover:shadow-lg hover:border-primary hover:scale-[1.02]"
+                  className="cursor-pointer transition-all hover:shadow-lg hover:border-primary hover:scale-[1.02] opacity-0 translate-y-4"
+                  style={{
+                    animation: `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`
+                  }}
                   onClick={() => startSession(scenario)}
                 >
-                  <CardHeader className="relative overflow-hidden bg-white/40 backdrop-blur-xl border-b border-white/50 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]">
-                    <div className="absolute inset-0 bg-gradient-to-br from-violet-200/30 via-violet-100/20 to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-violet-300/25 via-violet-200/15 to-transparent pointer-events-none" />
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+                  <CardHeader className="relative overflow-hidden bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent border-b border-white/50">
                     <div className="relative z-10">
                       <div className="flex items-start justify-between mb-2">
                         <span className={cn(
@@ -451,7 +464,7 @@ export default function TrainingPage() {
           <div className="max-w-6xl mx-auto w-full">
             <div className="grid lg:grid-cols-3 gap-4 h-[calc(100vh-10rem)]">
               {/* Conversation Panel */}
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0s_forwards]">
                 <Card className="h-full flex flex-col">
                   <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 flex-shrink-0 py-3">
                     <div className="flex items-center justify-between">
@@ -575,7 +588,7 @@ export default function TrainingPage() {
 
               {/* Scenario Info Panel */}
               <div className="h-full flex flex-col gap-3">
-                <Card className="flex-1 flex flex-col min-h-0">
+                <Card className="flex-1 flex flex-col min-h-0 opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.1s_forwards]">
                   <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 px-4 py-3 flex-shrink-0">
                     <CardTitle className="text-sm flex items-center gap-2">
                       <Target className="h-4 w-4" />
@@ -596,7 +609,7 @@ export default function TrainingPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="flex-1 flex flex-col min-h-0">
+                <Card className="flex-1 flex flex-col min-h-0 opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.15s_forwards]">
                   <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 px-4 py-3 flex-shrink-0">
                     <CardTitle className="text-sm flex items-center gap-2">
                       <GraduationCap className="h-4 w-4" />
@@ -613,7 +626,7 @@ export default function TrainingPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="flex-1 flex flex-col min-h-0">
+                <Card className="flex-1 flex flex-col min-h-0 opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.2s_forwards]">
                   <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 px-4 py-3 flex-shrink-0">
                     <CardTitle className="text-sm">Prospect Context</CardTitle>
                   </CardHeader>
@@ -643,7 +656,10 @@ export default function TrainingPage() {
         {sessionState === 'results' && evaluation && selectedScenario && (
           <div className="max-w-4xl mx-auto">
             {/* Score Header */}
-            <Card className="mb-6">
+            <Card className="mb-6 opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0s_forwards]">
+              <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent pb-0">
+                <CardTitle className="sr-only">Training Complete</CardTitle>
+              </CardHeader>
               <CardContent className="p-8">
                 <div className="flex items-center justify-between">
                   <div>
@@ -671,8 +687,8 @@ export default function TrainingPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* Objectives */}
-              <Card>
-                <CardHeader>
+              <Card className="opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.1s_forwards]">
+                <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
                     Objectives
@@ -699,8 +715,8 @@ export default function TrainingPage() {
               </Card>
 
               {/* Strengths & Improvements */}
-              <Card>
-                <CardHeader>
+              <Card className="opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.15s_forwards]">
+                <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                   <CardTitle className="flex items-center gap-2">
                     <Trophy className="h-5 w-5" />
                     Strengths & Improvements
@@ -731,8 +747,8 @@ export default function TrainingPage() {
               </Card>
 
               {/* Criteria Scores */}
-              <Card>
-                <CardHeader>
+              <Card className="opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.2s_forwards]">
+                <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                   <CardTitle>Skill Breakdown</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -762,8 +778,8 @@ export default function TrainingPage() {
               </Card>
 
               {/* Coaching Tips */}
-              <Card>
-                <CardHeader>
+              <Card className="opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.25s_forwards]">
+                <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                   <CardTitle className="flex items-center gap-2">
                     <GraduationCap className="h-5 w-5" />
                     Coaching Tips
@@ -788,8 +804,8 @@ export default function TrainingPage() {
 
             {/* Key Moments */}
             {evaluation.keyMoments && evaluation.keyMoments.length > 0 && (
-              <Card className="mt-6">
-                <CardHeader>
+              <Card className="mt-6 opacity-0 translate-y-4 animate-[fadeInUp_0.5s_ease-out_0.3s_forwards]">
+                <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                   <CardTitle>Key Moments</CardTitle>
                 </CardHeader>
                 <CardContent>

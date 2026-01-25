@@ -121,16 +121,20 @@ export default function PlaybooksPage() {
                     <Badge variant={playbook.isActive ? 'success' : 'secondary'}>
                       {playbook.isActive ? 'Active' : 'Inactive'}
                     </Badge>
-                    {expandedPlaybook === playbook.id ? (
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                    )}
+                    <div className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ease-in-out ${expandedPlaybook === playbook.id ? 'rotate-180' : 'rotate-0'}`}>
+                      <ChevronDown className="h-5 w-5" />
+                    </div>
                   </div>
                 </div>
               </CardHeader>
               
-              {expandedPlaybook === playbook.id && (
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  expandedPlaybook === playbook.id
+                    ? 'max-h-[2000px] opacity-100'
+                    : 'max-h-0 opacity-0 pointer-events-none'
+                }`}
+              >
                 <CardContent className="border-t pt-4 space-y-6">
                   {/* Stages */}
                   <div>
@@ -215,7 +219,7 @@ export default function PlaybooksPage() {
                     </div>
                   </div>
                 </CardContent>
-              )}
+              </div>
             </Card>
           ))}
           

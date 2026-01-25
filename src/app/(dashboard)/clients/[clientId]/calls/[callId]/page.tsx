@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Badge } from '@/components/ui/badge'
 import {
   formatDate,
   formatDateTime,
@@ -196,6 +197,38 @@ export default function CallDetailPage() {
     setTimeout(() => setHighlightSegmentT(null), 2000)
   }, [])
 
+  // Determine if a transcript segment is important
+  const isImportantSegment = useCallback((seg: { t: number; speaker: string; text: string }) => {
+    if (!call) return false
+    
+    // Check if this segment is a key point
+    const isKeyPoint = call.keyPoints.some(kp => 
+      Math.abs(kp.timestampSeconds - seg.t) < 5
+    )
+    if (isKeyPoint) return true
+
+    // Check for important keywords
+    const importantKeywords = [
+      'schedule', 'scheduled', 'demo', 'pricing', 'price', 'cost', 'next', 
+      'follow-up', 'follow up', 'decision', 'approve', 'contract', 'agreement',
+      'interested', 'concern', 'objection', 'deadline', 'timeline', 'proposal',
+      'meeting', 'call', 'discuss', 'review', 'sign', 'commit', 'budget'
+    ]
+    const lowerText = seg.text.toLowerCase()
+    const hasKeyword = importantKeywords.some(keyword => lowerText.includes(keyword))
+    
+    // Also highlight if it's from the rep and contains actionable information
+    const isRepImportant = seg.speaker === 'REP' && (
+      lowerText.includes('send') || 
+      lowerText.includes('prepare') || 
+      lowerText.includes('will') ||
+      lowerText.includes('can') ||
+      lowerText.includes('should')
+    )
+
+    return hasKeyword || isRepImportant
+  }, [call])
+
   const clientLine = call?.client?.accountName
     ? `${call.client.name} — ${call.client.accountName}`
     : call?.client?.name ?? ''
@@ -246,7 +279,8 @@ export default function CallDetailPage() {
   }
 
   const startEditSummary = () => {
-    setSummaryDraft(call!.summary.bullets.length ? [...call.summary.bullets] : [''])
+    if (!call) return
+    setSummaryDraft(call.summary.bullets.length ? [...call.summary.bullets] : [''])
     setEditingSummary(true)
   }
 
@@ -299,12 +333,67 @@ export default function CallDetailPage() {
           {busy && !call ? (
             <CallHeaderSkeleton />
           ) : call ? (
-            <div className="space-y-1">
-              <h2 className="text-2xl font-semibold tracking-tight">
-                {call.title}
-              </h2>
-              <p className="text-muted-foreground text-sm">{clientLine}</p>
-              <p className="text-muted-foreground text-sm">{repLine}</p>
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  {call.title}
+                </h2>
+                <p className="text-muted-foreground text-sm">{clientLine}</p>
+                <p className="text-muted-foreground text-sm">{repLine}</p>
+              </div>
+              {/* Tags with varying shades */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Status-based tags */}
+                {call.status === 'READY' && (
+                  <Badge variant="success" className="bg-green-500/10 text-green-700 border-green-300/50">
+                    Completed
+                  </Badge>
+                )}
+                {call.status === 'PROCESSING' && (
+                  <Badge variant="warning" className="bg-orange-500/10 text-orange-700 border-orange-300/50">
+                    Processing
+                  </Badge>
+                )}
+                {call.status === 'FAILED' && (
+                  <Badge variant="destructive" className="bg-red-500/10 text-red-700 border-red-300/50">
+                    Failed
+                  </Badge>
+                )}
+                
+                {/* Outcome-based tags */}
+                {call.outcome.label && (
+                  <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 border-blue-300/50">
+                    {call.outcome.label}
+                  </Badge>
+                )}
+                
+                {/* Call type tags - determine based on title and outcome */}
+                {call.title.toLowerCase().includes('initial') || call.title.toLowerCase().includes('intro') || call.title.toLowerCase().includes('first') ? (
+                  <Badge variant="default" className="bg-purple-500/10 text-purple-700 border-purple-300/50">
+                    Initial Contact
+                  </Badge>
+                ) : call.title.toLowerCase().includes('demo') ? (
+                  <Badge variant="default" className="bg-cyan-500/10 text-cyan-700 border-cyan-300/50">
+                    Demo
+                  </Badge>
+                ) : call.title.toLowerCase().includes('follow') || call.title.toLowerCase().includes('follow-up') ? (
+                  <Badge variant="default" className="bg-pink-500/10 text-pink-700 border-pink-300/50">
+                    Follow-up
+                  </Badge>
+                ) : null}
+                
+                {/* Sentiment tag - placeholder (would need to be added to CallDetail type) */}
+                <Badge variant="outline" className="bg-gray-500/10 text-gray-700 border-gray-300/50">
+                  Sentiment: neutral
+                </Badge>
+                
+                {/* First contact tag if it's the first call */}
+                {call.title.toLowerCase().includes('first') || call.title.toLowerCase().includes('initial') ? (
+                  <Badge variant="secondary" className="bg-teal-500/10 text-teal-700 border-teal-300/50">
+                    First Contact
+                  </Badge>
+                ) : null}
+              </div>
             </div>
           ) : callError ? (
             <p className="text-muted-foreground">Call not found.</p>
@@ -348,7 +437,7 @@ export default function CallDetailPage() {
               <div className="space-y-6">
                 {/* Call summary */}
                 <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                     <CardTitle className="text-base">Call Summary</CardTitle>
                     {canEdit && !editingSummary && (
                       <Button
@@ -441,7 +530,7 @@ export default function CallDetailPage() {
                 {/* Key discussion points */}
                 {!isProcessing && call.keyPoints.length > 0 && (
                   <Card>
-                    <CardHeader>
+                    <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                       <CardTitle className="text-base">
                         Key Discussion Points
                       </CardTitle>
@@ -471,7 +560,7 @@ export default function CallDetailPage() {
 
                 {/* Transcript */}
                 <Card>
-                  <CardHeader>
+                  <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                     <CardTitle className="text-base">Transcript</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -487,22 +576,34 @@ export default function CallDetailPage() {
                         className="h-[280px] rounded-md border p-3"
                       >
                         <div className="space-y-2">
-                          {call.transcript.segments.map((seg, i) => (
-                            <div
-                              key={i}
-                              data-t={String(seg.t)}
-                              className={cn(
-                                'rounded px-2 py-1 transition-colors',
-                                highlightSegmentT === seg.t &&
-                                  'bg-primary/10'
-                              )}
-                            >
-                              <span className="text-xs text-muted-foreground font-medium">
-                                {secondsToTimestamp(seg.t)} · {seg.speaker}
-                              </span>
-                              <p className="text-sm mt-0.5">{seg.text}</p>
-                            </div>
-                          ))}
+                          {call.transcript.segments.map((seg, i) => {
+                            const isImportant = isImportantSegment(seg)
+                            const isHighlighted = highlightSegmentT === seg.t
+                            return (
+                              <div
+                                key={i}
+                                data-t={String(seg.t)}
+                                className={cn(
+                                  'rounded px-2 py-1 transition-colors',
+                                  isHighlighted && 'bg-primary/10 ring-2 ring-primary/20',
+                                  isImportant && !isHighlighted && 'bg-yellow-50 border-l-4 border-yellow-400'
+                                )}
+                              >
+                                <span className="text-xs text-muted-foreground font-medium">
+                                  {secondsToTimestamp(seg.t)} · {seg.speaker}
+                                  {isImportant && (
+                                    <span className="ml-2 text-yellow-600 text-[10px]">⭐</span>
+                                  )}
+                                </span>
+                                <p className={cn(
+                                  'text-sm mt-0.5',
+                                  isImportant && 'font-medium text-gray-900'
+                                )}>
+                                  {seg.text}
+                                </p>
+                              </div>
+                            )
+                          })}
                         </div>
                       </ScrollArea>
                     )}
@@ -512,7 +613,7 @@ export default function CallDetailPage() {
                 {/* Recording */}
                 {call.recording.available && call.recording.url && (
                   <Card>
-                    <CardHeader>
+                    <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                       <CardTitle className="text-base">Recording</CardTitle>
                     </CardHeader>
                     <CardContent className="pt-0">
@@ -548,7 +649,7 @@ export default function CallDetailPage() {
                           'border-l-4 border-l-destructive/50'
                       )}
                     >
-                      <CardHeader>
+                      <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                         <CardTitle className="text-base">
                           Next Action
                         </CardTitle>
@@ -685,7 +786,7 @@ export default function CallDetailPage() {
 
                     {/* Call outcome */}
                     <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                         <CardTitle className="text-base">Call Outcome</CardTitle>
                         {canEdit && !editingOutcome && (
                           <Button
@@ -741,7 +842,7 @@ export default function CallDetailPage() {
 
                     {/* Context history */}
                     <Card>
-                      <CardHeader>
+                      <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                         <CardTitle className="text-base">
                           Context History
                         </CardTitle>

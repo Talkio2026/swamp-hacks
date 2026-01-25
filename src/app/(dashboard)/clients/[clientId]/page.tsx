@@ -81,7 +81,7 @@ function ClientHeaderSkeleton() {
 function ContextSkeleton() {
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
         <Skeleton className="h-5 w-28" />
       </CardHeader>
       <CardContent className="space-y-2 pt-0">
@@ -312,7 +312,7 @@ export default function ClientDetailPage() {
             <ContextSkeleton />
           ) : context ? (
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
                 <CardTitle className="text-base">Client Context</CardTitle>
                 {!contextEditing && (
                   <Button
