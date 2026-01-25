@@ -122,19 +122,18 @@ export async function analyzeTranscript(
   }
   
   try {
-    // Try primary provider first
+    // Try primary provider first (OpenRouter by default)
     const response = await primaryProvider.analyze(prompt)
     const processingTimeMs = Date.now() - startTime
     return parseAnalysisResponse(response, `${primaryProvider.name}/${primaryProvider.modelId}`, processingTimeMs)
   } catch (error) {
-    // If Gemini fails (quota exceeded, etc.), fall back to OpenRouter
-    if (config?.provider !== 'openrouter') {
-      console.log(`[Analyzer] ${primaryProvider.name} failed, falling back to OpenRouter...`)
+    // If OpenRouter fails, fall back to Gemini
+    if (config?.provider !== 'gemini') {
+      console.log(`[Analyzer] ${primaryProvider.name} failed, falling back to Gemini...`)
       console.error(`[Analyzer] Primary error:`, error)
       
       const fallbackProvider = getProvider({
-        provider: 'openrouter',
-        model: 'claude-3-sonnet',
+        provider: 'gemini',
       })
       
       const fallbackAvailable = await fallbackProvider.isAvailable()

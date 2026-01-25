@@ -8,20 +8,165 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   ArrowLeft, 
-  Building2,
-  User,
-  Phone,
-  Mail,
-  Calendar,
+  Play,
+  Loader2,
   MessageSquare,
+  Clock,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle,
+  ArrowUpRight,
   TrendingUp,
   AlertCircle,
-  Loader2,
+  ShieldAlert,
 } from 'lucide-react'
-import { formatDuration } from '@/lib/utils'
+import { cn, formatDuration } from '@/lib/utils'
 
-// Type for call data
+// Helper function to parse structured insight content
+function parseInsightContent(content: string): { title: string; sections: { label: string; text: string }[] } {
+  // Extract title from brackets [Title]
+  const titleMatch = content.match(/^\[([^\]]+)\]/)
+  const title = titleMatch ? titleMatch[1] : ''
+  const restContent = titleMatch ? content.slice(titleMatch[0].length).trim() : content
+  
+  // Parse sections (WHAT HAPPENED:, WHY IT MATTERS:, ACTION 1:, etc.)
+  const sections: { label: string; text: string }[] = []
+  const sectionPattern = /(WHAT HAPPENED|WHY IT MATTERS|ACTION \d+|PRIORITY|TIMING|WHAT TO DO|PREPARATION|SUCCESS CRITERIA):\s*/gi
+  
+  const parts = restContent.split(sectionPattern).filter(Boolean)
+  
+  for (let i = 0; i < parts.length; i += 2) {
+    if (parts[i + 1]) {
+      sections.push({
+        label: parts[i].trim(),
+        text: parts[i + 1].trim()
+      })
+    }
+  }
+  
+  // If no sections found, treat the whole content as a single section
+  if (sections.length === 0 && restContent) {
+    sections.push({ label: '', text: restContent })
+  }
+  
+  return { title, sections }
+}
+
+// Insight Section Component - Enterprise-friendly minimal design
+function InsightSection({ 
+  icon, 
+  title, 
+  color, 
+  items, 
+  emptyMessage,
+  emptyIsPositive = false 
+}: { 
+  icon: React.ReactNode | null
+  title: string
+  color: 'blue' | 'emerald' | 'amber' | 'red'
+  items: string[]
+  emptyMessage: string
+  emptyIsPositive?: boolean
+}) {
+  // Subtle accent color - only for the left border indicator
+  const borderColors = {
+    blue: 'border-l-slate-400',
+    emerald: 'border-l-slate-400',
+    amber: 'border-l-slate-400',
+    red: 'border-l-slate-400',
+  }
+  
+  // Icon colors - subtle but distinct
+  const iconColors = {
+    blue: 'text-blue-500',
+    emerald: 'text-emerald-500',
+    amber: 'text-amber-500',
+    red: 'text-red-500',
+  }
+  
+  return (
+    <div>
+      {/* Section Header - Clean, enterprise-style */}
+      <div className="flex items-center justify-between mb-3 pb-2 border-b">
+        <div className="flex items-center gap-2">
+          {icon && <span className={cn("flex-shrink-0", iconColors[color])}>{icon}</span>}
+          <h4 className="font-medium text-sm text-foreground uppercase tracking-wide">{title}</h4>
+        </div>
+        <span className="text-xs text-muted-foreground">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+      </div>
+      
+      {items.length > 0 ? (
+        <div className="space-y-4">
+          {items.map((item, i) => {
+            const parsed = parseInsightContent(item)
+            
+            return (
+              <div key={i} className={cn("pl-3 border-l-2", borderColors[color])}>
+                {/* Item Title */}
+                {parsed.title && (
+                  <div className="font-medium text-sm text-foreground mb-1.5">
+                    {parsed.title}
+                  </div>
+                )}
+                
+                {/* Structured Content */}
+                {parsed.sections.length > 0 ? (
+                  <div className="space-y-1.5">
+                    {parsed.sections.map((section, j) => (
+                      <div key={j} className="text-sm leading-relaxed">
+                        {section.label && (
+                          <span className="font-medium text-foreground/70 text-xs mr-1.5">
+                            {section.label}:
+                          </span>
+                        )}
+                        <span className="text-muted-foreground">{section.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item}</p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground/70 italic">
+          {emptyMessage}
+        </p>
+      )}
+    </div>
+  )
+}
+
+// Types
+interface ConversationEntry {
+  speaker: string | number  // Can be 'sales_representative'/'client' or 0/1
+  text: string
+  start: number
+  end: number
+}
+
+interface AnalysisResult {
+  summary: string
+  keyPoints: string[]
+  overallSentiment: 'positive' | 'neutral' | 'negative' | 'mixed'
+  clientInterestLevel: 'high' | 'medium' | 'low'
+  objections: string[]
+  buyingSignals: string[]
+  risks: string[]
+  nextSteps: string[]
+  suggestedFollowUpDate?: string
+  currentStage: string
+  stageConfidence: number
+  analyzedAt: string
+  modelUsed: string
+  processingTimeMs: number
+}
+
 interface CallData {
+  callSid: string
   clientId: string
   clientName: string
   companyName: string
@@ -30,23 +175,19 @@ interface CallData {
   contactPhone: string
   salesRepName: string
   callNumber: number
-  callSid: string
   status: string
   outcome: string
   nextAction: string
   createdAt: string
   sentiment: string
-  conversation: Array<{
-    speaker: string
-    text: string
-    start: number
-    end: number
-  }>
+  conversation: ConversationEntry[]
+  analysis?: AnalysisResult
 }
 
-// Mock call data for demonstration
+// Mock data for demonstration
 const mockCallsData: Record<string, CallData> = {
   'MOCK_CA_CLT001_CALL001': {
+    callSid: 'MOCK_CA_CLT001_CALL001',
     clientId: 'CLT_001',
     clientName: 'Sarah Chen',
     companyName: 'Bright Ideas Marketing',
@@ -55,7 +196,6 @@ const mockCallsData: Record<string, CallData> = {
     contactPhone: '+15551001001',
     salesRepName: 'Michael',
     callNumber: 1,
-    callSid: 'MOCK_CA_CLT001_CALL001',
     status: 'initial_contact',
     outcome: 'interested',
     nextAction: 'scheduled_demo',
@@ -69,149 +209,6 @@ const mockCallsData: Record<string, CallData> = {
       { speaker: 'client', text: "Well, our team spends hours manually compiling reports from different sources. By the time we get the insights, the data is often outdated. We're a marketing agency, so real-time insights are crucial for our campaigns.", start: 29.5, end: 42.0 },
     ],
   },
-  'MOCK_CA_CLT001_CALL002': {
-    clientId: 'CLT_001',
-    clientName: 'Sarah Chen',
-    companyName: 'Bright Ideas Marketing',
-    industry: 'Marketing',
-    contactEmail: 'sarah@brightideasmarketing.com',
-    contactPhone: '+15551001001',
-    salesRepName: 'Michael',
-    callNumber: 2,
-    callSid: 'MOCK_CA_CLT001_CALL002',
-    status: 'demo',
-    outcome: 'very_interested',
-    nextAction: 'contract_review',
-    createdAt: '2026-01-14T10:00:00.000Z',
-    sentiment: 'positive',
-    conversation: [
-      { speaker: 'sales_representative', text: 'Hi Sarah! Great to connect again. Ready for the demo today?', start: 5.0, end: 9.0 },
-      { speaker: 'client', text: "Absolutely! I've been looking forward to this. I also brought my colleague James who handles our technical integrations.", start: 9.5, end: 16.0 },
-      { speaker: 'sales_representative', text: 'Perfect! Welcome James. Let me share my screen and walk you through our platform.', start: 16.5, end: 22.0 },
-    ],
-  },
-  'MOCK_CA_CLT001_CALL003': {
-    clientId: 'CLT_001',
-    clientName: 'Sarah Chen',
-    companyName: 'Bright Ideas Marketing',
-    industry: 'Marketing',
-    contactEmail: 'sarah@brightideasmarketing.com',
-    contactPhone: '+15551001001',
-    salesRepName: 'Michael',
-    callNumber: 3,
-    callSid: 'MOCK_CA_CLT001_CALL003',
-    status: 'contract_accepted',
-    outcome: 'closed_won',
-    nextAction: 'implementation_kickoff',
-    createdAt: '2026-01-17T15:00:00.000Z',
-    sentiment: 'positive',
-    conversation: [
-      { speaker: 'sales_representative', text: 'Hi Sarah! Great news - I received the signed contract this morning.', start: 5.0, end: 10.0 },
-      { speaker: 'client', text: "Yes! We're all very excited to get started. The team has been asking when we can begin the implementation.", start: 10.5, end: 17.0 },
-    ],
-  },
-  'MOCK_CA_CLT002_CALL001': {
-    clientId: 'CLT_002',
-    clientName: 'David Martinez',
-    companyName: 'Genesis Tech Solutions',
-    industry: 'Technology',
-    contactEmail: 'd.martinez@genesistech.com',
-    contactPhone: '+15551002002',
-    salesRepName: 'Jessica',
-    callNumber: 1,
-    callSid: 'MOCK_CA_CLT002_CALL001',
-    status: 'initial_contact',
-    outcome: 'hesitant_interest',
-    nextAction: 'scheduled_followup',
-    createdAt: '2026-01-08T10:15:00.000Z',
-    sentiment: 'neutral',
-    conversation: [
-      { speaker: 'client', text: 'Hello, David Martinez speaking.', start: 5.0, end: 7.0 },
-      { speaker: 'sales_representative', text: 'Hi David, this is Jessica from TechFlow Solutions. Do you have a few minutes to discuss how we might help Genesis Tech with your analytics needs?', start: 7.5, end: 15.0 },
-      { speaker: 'client', text: "I suppose I can spare a few minutes, but I should tell you upfront - we're currently locked into a contract with another vendor.", start: 15.5, end: 23.0 },
-    ],
-  },
-  'MOCK_CA_CLT002_CALL002': {
-    clientId: 'CLT_002',
-    clientName: 'David Martinez',
-    companyName: 'Genesis Tech Solutions',
-    industry: 'Technology',
-    contactEmail: 'd.martinez@genesistech.com',
-    contactPhone: '+15551002002',
-    salesRepName: 'Jessica',
-    callNumber: 2,
-    callSid: 'MOCK_CA_CLT002_CALL002',
-    status: 'rejected',
-    outcome: 'closed_lost',
-    nextAction: 'none',
-    createdAt: '2026-01-12T14:00:00.000Z',
-    sentiment: 'negative',
-    conversation: [
-      { speaker: 'sales_representative', text: 'Hi David, Jessica here from TechFlow. How are you today?', start: 5.0, end: 9.0 },
-      { speaker: 'client', text: "Hi Jessica. Look, I'll be honest with you - I've discussed this with my team and we've decided to stick with our current solution for now.", start: 9.5, end: 18.0 },
-    ],
-  },
-  'MOCK_CA_CLT003_CALL001': {
-    clientId: 'CLT_003',
-    clientName: 'Lisa Wong',
-    companyName: 'Nexus Retail Solutions',
-    industry: 'Retail',
-    contactEmail: 'lisa@nexusretail.com',
-    contactPhone: '+15551003003',
-    salesRepName: 'Kevin',
-    callNumber: 1,
-    callSid: 'MOCK_CA_CLT003_CALL001',
-    status: 'initial_contact',
-    outcome: 'interested',
-    nextAction: 'scheduled_demo',
-    createdAt: '2026-01-15T11:00:00.000Z',
-    sentiment: 'positive',
-    conversation: [
-      { speaker: 'client', text: 'Hi, Lisa Wong here.', start: 5.0, end: 6.5 },
-      { speaker: 'sales_representative', text: "Hi Lisa! This is Kevin from TechFlow Solutions. Thanks for taking my call. I understand you're looking to improve your retail analytics capabilities?", start: 7.0, end: 15.0 },
-      { speaker: 'client', text: "Yes, that's right. We've been growing rapidly and our current systems just can't keep up with the data volume.", start: 15.5, end: 23.0 },
-    ],
-  },
-  'MOCK_CA_CLT003_CALL002': {
-    clientId: 'CLT_003',
-    clientName: 'Lisa Wong',
-    companyName: 'Nexus Retail Solutions',
-    industry: 'Retail',
-    contactEmail: 'lisa@nexusretail.com',
-    contactPhone: '+15551003003',
-    salesRepName: 'Kevin',
-    callNumber: 2,
-    callSid: 'MOCK_CA_CLT003_CALL002',
-    status: 'in_progress',
-    outcome: 'pending_decision',
-    nextAction: 'awaiting_cfo_approval',
-    createdAt: '2026-01-20T11:00:00.000Z',
-    sentiment: 'positive',
-    conversation: [
-      { speaker: 'sales_representative', text: 'Hi Lisa! Kevin here. How did the demo go with your team?', start: 5.0, end: 9.0 },
-      { speaker: 'client', text: 'It went really well, Kevin! Everyone was impressed with the platform. We just need to get final approval from our CFO.', start: 9.5, end: 17.0 },
-    ],
-  },
-}
-
-const statusColors: Record<string, 'default' | 'success' | 'warning' | 'destructive'> = {
-  initial_contact: 'default',
-  demo: 'warning',
-  in_progress: 'warning',
-  contract_accepted: 'success',
-  rejected: 'destructive',
-  followup: 'default',
-  completed: 'success',
-}
-
-const outcomeColors: Record<string, 'default' | 'success' | 'warning' | 'destructive'> = {
-  interested: 'success',
-  very_interested: 'success',
-  hesitant_interest: 'warning',
-  pending_decision: 'warning',
-  closed_won: 'success',
-  closed_lost: 'destructive',
-  unknown: 'default',
 }
 
 const sentimentColors: Record<string, 'default' | 'success' | 'warning' | 'destructive'> = {
@@ -221,8 +218,10 @@ const sentimentColors: Record<string, 'default' | 'success' | 'warning' | 'destr
   mixed: 'warning',
 }
 
-const formatStatus = (status: string) => {
-  return status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+const interestColors: Record<string, 'success' | 'warning' | 'destructive'> = {
+  high: 'success',
+  medium: 'warning',
+  low: 'destructive',
 }
 
 const formatDate = (dateStr: string) => {
@@ -241,6 +240,9 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
   const [call, setCall] = useState<CallData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
+  const [expandedSection, setExpandedSection] = useState<string | null>('summary')
 
   useEffect(() => {
     async function fetchCall() {
@@ -260,9 +262,9 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
           throw new Error(data.error || 'Transcript not found')
         }
 
-        // Transform API response to CallData format
         const transcript = data.transcript
         setCall({
+          callSid: transcript.callSid,
           clientId: transcript.clientId || 'Unknown',
           clientName: transcript.clientName || 'Unknown Client',
           companyName: transcript.companyName || 'Unknown Company',
@@ -271,13 +273,13 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
           contactPhone: transcript.contactPhone || '',
           salesRepName: transcript.salesRepName || 'Unknown',
           callNumber: transcript.callNumber || 1,
-          callSid: transcript.callSid,
           status: transcript.status || 'completed',
           outcome: transcript.outcome || 'unknown',
           nextAction: transcript.nextAction || 'none',
           createdAt: transcript.createdAt || new Date().toISOString(),
           sentiment: transcript.sentiment || 'neutral',
           conversation: transcript.conversation || [],
+          analysis: transcript.analysis || undefined,
         })
       } catch (err) {
         console.error('Error fetching call:', err)
@@ -290,6 +292,35 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
     fetchCall()
   }, [id])
 
+  const handleAnalyze = async () => {
+    if (!call) return
+    
+    setIsAnalyzing(true)
+    setAnalyzeError(null)
+    
+    try {
+      const response = await fetch(`/api/analyze/${call.callSid}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: 'openrouter' }), // Use OpenRouter as primary
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Analysis failed')
+      }
+      
+      // Update call with analysis
+      setCall(prev => prev ? { ...prev, analysis: data.analysis } : null)
+    } catch (err) {
+      console.error('Error analyzing call:', err)
+      setAnalyzeError(err instanceof Error ? err.message : 'Analysis failed')
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex flex-col h-full">
@@ -300,7 +331,7 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
             <Link href="/clients">
               <Button variant="ghost">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Clients
+                Back
               </Button>
             </Link>
           }
@@ -322,7 +353,7 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
             <Link href="/clients">
               <Button variant="ghost">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Clients
+                Back
               </Button>
             </Link>
           }
@@ -342,10 +373,11 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
     )
   }
 
-  // Calculate call duration from conversation
   const duration = call.conversation.length > 0 
     ? call.conversation[call.conversation.length - 1].end 
     : 0
+
+  const analysis = call.analysis
 
   return (
     <div className="flex flex-col h-full">
@@ -353,58 +385,77 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
         title={`Call #${call.callNumber}`}
         description={`${call.clientName} • ${call.companyName}`}
         actions={
-          <Link href="/clients">
-            <Button variant="ghost">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Clients
+          <div className="flex gap-2">
+            <Link href="/clients">
+              <Button variant="ghost">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+            </Link>
+            <Button 
+              onClick={handleAnalyze} 
+              disabled={isAnalyzing || call.conversation.length === 0}
+              variant={analysis ? 'outline' : 'default'}
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  {analysis ? 'Re-analyze' : 'Analyze with AI'}
+                </>
+              )}
             </Button>
-          </Link>
+          </div>
         }
       />
       
       <div className="flex-1 p-6 overflow-auto">
+        {analyzeError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            {analyzeError}
+          </div>
+        )}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Main Content */}
+          {/* Left Column - Transcript */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Tags/Badges Bar */}
+            {/* Call Info Bar */}
             <Card>
               <CardContent className="p-4">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Badge variant={statusColors[call.status] || 'default'}>
-                    {formatStatus(call.status)}
-                  </Badge>
-                  <Badge variant={outcomeColors[call.outcome] || 'default'}>
-                    {formatStatus(call.outcome)}
-                  </Badge>
                   <Badge variant={sentimentColors[call.sentiment] || 'default'}>
-                    Sentiment: {call.sentiment}
+                    {call.sentiment}
                   </Badge>
-                  {call.status === 'initial_contact' && (
-                    <Badge variant="outline">First Contact</Badge>
-                  )}
-                  {call.outcome === 'closed_won' && (
-                    <Badge variant="success">Deal Won</Badge>
-                  )}
-                  {call.outcome === 'closed_lost' && (
-                    <Badge variant="destructive">Deal Lost</Badge>
-                  )}
-                  {call.outcome === 'very_interested' && (
-                    <Badge variant="success">High Interest</Badge>
-                  )}
-                  {call.outcome === 'hesitant_interest' && (
-                    <Badge variant="warning">Low Interest</Badge>
-                  )}
+                  <Badge variant="outline">{call.status.replace(/_/g, ' ')}</Badge>
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {formatDuration(Math.floor(duration))}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    Rep: {call.salesRepName}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {formatDate(call.createdAt)}
+                  </span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Transcript */}
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
                   Transcript
                 </CardTitle>
+                <Button variant="ghost" size="sm" disabled>
+                  <Play className="h-4 w-4 mr-1" />
+                  Play Audio
+                </Button>
               </CardHeader>
               <CardContent>
                 {call.conversation.length === 0 ? (
@@ -412,15 +463,35 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
                     No transcript available for this call.
                   </div>
                 ) : (
-                  <div className="bg-muted/30 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap max-h-[600px] overflow-y-auto space-y-3">
+                  <div className="bg-muted/30 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap max-h-[500px] overflow-y-auto space-y-3">
                     {call.conversation.map((entry, i) => {
                       const minutes = Math.floor(entry.start / 60)
                       const seconds = Math.floor(entry.start % 60)
                       const timestamp = `[${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}]`
-                      const speakerName = entry.speaker === 'sales_representative' ? call.salesRepName : call.clientName
+                      
+                      // Determine speaker based on alternating pattern
+                      // First person (index 0) = Client, second person (index 1) = Sales Rep
+                      // Pattern: Client, Sales Rep, Client, Sales Rep...
+                      // Even indices (0, 2, 4...) = Client
+                      // Odd indices (1, 3, 5...) = Sales Rep
+                      const isRep = i % 2 === 1
+                      const speakerName = isRep 
+                        ? (call.salesRepName || 'Sales Rep')
+                        : (call.clientName || 'Client')
+                      
+                      // Check if this text contains an objection
+                      const isObjection = analysis?.objections?.some(obj => 
+                        entry.text.toLowerCase().includes(obj.toLowerCase().substring(0, 30))
+                      )
                       
                       return (
-                        <p key={i} className="leading-relaxed">
+                        <p 
+                          key={i} 
+                          className={cn(
+                            'leading-relaxed',
+                            isObjection && 'bg-yellow-100 -mx-2 px-2 py-1 rounded border-l-4 border-yellow-400'
+                          )}
+                        >
                           <span className="text-muted-foreground">{timestamp}</span>{' '}
                           <span className="font-semibold">{speakerName}:</span>{' '}
                           {entry.text}
@@ -433,91 +504,162 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
             </Card>
           </div>
           
-          {/* Right Column - Details */}
+          {/* Right Column - Analysis Panel */}
           <div className="space-y-6">
-            {/* Call Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Call Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Date</p>
-                    <p className="text-sm text-muted-foreground">{formatDate(call.createdAt)}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Sales Rep</p>
-                    <p className="text-sm text-muted-foreground">{call.salesRepName}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Duration</p>
-                    <p className="text-sm text-muted-foreground">{formatDuration(Math.floor(duration))}s</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Client Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Client Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">{call.clientName}</p>
-                    <p className="text-sm text-muted-foreground">{call.clientId}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Building2 className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">{call.companyName}</p>
-                    <p className="text-sm text-muted-foreground">{call.industry}</p>
-                  </div>
-                </div>
-                {call.contactEmail && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">{call.contactEmail}</p>
-                  </div>
-                )}
-                {call.contactPhone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">{call.contactPhone}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Next Action */}
-            {call.nextAction && call.nextAction !== 'none' && (
+            {!analysis ? (
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Next Action
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Badge variant="outline" className="text-sm">
-                    {formatStatus(call.nextAction)}
-                  </Badge>
+                <CardContent className="py-12 text-center">
+                  <Sparkles className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-medium mb-2">No Analysis Yet</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Click "Analyze with AI" to get insights about this call.
+                  </p>
+                  <Button onClick={handleAnalyze} disabled={isAnalyzing || call.conversation.length === 0}>
+                    {isAnalyzing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Analyze Now
+                      </>
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
+            ) : (
+              <>
+                {/* Score Card - Enterprise Style */}
+                <Card>
+                  <CardHeader className="pb-2 border-b">
+                    <CardTitle className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                      Deal Score
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <div className="text-center mb-4">
+                      <div className="text-4xl font-semibold text-foreground">
+                        {analysis.stageConfidence}%
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">Confidence Score</div>
+                    </div>
+                    <div className="space-y-2.5 text-sm">
+                      <div className="flex justify-between items-center py-1.5 border-b border-border/50">
+                        <span className="text-muted-foreground">Pipeline Stage</span>
+                        <span className="font-medium capitalize">{(analysis.currentStage || 'unknown').replace(/_/g, ' ')}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-1.5 border-b border-border/50">
+                        <span className="text-muted-foreground">Interest Level</span>
+                        <span className="font-medium capitalize">{analysis.clientInterestLevel || 'unknown'}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-1.5">
+                        <span className="text-muted-foreground">Sentiment</span>
+                        <span className="font-medium capitalize">{analysis.overallSentiment || 'unknown'}</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-3 border-t text-xs text-muted-foreground/70">
+                      Model: {analysis.modelUsed?.split('/').pop() || 'AI'} • {analysis.processingTimeMs}ms
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Summary */}
+                <Card>
+                  <CardHeader 
+                    className="cursor-pointer"
+                    onClick={() => setExpandedSection(expandedSection === 'summary' ? null : 'summary')}
+                  >
+                    <CardTitle className="text-base flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4" />
+                        Summary
+                      </span>
+                      {expandedSection === 'summary' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </CardTitle>
+                  </CardHeader>
+                  {expandedSection === 'summary' && (
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+                      {analysis.keyPoints.length > 0 && (
+                        <div className="mt-3">
+                          <div className="text-xs font-medium mb-2">Key Points</div>
+                          <ul className="space-y-1">
+                            {analysis.keyPoints.map((point, i) => (
+                              <li key={i} className="text-sm flex items-start gap-2">
+                                <CheckCircle className="h-3 w-3 text-green-500 mt-1 flex-shrink-0" />
+                                {point}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </CardContent>
+                  )}
+                </Card>
+              </>
             )}
           </div>
         </div>
+
+        {/* Action Insights - Full Width Enterprise Section */}
+        {analysis && (
+          <Card className="mt-6">
+            <CardHeader className="pb-3 border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-semibold">
+                  Analysis & Recommendations
+                </CardTitle>
+                {analysis.suggestedFollowUpDate && (
+                  <span className="text-xs text-muted-foreground">
+                    Suggested follow-up: {analysis.suggestedFollowUpDate}
+                  </span>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="pt-5">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Next Steps */}
+                <InsightSection
+                  icon={<ArrowUpRight className="h-4 w-4" />}
+                  title="Recommended Actions"
+                  color="blue"
+                  items={analysis.nextSteps || []}
+                  emptyMessage="No specific actions identified"
+                />
+
+                {/* Buying Signals */}
+                <InsightSection
+                  icon={<TrendingUp className="h-4 w-4" />}
+                  title="Positive Indicators"
+                  color="emerald"
+                  items={analysis.buyingSignals || []}
+                  emptyMessage="No buying signals detected"
+                />
+
+                {/* Objections */}
+                <InsightSection
+                  icon={<AlertCircle className="h-4 w-4" />}
+                  title="Client Concerns"
+                  color="amber"
+                  items={analysis.objections || []}
+                  emptyMessage="No objections raised"
+                />
+
+                {/* Risks */}
+                <InsightSection
+                  icon={<ShieldAlert className="h-4 w-4" />}
+                  title="Risk Factors"
+                  color="red"
+                  items={analysis.risks || []}
+                  emptyMessage="No significant risks identified"
+                  emptyIsPositive
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   )

@@ -125,19 +125,21 @@ export async function transcribeWithDeepgram(
 
 /**
  * Convert Deepgram utterances to our conversation format
- * Speaker 0 = typically the first person to speak (usually client answering "Hello?")
- * Speaker 1 = typically the second person to speak (usually sales rep)
- * @param firstSpeakerIsRep - if true, speaker 0 is rep; if false (default), speaker 0 is client
+ * Uses alternating pattern based on position in the conversation:
+ * - First utterance (index 0) = Client (they answer the phone with "Hello?")
+ * - Second utterance (index 1) = Sales Rep
+ * - Third utterance (index 2) = Client
+ * - And so on...
+ * 
+ * This is more reliable than Deepgram's speaker diarization which can be inconsistent.
  */
 export function deepgramToConversation(
   utterances: TranscriptionUtterance[],
-  firstSpeakerIsRep: boolean = true
+  firstSpeakerIsRep: boolean = false // kept for backwards compatibility but ignored
 ): { speaker: "sales_representative" | "client"; text: string; start: number; end: number }[] {
-  return utterances.map((u) => ({
-    speaker:
-      (u.speaker === 0 && firstSpeakerIsRep) || (u.speaker === 1 && !firstSpeakerIsRep)
-        ? "sales_representative"
-        : "client",
+  return utterances.map((u, index) => ({
+    // Even indices (0, 2, 4...) = Client, Odd indices (1, 3, 5...) = Sales Rep
+    speaker: index % 2 === 0 ? "client" : "sales_representative",
     text: u.text,
     start: u.start,
     end: u.end,

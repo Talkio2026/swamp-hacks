@@ -4,6 +4,7 @@ import connectToDatabase from "@/lib/mongodb";
 import Transcript from "@/lib/models/Transcript";
 import Client, { normalizePhoneNumber } from "@/lib/models/Client";
 import { transcribeWithDeepgram, deepgramToConversation } from "@/lib/transcription/deepgram";
+import { analyzeTranscript } from "@/lib/ai/analyzer";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -387,8 +388,63 @@ async function processTranscription(recordingSid: string, callSid: string, diale
     if (Object.keys(clientData).length > 0) {
       console.log(`[Recording Status] Client data merged: ${clientData.clientId} - ${clientData.clientName}`);
     }
+    
+    // ========== AUTOMATIC AI ANALYSIS ==========
+    // Run AI analysis automatically after transcript is saved
+    if (mergedConversation.length > 0) {
+      try {
+        console.log(`[Recording Status] Starting automatic AI analysis for callSid: ${callSid}`);
+        
+        // Re-fetch the transcript to ensure we have the latest data with all fields
+        const transcriptForAnalysis = await Transcript.findOne({ callSid });
+        
+        if (transcriptForAnalysis) {
+          // Run analysis with OpenRouter as primary provider
+          const analysis = await analyzeTranscript(transcriptForAnalysis, { provider: 'openrouter' });
+          
+          console.log(`[Recording Status] AI analysis completed in ${analysis.processingTimeMs}ms`);
+          
+          // Save the analysis results back to the transcript
+          transcriptForAnalysis.analysis = analysis;
+          
+          // Update transcript fields based on analysis
+          if (analysis.overallSentiment) {
+            transcriptForAnalysis.sentiment = analysis.overallSentiment;
+          }
+          if (analysis.currentStage) {
+            transcriptForAnalysis.status = mapStageToStatus(analysis.currentStage);
+          }
+          if (analysis.nextSteps && analysis.nextSteps.length > 0) {
+            transcriptForAnalysis.nextAction = analysis.nextSteps[0];
+          }
+          
+          await transcriptForAnalysis.save();
+          console.log(`[Recording Status] AI analysis saved to transcript`);
+        }
+      } catch (analysisError) {
+        // Don't fail the whole process if analysis fails - transcript is already saved
+        console.error(`[Recording Status] AI analysis failed (transcript still saved):`, analysisError);
+      }
+    }
   } catch (error) {
     console.error(`[Recording Status] Error processing transcription:`, error);
     throw error;
   }
+}
+
+// Map analysis stage to transcript status
+type TranscriptStatus = "initial_contact" | "demo" | "followup" | "negotiation" | "contract_accepted" | "rejected" | "in_progress";
+
+function mapStageToStatus(stage: string): TranscriptStatus {
+  const stageMap: Record<string, TranscriptStatus> = {
+    'initial_contact': 'initial_contact',
+    'discovery': 'initial_contact',
+    'demo': 'demo',
+    'proposal': 'followup',
+    'negotiation': 'negotiation',
+    'closing': 'negotiation',
+    'closed_won': 'contract_accepted',
+    'closed_lost': 'rejected',
+  };
+  return stageMap[stage] || 'in_progress';
 }

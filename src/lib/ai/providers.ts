@@ -94,18 +94,19 @@ export class OpenRouterProvider implements LLMProvider {
 
 /**
  * Get the appropriate LLM provider based on configuration
+ * Default: OpenRouter (primary), Gemini (fallback)
  */
 export function getProvider(config?: { 
   provider?: 'gemini' | 'openrouter'
   model?: OpenRouterModel 
 }): LLMProvider {
-  const providerType = config?.provider || 'gemini'
+  const providerType = config?.provider || 'openrouter'
   
-  if (providerType === 'openrouter') {
-    return new OpenRouterProvider(config?.model || 'claude-3-sonnet')
+  if (providerType === 'gemini') {
+    return new GeminiProvider()
   }
   
-  return new GeminiProvider()
+  return new OpenRouterProvider(config?.model || 'claude-3-sonnet')
 }
 
 /**
