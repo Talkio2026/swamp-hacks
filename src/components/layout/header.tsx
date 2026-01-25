@@ -11,24 +11,30 @@ interface HeaderProps {
   description?: string
   role?: 'ADMIN' | 'MANAGER' | 'REP'
   actions?: React.ReactNode
+  className?: string
+  titleSize?: 'default' | 'large'
 }
 
-export function Header({ title, description, role, actions }: HeaderProps) {
+export function Header({ title, description, role, actions, className, titleSize = 'default' }: HeaderProps) {
   const { isModalOpen } = useModal()
   
   return (
     <header className={cn(
       "h-16 border-b border-[#E0E7FF] bg-white flex items-center justify-between px-8 transition-all duration-300 ease-in-out",
-      isModalOpen && "opacity-5 blur-xl pointer-events-none border-transparent shadow-none"
+      isModalOpen && "opacity-5 blur-xl pointer-events-none border-transparent shadow-none",
+      className
     )}>
       <div className="flex items-center gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-[#1E1B4B] tracking-tight">{title}</h1>
+            <h1 className={cn(
+              "font-bold text-[#1E1B4B] tracking-tight",
+              titleSize === 'large' ? "text-3xl" : "text-2xl"
+            )}>{title}</h1>
             {role && <RoleBadge role={role} />}
           </div>
           {description && (
-            <p className="text-sm text-gray-500 mt-0.5">{description}</p>
+            <p className="text-base text-gray-500 mt-1">{description}</p>
           )}
         </div>
       </div>

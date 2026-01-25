@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { Header } from '@/components/layout/header'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Phone, CheckCircle, AlertTriangle, Clock, ArrowUpRight, Users, BookOpen } from 'lucide-react'
@@ -27,9 +28,14 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
+  const { user } = useUser()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  const firstName = user?.firstName 
+    ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
+    : 'there'
 
   useEffect(() => {
     async function fetchStats() {
@@ -52,8 +58,13 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col h-full bg-[#F6F5FA]">
       <Header 
-        title="Dashboard" 
-        description="Overview of your sales activity"
+        title={
+          <span className="text-3xl text-[#1E1B4B] tracking-tight">
+            <span className="font-bold">Welcome, </span>
+            <span className="text-2xl font-normal">{firstName}</span>
+          </span>
+        }
+        className="h-20"
       />
       
       <div className="flex-1 p-8 space-y-8 overflow-auto">
