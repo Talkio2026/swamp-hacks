@@ -41,15 +41,15 @@ export function Sidebar() {
     >
       {/* Logo & Org Switcher */}
       <div className={cn(
-        "flex h-16 items-center justify-between border-b border-[#E0E7FF] px-4 bg-white transition-all duration-300",
+        "relative flex h-16 items-center justify-center border-b border-[#E0E7FF] px-4 bg-white transition-all duration-300",
         isModalOpen && "border-transparent shadow-none"
       )}>
         {!collapsed ? (
           <>
-            <Link href="/dashboard" className="flex items-center transition-all duration-500 ease-in-out">
+            <Link href="/dashboard" className="flex items-center justify-center transition-all duration-500 ease-in-out">
               <div className="transition-opacity duration-500 ease-in-out opacity-100">
                 <span 
-                  className="text-2xl font-normal text-[#1E1B4B]"
+                  className="text-4xl font-normal text-[#1E1B4B]"
                   style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
                 >
                   Talkio
@@ -58,7 +58,7 @@ export function Sidebar() {
             </Link>
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="h-7 w-7 rounded-md flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-100 transition-colors flex-shrink-0 ml-2"
+              className="absolute right-4 h-7 w-7 rounded-md flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-100 transition-colors flex-shrink-0"
               aria-label="Collapse sidebar"
             >
               <ChevronLeft className="h-4 w-4" />
