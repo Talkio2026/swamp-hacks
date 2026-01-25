@@ -196,3 +196,59 @@ body {
 .cl-cardBox {
   box-shadow: none !important;
 }
+
+/* Make Account section bigger in settings */
+.cl-userProfile .cl-cardBox .cl-navbar {
+  font-size: 16px !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-navbar .cl-navbarButton {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  padding: 12px 16px !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-navbar .cl-navbarButtonText {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-pageHeaderTitle {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-pageHeaderSubtitle {
+  font-size: 16px !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-profileSectionTitleText {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-formFieldLabel {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-formFieldInput {
+  font-size: 16px !important;
+}
+
+.cl-userProfile .cl-cardBox .cl-profileSectionPrimaryButton {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+/* Center Account component within Profile Settings */
+.cl-userProfile {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.cl-userProfile .cl-cardBox {
+  margin: 0 auto !important;
+  max-width: 100% !important;
+}

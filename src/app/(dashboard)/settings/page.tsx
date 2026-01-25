@@ -165,29 +165,49 @@ export default function SettingsPage() {
           {/* Profile Settings - Clerk Component */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <Users className="h-6 w-6" />
                 Profile Settings
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-base mt-2">
                 Update your profile photo, name, and account settings
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <UserProfile 
-                routing="hash"
-                appearance={{
-                  elements: {
-                    rootBox: 'w-full',
-                    cardBox: 'shadow-none border-0 w-full',
-                    navbar: 'hidden',
-                    navbarMobileMenuButton: 'hidden',
-                    headerTitle: 'hidden',
-                    headerSubtitle: 'hidden',
-                    profileSectionTitleText: 'text-sm font-medium',
-                  },
-                }}
-              />
+            <CardContent className="flex justify-center">
+              <div className="w-full max-w-4xl">
+                <UserProfile 
+                  routing="hash"
+                  appearance={{
+                    elements: {
+                      rootBox: 'w-full flex justify-center',
+                      cardBox: 'shadow-none border-0 w-full mx-auto',
+                      navbar: 'hidden',
+                      navbarMobileMenuButton: 'hidden',
+                      headerTitle: 'hidden',
+                      headerSubtitle: 'hidden',
+                      profileSectionTitleText: 'text-lg font-bold',
+                      // Account section styling
+                      accountSwitcherTrigger: 'text-base font-semibold',
+                      accountSwitcherTriggerText: 'text-base font-semibold',
+                      // Navigation items
+                      navbarButton: 'text-base font-medium',
+                      navbarButtonText: 'text-base font-medium',
+                      // Content sections
+                      pageHeaderTitle: 'text-xl font-bold',
+                      pageHeaderSubtitle: 'text-base',
+                      formFieldLabel: 'text-base font-semibold',
+                      formFieldInput: 'text-base',
+                      formButtonPrimary: 'text-base font-semibold',
+                      // Profile info
+                      profileSection: 'text-base',
+                      profileSectionPrimaryButton: 'text-base font-semibold',
+                      // Email and connected accounts
+                      formFieldLabelRow: 'text-base font-semibold',
+                      badge: 'text-sm font-medium',
+                    },
+                  }}
+                />
+              </div>
             </CardContent>
           </Card>
 
