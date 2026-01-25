@@ -124,14 +124,8 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Calls - Takes 2 columns */}
           <div className="lg:col-span-2 rounded-xl border border-[#E0E7FF] bg-white shadow-sm">
-<<<<<<< Updated upstream
-            <div className="px-5 py-4 border-b border-[#E0E7FF] flex items-center justify-between">
-              <h2 className="text-[13px] font-semibold text-[#1E1B4B]">Recent Calls</h2>
-              <Link href="/calls" className="text-[11px] text-[#4F46E5] hover:underline">View all</Link>
-=======
             <div className="px-6 py-5 border-b border-[#E0E7FF]">
               <h2 className="text-[15px] font-semibold text-[#1E1B4B]">Recent Calls</h2>
->>>>>>> Stashed changes
             </div>
             <div className="p-4">
               {loading ? (
@@ -148,52 +142,6 @@ export default function DashboardPage() {
                     <Link 
                       key={call.id} 
                       href={`/calls/${call.id}`}
-<<<<<<< Updated upstream
-                      className="block px-4 py-3 rounded-lg hover:bg-[#F5F7FA] transition-colors group border border-transparent hover:border-[#E0E7FF]"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
-                          <div className="h-10 w-10 rounded-full bg-[#EEF2FF] flex items-center justify-center group-hover:bg-[#E0E7FF] transition-colors flex-shrink-0 mt-0.5">
-                            <span className="text-[13px] font-semibold text-[#4F46E5]">
-                              {call.prospect ? call.prospect.charAt(0).toUpperCase() : <Phone className="h-4 w-4" />}
-                            </span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="text-[13px] font-medium text-[#1E1B4B] group-hover:text-[#4F46E5] transition-colors truncate">
-                                {call.prospect || call.phoneNumber || 'Unknown Contact'}
-                              </p>
-                              {call.status === 'COMPLETED' && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-green-100 text-green-700">
-                                  <CheckCircle className="h-2.5 w-2.5 mr-0.5" />
-                                  Done
-                                </span>
-                              )}
-                              {call.status === 'PROCESSING' && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-yellow-100 text-yellow-700">
-                                  <Clock className="h-2.5 w-2.5 mr-0.5" />
-                                  Processing
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-[11px] text-[#6366F1] mt-0.5">
-                              {call.company && <span>{call.company} · </span>}
-                              {new Date(call.callDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                              {call.duration && (
-                                <span className="ml-1 text-[#A5B4FC]">
-                                  · {Math.floor(call.duration / 60)}:{(call.duration % 60).toString().padStart(2, '0')}
-                                </span>
-                              )}
-                            </p>
-                            {call.summary && (
-                              <p className="text-[11px] text-[#64748B] mt-1.5 line-clamp-2 leading-relaxed">
-                                {call.summary}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <ArrowUpRight className="h-4 w-4 text-[#C7D2FE] group-hover:text-[#4F46E5] transition-colors flex-shrink-0 mt-1" />
-=======
                       className="flex items-center justify-between px-4 py-4 rounded-lg hover:bg-[#F5F7FA] transition-colors group"
                     >
                       <div className="flex items-center gap-4">
@@ -201,18 +149,19 @@ export default function DashboardPage() {
                           <Phone className="h-5 w-5 text-[#4F46E5]" />
                         </div>
                         <div>
-                          <p className="text-[15px] font-medium text-[#1E1B4B] group-hover:text-[#4F46E5] transition-colors">{call.title}</p>
+                          <p className="text-[15px] font-medium text-[#1E1B4B] group-hover:text-[#4F46E5] transition-colors">{call.title || call.prospect || call.phoneNumber || 'Unknown Contact'}</p>
                           <p className="text-[13px] font-medium text-[#6366F1]">
                             {call.rep.firstName} {call.rep.lastName} · {new Date(call.callDate).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-[14px] text-[#A5B4FC] font-mono">
-                          {Math.floor(call.duration / 60)}:{(call.duration % 60).toString().padStart(2, '0')}
-                        </span>
+                        {call.duration && (
+                          <span className="text-[14px] text-[#A5B4FC] font-mono">
+                            {Math.floor(call.duration / 60)}:{(call.duration % 60).toString().padStart(2, '0')}
+                          </span>
+                        )}
                         <ArrowUpRight className="h-5 w-5 text-[#C7D2FE] group-hover:text-[#4F46E5] transition-colors" />
->>>>>>> Stashed changes
                       </div>
                     </Link>
                   ))}
