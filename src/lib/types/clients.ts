@@ -116,6 +116,15 @@ export type CallDetailStatus = 'PROCESSING' | 'READY' | 'FAILED'
 export type TranscriptSpeaker = 'REP' | 'CLIENT' | 'UNKNOWN'
 export type NextActionFollowUp = 'SCHEDULED' | 'MISSING' | 'NONE'
 
+export interface ScheduledMeeting {
+  detected: boolean
+  date?: string        // YYYY-MM-DD format
+  time?: string        // HH:MM 24-hour format  
+  duration?: number    // minutes
+  type?: 'call' | 'demo' | 'meeting'
+  notes?: string       // What was agreed to be discussed
+}
+
 export interface CallDetail {
   id: string
   title: string
@@ -139,6 +148,7 @@ export interface CallDetail {
     purpose: string | null
     missingReason: string | null
   }
+  scheduledMeeting?: ScheduledMeeting
 }
 
 export interface ContextHistoryItem {

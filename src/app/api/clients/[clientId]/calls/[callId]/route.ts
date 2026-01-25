@@ -6,6 +6,7 @@ import type {
   CallDetailApiResponse,
   NextActionFollowUp,
   TranscriptSpeaker,
+  ScheduledMeeting,
 } from '@/lib/types/clients'
 
 type Role = 'ADMIN' | 'MANAGER' | 'REP'
@@ -40,7 +41,7 @@ function mockCallDetail(
   const client = clients[clientId]
   if (!client) return null
 
-  const base: Record<string, Omit<CallDetail, 'outcome' | 'summary' | 'nextAction'> & { outcome: { label: string; explanation: string | null }; summary: { bullets: string[] }; nextAction: { followUpStatus: NextActionFollowUp; scheduledAt: string | null; purpose: string | null; missingReason: string | null } }> = {
+  const base: Record<string, Omit<CallDetail, 'outcome' | 'summary' | 'nextAction' | 'scheduledMeeting'> & { outcome: { label: string; explanation: string | null }; summary: { bullets: string[] }; nextAction: { followUpStatus: NextActionFollowUp; scheduledAt: string | null; purpose: string | null; missingReason: string | null }; scheduledMeeting?: ScheduledMeeting }> = {
     'call-c1-1': {
       id: 'call-c1-1',
       title: 'Discovery pricing discussion',
@@ -87,6 +88,14 @@ function mockCallDetail(
         purpose: 'Walk through security add-ons and pricing options with VP Engineering.',
         missingReason: null,
       },
+      scheduledMeeting: {
+        detected: true,
+        date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        time: '14:00',
+        duration: 30,
+        type: 'call' as const,
+        notes: 'Walk through security add-ons with VP Engineering',
+      } as ScheduledMeeting,
     },
     'call-c1-2': {
       id: 'call-c1-2',
@@ -161,6 +170,14 @@ function mockCallDetail(
         purpose: 'Demo and pilot proposal.',
         missingReason: null,
       },
+      scheduledMeeting: {
+        detected: true,
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        time: '10:00',
+        duration: 60,
+        type: 'demo' as const,
+        notes: 'Product demo and pilot proposal discussion',
+      } as ScheduledMeeting,
     },
     'call-c3-1': {
       id: 'call-c3-1',
@@ -288,6 +305,7 @@ function mockCallDetail(
     summary,
     outcome,
     nextAction,
+    scheduledMeeting: raw.scheduledMeeting,
   } as CallDetail
 }
 

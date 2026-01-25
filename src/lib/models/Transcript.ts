@@ -8,6 +8,16 @@ export interface IConversationEntry {
   end: number;
 }
 
+// Interface for scheduled meeting detection
+export interface IScheduledMeeting {
+  detected: boolean;
+  date?: string;        // YYYY-MM-DD format
+  time?: string;        // HH:MM 24-hour format  
+  duration?: number;    // minutes
+  type?: "call" | "demo" | "meeting";
+  notes?: string;       // What was agreed to be discussed
+}
+
 // Interface for AI Analysis result
 export interface IAnalysis {
   summary: string;
@@ -21,6 +31,7 @@ export interface IAnalysis {
   suggestedFollowUpDate?: string;
   currentStage: string;
   stageConfidence: number;
+  scheduledMeeting?: IScheduledMeeting;
   analyzedAt: Date;
   modelUsed: string;
   processingTimeMs: number;
@@ -180,6 +191,17 @@ const TranscriptSchema = new Schema<ITranscript>(
       suggestedFollowUpDate: String,
       currentStage: String,
       stageConfidence: Number,
+      scheduledMeeting: {
+        detected: { type: Boolean, default: false },
+        date: String,      // YYYY-MM-DD
+        time: String,      // HH:MM
+        duration: Number,  // minutes
+        type: {
+          type: String,
+          enum: ["call", "demo", "meeting"],
+        },
+        notes: String,
+      },
       analyzedAt: Date,
       modelUsed: String,
       processingTimeMs: Number,
