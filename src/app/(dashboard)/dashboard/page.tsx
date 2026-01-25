@@ -59,9 +59,8 @@ export default function DashboardPage() {
     <div className="flex flex-col h-full bg-[#F6F5FA]">
       <Header 
         title={
-          <span className="text-3xl text-[#1E1B4B] tracking-tight">
-            <span className="font-bold">Welcome, </span>
-            <span className="text-2xl font-normal">{firstName}</span>
+          <span className="text-3xl text-[#1E1B4B] tracking-tight font-medium">
+            Welcome, {firstName}!
           </span>
         }
         className="h-20"

@@ -537,7 +537,12 @@ export default function DocsPage() {
             <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">T</span>
             </div>
-            <span className="font-semibold text-lg text-white">Talkio</span>
+            <span 
+              className="text-2xl font-normal text-white"
+              style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+            >
+              Talkio
+            </span>
             <span className="text-gray-500 mx-2">/</span>
             <span className="text-gray-400">Documentation</span>
           </div>

@@ -2,7 +2,6 @@
 
 import { UserButton } from '@clerk/nextjs'
 import { RoleBadge } from '@/components/ui/badge'
-import { Bell } from 'lucide-react'
 import { useModal } from '@/contexts/modal-context'
 import { cn } from '@/lib/utils'
 
@@ -41,11 +40,6 @@ export function Header({ title, description, role, actions, className, titleSize
 
       <div className="flex items-center gap-4">
         {actions}
-
-        <button className="relative h-10 w-10 rounded-lg flex items-center justify-center text-black hover:text-gray-700 hover:bg-gray-100 transition-colors">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-black" />
-        </button>
 
         <div className={cn(
           "w-px h-6 bg-[#E0E7FF] mx-1 transition-all duration-300",

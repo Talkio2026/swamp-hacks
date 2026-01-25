@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
 import {
@@ -49,14 +48,12 @@ export function Sidebar() {
           <>
             <Link href="/dashboard" className="flex items-center transition-all duration-500 ease-in-out">
               <div className="transition-opacity duration-500 ease-in-out opacity-100">
-                <Image
-                  src="/talkio-logo.svg"
-                  alt="Talkio"
-                  width={120}
-                  height={36}
-                  className="object-contain"
-                  priority
-                />
+                <span 
+                  className="text-2xl font-normal text-[#1E1B4B]"
+                  style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+                >
+                  Talkio
+                </span>
               </div>
             </Link>
             <button

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
 
@@ -36,17 +35,22 @@ export function Footer() {
       <div className="footer-inner mx-auto max-w-[1280px] flex flex-col items-center">
         <Link
           href="/"
-          className="relative h-10 w-[120px] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#7D9AB3] rounded-sm"
+          className="transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#7D9AB3] rounded-sm"
         >
-          <Image
-            src="/talkio-logo-white.svg"
-            alt="Talkio"
-            fill
-            className="object-contain"
-          />
+          <span 
+            className="text-2xl font-normal text-white"
+            style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+          >
+            Talkio
+          </span>
         </Link>
         <p className="mt-3 text-sm text-white/80">
-          © 2026 Talkio. All rights reserved.
+          © 2026 <span 
+            className="text-sm font-normal text-white/80"
+            style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+          >
+            Talkio
+          </span>. All rights reserved.
         </p>
       </div>
     </footer>

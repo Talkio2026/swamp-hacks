@@ -69,7 +69,7 @@ export default function SignInPage() {
           {/* Logo */}
           <Link href="/" className="inline-block mb-8">
             <span 
-              className="text-3xl font-normal text-white"
+              className="text-2xl font-normal text-white"
               style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
             >
               Talkio

@@ -88,10 +88,14 @@ export default function ProductPage() {
         <div className="mx-auto max-w-[1400px] px-8 lg:px-12 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="text-2xl font-normal text-white transition-opacity hover:opacity-80"
-            style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+            className="transition-opacity hover:opacity-80"
           >
-            Talkio
+            <span 
+              className="text-2xl font-normal text-white"
+              style={{ fontFamily: "'Lora', serif", fontStyle: 'italic' }}
+            >
+              Talkio
+            </span>
           </Link>
           <div className="flex items-center gap-6">
             <Link
