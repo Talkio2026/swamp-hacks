@@ -35,13 +35,16 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'relative z-20 flex flex-col border-r border-[#E0E7FF] bg-white transition-all duration-500 ease-in-out',
+        'relative z-20 flex flex-col border-r border-[#E0E7FF] bg-[#F6F5FA] transition-all duration-300 ease-in-out',
         collapsed ? 'w-16' : 'w-60',
-        isModalOpen && 'opacity-40 blur-sm pointer-events-none'
+        isModalOpen && 'opacity-5 blur-xl pointer-events-none border-transparent shadow-none'
       )}
     >
       {/* Logo & Org Switcher */}
-      <div className="flex h-16 items-center justify-between border-b px-4">
+      <div className={cn(
+        "flex h-16 items-center justify-between border-b border-[#E0E7FF] px-4 bg-white transition-all duration-300",
+        isModalOpen && "border-transparent shadow-none"
+      )}>
         {!collapsed ? (
           <>
             <Link href="/dashboard" className="flex items-center transition-all duration-500 ease-in-out">
@@ -84,7 +87,10 @@ export function Sidebar() {
         "overflow-hidden transition-all duration-500 ease-in-out",
         collapsed ? "max-h-0 opacity-0" : "max-h-32 opacity-100"
       )}>
-        <div className="p-3 border-b border-[#E0E7FF]">
+        <div className={cn(
+          "p-3 border-b border-[#E0E7FF] bg-white transition-all duration-300",
+          isModalOpen && "border-transparent shadow-none"
+        )}>
           <OrganizationSwitcher
             appearance={{
               elements: {
@@ -116,8 +122,8 @@ export function Sidebar() {
                   ? 'justify-center px-0 py-3 gap-0' 
                   : 'gap-3 px-3 py-2.5',
                 isActive
-                  ? 'bg-gray-100 text-black font-semibold'
-                  : 'text-black font-medium hover:bg-gray-50',
+                  ? cn('bg-white text-black font-semibold', !isModalOpen && 'shadow-sm')
+                  : 'text-black font-medium hover:bg-white/80',
               )}
               title={collapsed ? item.name : undefined}
             >
@@ -140,7 +146,10 @@ export function Sidebar() {
         "overflow-hidden transition-all duration-500 ease-in-out",
         collapsed ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
       )}>
-        <div className="px-4 py-3 border-t border-[#E0E7FF]">
+        <div className={cn(
+          "px-4 py-3 border-t border-[#E0E7FF] transition-all duration-300",
+          isModalOpen && "border-transparent"
+        )}>
           <p className="text-[10px] text-gray-400 font-medium">
             v1.0.0
           </p>

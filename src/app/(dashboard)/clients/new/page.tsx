@@ -71,35 +71,35 @@ export default function NewClientPage() {
         }
       />
       
-      <div className="flex-1 p-8 overflow-auto">
-        <div className="max-w-3xl mx-auto">
-          <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="flex-1 p-6 overflow-hidden">
+        <div className="max-w-4xl mx-auto h-full flex flex-col">
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-4">
             {error && (
-              <div className="p-4 rounded-lg bg-destructive/10 text-destructive text-base">
+              <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
 
-            <Card>
-              <CardHeader className="pb-6">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <UserPlus className="h-6 w-6" />
+            <Card className="flex-1 flex flex-col overflow-hidden">
+              <CardHeader className="bg-violet-50 pb-3 px-6 pt-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <UserPlus className="h-5 w-5" />
                   Client Information
                 </CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-sm mt-1">
                   Enter the client details below
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 px-6 pb-6 flex-1 overflow-y-auto">
                 {/* Client Name & Company - side by side */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="relative">
                     <Input
                       label="Client Name"
                       value={formData.clientName}
                       onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
                       required
-                      className="h-12 text-base"
+                      className="h-11 text-base"
                     />
                   </div>
                   <div className="relative">
@@ -108,7 +108,7 @@ export default function NewClientPage() {
                       value={formData.companyName}
                       onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                       required
-                      className="h-12 text-base"
+                      className="h-11 text-base"
                     />
                   </div>
                 </div>
@@ -119,18 +119,18 @@ export default function NewClientPage() {
                   value={formData.industry}
                   onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
                   required
-                  className="h-12 text-base"
+                  className="h-11 text-base"
                 />
 
                 {/* Email & Phone - side by side */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
                     label="Email"
                     type="email"
                     value={formData.contactEmail}
                     onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
                     required
-                    className="h-12 text-base"
+                    className="h-11 text-base"
                   />
                   <Input
                     label="Phone"
@@ -138,7 +138,7 @@ export default function NewClientPage() {
                     value={formData.contactPhone}
                     onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
                     required
-                    className="h-12 text-base"
+                    className="h-11 text-base"
                   />
                 </div>
 
@@ -147,15 +147,15 @@ export default function NewClientPage() {
                   placeholder="Notes (optional)"
                   value={formData.initialNotes}
                   onChange={(e) => setFormData({ ...formData, initialNotes: e.target.value })}
-                  className="min-h-[120px] resize-none text-base"
+                  className="min-h-[100px] resize-none text-base"
                 />
               </CardContent>
             </Card>
 
             {/* Actions */}
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-3 pt-2 flex-shrink-0">
               <Link href="/clients">
-                <Button type="button" variant="outline" className="h-11 px-6 text-base">
+                <Button type="button" variant="outline" className="h-10 px-6 text-base">
                   Cancel
                 </Button>
               </Link>
@@ -163,9 +163,9 @@ export default function NewClientPage() {
                 type="submit" 
                 isLoading={isSubmitting}
                 disabled={!isFormValid}
-                className="h-11 px-6 text-base"
+                className="h-10 px-6 text-base"
               >
-                <UserPlus className="h-5 w-5 mr-2" />
+                <UserPlus className="h-4 w-4 mr-2" />
                 Add Client
               </Button>
             </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useModal } from '@/contexts/modal-context'
 import { Header } from '@/components/layout/header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -203,6 +204,7 @@ const formatStatus = (status: string) => {
 }
 
 export default function ClientsPage() {
+  const { setModalOpen } = useModal()
   const [clients, setClients] = useState<Client[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -212,6 +214,11 @@ export default function ClientsPage() {
   
   // Agent summary state
   const [agentModalOpen, setAgentModalOpen] = useState(false)
+  
+  // Sync all modal states with modal context for sidebar blending
+  useEffect(() => {
+    setModalOpen(agentModalOpen || !!deleteConfirm)
+  }, [agentModalOpen, deleteConfirm, setModalOpen])
   const [agentLoading, setAgentLoading] = useState(false)
   const [agentError, setAgentError] = useState<string | null>(null)
   const [agentSummary, setAgentSummary] = useState<{

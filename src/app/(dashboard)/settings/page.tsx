@@ -257,7 +257,7 @@ export default function SettingsPage() {
           <div className="flex justify-center items-start py-6">
             <div className="w-full max-w-2xl mx-auto flex justify-center">
               <Card className="w-full">
-                <CardHeader className="px-6 py-5">
+                <CardHeader className="bg-violet-50 px-6 py-5">
                   <CardTitle className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-purple-500" />
                     AI Summarizer Model
