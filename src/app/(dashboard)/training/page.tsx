@@ -383,19 +383,34 @@ export default function TrainingPage() {
                   )}
                   onClick={() => setSelectedScenario(scenario)}
                 >
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge variant={
-                        scenario.difficulty === 'beginner' ? 'default' :
-                        scenario.difficulty === 'intermediate' ? 'secondary' :
-                        'destructive'
-                      }>
-                        {scenario.difficulty}
-                      </Badge>
-                      <Badge variant="outline">{scenario.category}</Badge>
+                  <CardHeader className="relative overflow-hidden bg-white/40 backdrop-blur-xl border-b border-white/50 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.5)]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-200/30 via-violet-100/20 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-violet-300/25 via-violet-200/15 to-transparent pointer-events-none" />
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+                    <div className="relative z-10">
+                      <div className="flex items-start justify-between mb-2">
+                        <span className={cn(
+                          "inline-flex items-center rounded-md px-2.5 py-0.5 text-[10px] font-medium",
+                          scenario.difficulty === 'beginner' && 'bg-green-100 text-green-700 border border-green-200',
+                          scenario.difficulty === 'intermediate' && 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+                          scenario.difficulty === 'advanced' && 'bg-red-100 text-red-700 border border-red-200'
+                        )}>
+                          {scenario.difficulty}
+                        </span>
+                        <span className={cn(
+                          "inline-flex items-center rounded-md px-2.5 py-0.5 text-[10px] font-medium border",
+                          scenario.category === 'cold-call' && 'bg-blue-100 text-blue-700 border-blue-200',
+                          scenario.category === 'discovery' && 'bg-purple-100 text-purple-700 border-purple-200',
+                          scenario.category === 'objection-handling' && 'bg-orange-100 text-orange-700 border-orange-200',
+                          scenario.category === 'closing' && 'bg-pink-100 text-pink-700 border-pink-200',
+                          scenario.category === 'demo' && 'bg-cyan-100 text-cyan-700 border-cyan-200'
+                        )}>
+                          {scenario.category.replace('-', ' ')}
+                        </span>
+                      </div>
+                      <CardTitle className="text-lg">{scenario.name}</CardTitle>
+                      <CardDescription>{scenario.description}</CardDescription>
                     </div>
-                    <CardTitle className="text-lg">{scenario.name}</CardTitle>
-                    <CardDescription>{scenario.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
