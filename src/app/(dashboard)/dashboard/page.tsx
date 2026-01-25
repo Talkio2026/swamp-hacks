@@ -186,7 +186,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="rounded-xl border border-[#E0E7FF] bg-white shadow-sm">
+          <div className="rounded-xl border border-[#E0E7FF] bg-white shadow-sm self-start">
             <div className="px-6 py-5 border-b border-[#E0E7FF]">
               <h2 className="text-[15px] font-semibold text-[#1E1B4B]">Quick Actions</h2>
             </div>
