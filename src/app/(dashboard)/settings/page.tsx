@@ -258,7 +258,7 @@ export default function SettingsPage() {
             <div className="w-full max-w-2xl mx-auto flex justify-center">
               <Card className="w-full">
                 <CardHeader className="bg-violet-50 px-6 py-5">
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-black">
                     <Sparkles className="h-5 w-5 text-purple-500" />
                     AI Summarizer Model
                   </CardTitle>
@@ -296,7 +296,7 @@ export default function SettingsPage() {
                             )}
                           </div>
                           <div>
-                            <div className="font-medium flex items-center gap-2">
+                            <div className="font-medium flex items-center gap-2 text-black">
                               {model.name}
                               <Badge variant="outline" className="text-xs">
                                 {model.provider === 'gemini' ? 'Google' : 'OpenRouter'}

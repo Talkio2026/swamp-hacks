@@ -120,12 +120,12 @@ function InsightSection({
                             {section.label}:
                           </span>
                         )}
-                        <span className="text-muted-foreground">{section.text}</span>
+                        <span className="text-black">{section.text}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item}</p>
+                  <p className="text-sm text-black leading-relaxed">{item}</p>
                 )}
               </div>
             )
@@ -488,13 +488,13 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
                         <p 
                           key={i} 
                           className={cn(
-                            'leading-relaxed',
+                            'leading-relaxed text-black',
                             isObjection && 'bg-yellow-100 -mx-2 px-2 py-1 rounded border-l-4 border-yellow-400'
                           )}
                         >
                           <span className="text-muted-foreground">{timestamp}</span>{' '}
-                          <span className="font-semibold">{speakerName}:</span>{' '}
-                          {entry.text}
+                          <span className="font-semibold text-black">{speakerName}:</span>{' '}
+                          <span className="text-black">{entry.text}</span>
                         </p>
                       )
                     })}
@@ -581,15 +581,15 @@ export default function CallDetailPage({ params }: { params: Promise<{ id: strin
                   </CardHeader>
                   {expandedSection === 'summary' && (
                     <CardContent>
-                      <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+                      <p className="text-sm text-black">{analysis.summary}</p>
                       {analysis.keyPoints.length > 0 && (
                         <div className="mt-3">
-                          <div className="text-xs font-medium mb-2">Key Points</div>
+                          <div className="text-xs font-medium mb-2 text-black">Key Points</div>
                           <ul className="space-y-1">
                             {analysis.keyPoints.map((point, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
+                              <li key={i} className="text-sm flex items-start gap-2 text-black">
                                 <CheckCircle className="h-3 w-3 text-green-500 mt-1 flex-shrink-0" />
-                                {point}
+                                <span className="text-black">{point}</span>
                               </li>
                             ))}
                           </ul>

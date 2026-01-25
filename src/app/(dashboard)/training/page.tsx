@@ -330,7 +330,29 @@ export default function TrainingPage() {
     // Check if this scenario has an ElevenLabs agent configured
     if (activeScenario.agentId) {
       console.log('[Training] Starting ElevenLabs voice AI session with agent:', activeScenario.agentId)
-      await startElevenLabsSession(activeScenario.agentId)
+      try {
+        await startElevenLabsSession(activeScenario.agentId)
+      } catch (err) {
+        // If ElevenLabs is not configured, fall back to text-based mode
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        if (errorMessage.includes('ElevenLabs API key not configured')) {
+          console.log('[Training] ElevenLabs not configured, falling back to text-based mode')
+          setError(null) // Clear the error since we're handling it gracefully
+          // Fall back to text-based mode with TTS
+          const firstMessage = getFirstMessage(activeScenario)
+          setConversation([{
+            role: 'assistant',
+            content: firstMessage,
+            timestamp: Date.now(),
+          }])
+
+          // Speak the first message
+          await playTTS(firstMessage, activeScenario.voiceId)
+        } else {
+          // Re-throw other errors
+          throw err
+        }
+      }
     } else {
       // Fall back to text-based mode with TTS
       const firstMessage = getFirstMessage(activeScenario)
@@ -498,9 +520,10 @@ export default function TrainingPage() {
 
     } catch (err) {
       console.error('[ElevenLabs] Failed to start session:', err)
-      setError(err instanceof Error ? err.message : 'Failed to connect to voice AI')
       setVoiceAIStatus('disconnected')
       setIsVoiceAIMode(false)
+      // Re-throw the error so the caller can handle it (e.g., fall back to text mode)
+      throw err
     }
   }
 
@@ -550,7 +573,7 @@ export default function TrainingPage() {
         {sessionState === 'selecting' && (
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2">Choose a Training Scenario</h2>
+              <h2 className="text-2xl font-bold mb-2 text-black">Choose a Training Scenario</h2>
               <p className="text-muted-foreground">
                 Practice with AI-powered prospects. You speak, they respond with realistic voice.
               </p>
@@ -716,10 +739,10 @@ export default function TrainingPage() {
                                 : 'bg-muted'
                             )}
                           >
-                            <p className="text-xs font-medium mb-0.5">
+                            <p className="text-xs font-medium mb-0.5 text-gray-600">
                               {turn.role === 'user' ? 'You (Sales Rep)' : selectedScenario.persona.name}
                             </p>
-                            <p className="text-sm">{turn.content}</p>
+                            <p className="text-sm text-gray-600">{turn.content}</p>
                           </div>
                         </div>
                       ))}
@@ -728,7 +751,7 @@ export default function TrainingPage() {
                       {interimTranscript && (
                         <div className="flex justify-end">
                           <div className="max-w-[80%] rounded-lg px-3 py-1.5 bg-primary/50 text-primary-foreground italic">
-                            <p className="text-xs">{interimTranscript}...</p>
+                            <p className="text-xs text-gray-600">{interimTranscript}...</p>
                           </div>
                         </div>
                       )}
@@ -736,8 +759,8 @@ export default function TrainingPage() {
                       {isProcessing && (
                         <div className="flex justify-start">
                           <div className="bg-muted rounded-lg px-3 py-1.5 flex items-center gap-2">
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            <span className="text-xs">Thinking...</span>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin text-gray-600" />
+                            <span className="text-xs text-gray-600">Thinking...</span>
                           </div>
                         </div>
                       )}
@@ -769,7 +792,7 @@ export default function TrainingPage() {
                               )}
                             </div>
                           </div>
-                          <p className="text-center text-sm font-medium">
+                          <p className="text-center text-sm font-medium text-black">
                             {voiceAIStatus === 'connecting' && 'Connecting to AI agent...'}
                             {voiceAIStatus === 'connected' && agentIsSpeaking && `${selectedScenario?.persona.name} is speaking...`}
                             {voiceAIStatus === 'connected' && !agentIsSpeaking && 'Listening... Speak naturally'}
@@ -809,7 +832,7 @@ export default function TrainingPage() {
                               value={textInput}
                               onChange={(e) => setTextInput(e.target.value)}
                               placeholder="Or type your response..."
-                              className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-600"
                               disabled={isProcessing || isSpeaking}
                             />
                             <Button type="submit" size="sm" disabled={isProcessing || !textInput.trim() || isSpeaking}>
@@ -835,7 +858,7 @@ export default function TrainingPage() {
                   <CardContent className="px-4 py-3 flex-1 overflow-hidden">
                     <ul className="space-y-2 h-full flex flex-col justify-center">
                       {selectedScenario.objectives.map((obj, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm">
+                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                           <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-medium">
                             {i + 1}
                           </div>
@@ -867,7 +890,7 @@ export default function TrainingPage() {
                   <CardHeader className="bg-violet-50 px-4 py-3 flex-shrink-0">
                     <CardTitle className="text-sm">Prospect Context</CardTitle>
                   </CardHeader>
-                  <CardContent className="px-4 py-3 flex-1 overflow-hidden text-sm space-y-2 flex flex-col justify-center">
+                  <CardContent className="px-4 py-3 flex-1 overflow-hidden text-sm text-muted-foreground space-y-2 flex flex-col justify-center">
                     <p><strong>Industry:</strong> {selectedScenario.persona.industry}</p>
                     <p><strong>Company:</strong> {selectedScenario.persona.company}</p>
                     <p><strong>Style:</strong> {selectedScenario.persona.decisionMakingStyle}</p>
