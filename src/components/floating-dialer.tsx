@@ -12,24 +12,74 @@ import {
   X,
   Loader2,
   Delete,
+  User,
+  Building2,
+  Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type CallStatus = 'idle' | 'connecting' | 'ringing' | 'connected' | 'disconnected'
 
+interface Contact {
+  clientId: string
+  clientName: string
+  companyName: string
+  contactPhone: string
+}
+
 export function FloatingDialer() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isContactsOpen, setIsContactsOpen] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState('')
   const [callStatus, setCallStatus] = useState<CallStatus>('idle')
   const [isMuted, setIsMuted] = useState(false)
   const [callDuration, setCallDuration] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [isDeviceReady, setIsDeviceReady] = useState(false)
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const [contactsLoading, setContactsLoading] = useState(false)
+  const [contactSearch, setContactSearch] = useState('')
   
   const deviceRef = useRef<Device | null>(null)
   const callRef = useRef<Call | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Fetch contacts when contacts popup opens
+  useEffect(() => {
+    if (!isContactsOpen) return
+
+    const fetchContacts = async () => {
+      setContactsLoading(true)
+      try {
+        const response = await fetch('/api/clients')
+        if (response.ok) {
+          const data = await response.json()
+          setContacts(data.clients || [])
+        }
+      } catch (err) {
+        console.error('Failed to fetch contacts:', err)
+      } finally {
+        setContactsLoading(false)
+      }
+    }
+
+    fetchContacts()
+  }, [isContactsOpen])
+
+  // Filter contacts by search
+  const filteredContacts = contacts.filter(contact => 
+    contact.clientName.toLowerCase().includes(contactSearch.toLowerCase()) ||
+    contact.companyName.toLowerCase().includes(contactSearch.toLowerCase()) ||
+    contact.contactPhone.includes(contactSearch)
+  )
+
+  // Handle contact selection - opens dialer with number and auto-calls
+  const handleContactSelect = (contact: Contact) => {
+    setPhoneNumber(contact.contactPhone)
+    setIsContactsOpen(false)
+    setIsOpen(true)
+  }
 
   // Initialize Twilio Device when popup opens
   useEffect(() => {
@@ -208,23 +258,119 @@ export function FloatingDialer() {
 
   return (
     <>
-      {/* Floating button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className={cn(
-          'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105',
-          isInCall 
-            ? 'bg-green-500 hover:bg-green-600 animate-pulse shadow-green-500/40' 
-            : 'bg-primary hover:bg-primary/90'
-        )}
-        title="Open Dialer"
-      >
-        {isInCall ? (
-          <PhoneCall className="h-6 w-6 text-white" />
-        ) : (
-          <Phone className="h-6 w-6 text-white" />
-        )}
-      </button>
+      {/* Floating buttons */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+        {/* Contacts button */}
+        <button
+          onClick={() => {
+            setIsContactsOpen(true)
+            setIsOpen(false)
+          }}
+          className="h-11 w-11 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 bg-white border border-gray-200 hover:bg-gray-50"
+          title="Contacts"
+        >
+          <User className="h-5 w-5 text-gray-700" />
+        </button>
+
+        {/* Dialer button */}
+        <button
+          onClick={() => {
+            setIsOpen(true)
+            setIsContactsOpen(false)
+          }}
+          className={cn(
+            'h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105',
+            isInCall 
+              ? 'bg-green-500 hover:bg-green-600 animate-pulse shadow-green-500/40' 
+              : 'bg-primary hover:bg-primary/90'
+          )}
+          title="Open Dialer"
+        >
+          {isInCall ? (
+            <PhoneCall className="h-6 w-6 text-white" />
+          ) : (
+            <Phone className="h-6 w-6 text-white" />
+          )}
+        </button>
+      </div>
+
+      {/* Contacts Popup */}
+      {isContactsOpen && (
+        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-primary" />
+              <span className="font-medium">Contacts</span>
+            </div>
+            <button
+              onClick={() => setIsContactsOpen(false)}
+              className="p-1 rounded hover:bg-muted transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Search */}
+          <div className="p-3 border-b">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={contactSearch}
+                onChange={(e) => setContactSearch(e.target.value)}
+                placeholder="Search contacts..."
+                className="w-full pl-9 pr-3 py-2 text-sm bg-muted/50 rounded-lg border-0 focus:ring-2 focus:ring-primary/50 outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Contacts List */}
+          <div className="max-h-64 overflow-y-auto">
+            {contactsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : filteredContacts.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                {contacts.length === 0 ? 'No contacts yet' : 'No matches found'}
+              </div>
+            ) : (
+              <div className="divide-y">
+                {filteredContacts.map((contact) => (
+                  <button
+                    key={contact.clientId}
+                    onClick={() => handleContactSelect(contact)}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left"
+                  >
+                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <User className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{contact.clientName}</p>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Building2 className="h-3 w-3" />
+                        <span className="truncate">{contact.companyName}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-primary font-mono">
+                      <Phone className="h-3 w-3" />
+                      <span>{contact.contactPhone}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer hint */}
+          <div className="p-2 border-t bg-muted/20">
+            <p className="text-xs text-center text-muted-foreground">
+              Click a contact to call
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Popup */}
       {isOpen && (
