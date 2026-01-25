@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import { useModal } from '@/contexts/modal-context'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -31,12 +32,14 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
+  const { isModalOpen } = useModal()
 
   return (
     <aside
       className={cn(
         'relative z-20 flex flex-col border-r border-[#E0E7FF] bg-white transition-all duration-500 ease-in-out',
-        collapsed ? 'w-16' : 'w-60'
+        collapsed ? 'w-16' : 'w-60',
+        isModalOpen && 'opacity-40 blur-sm pointer-events-none'
       )}
     >
       {/* Logo & Org Switcher */}
