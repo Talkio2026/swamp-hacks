@@ -247,7 +247,7 @@ function PlaybookChat({ playbookId }: { playbookId: string }) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="Ask about sales techniques, practice scenarios..."
-              className="flex-1 px-4 py-3 bg-slate-100 rounded-xl text-sm
+              className="flex-1 px-4 py-3 bg-slate-100 rounded-xl text-sm text-slate-900
                 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white
                 border border-transparent focus:border-indigo-200 transition-all"
             />

@@ -522,13 +522,13 @@ export default function ClientsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2 bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <CardTitle className="text-sm font-medium text-black flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Total Clients
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalClients}</div>
+              <div className="text-2xl font-bold text-black">{stats.totalClients}</div>
             </CardContent>
           </Card>
           <Card>
@@ -623,7 +623,7 @@ export default function ClientsPage() {
                         <Folder className="h-5 w-5 text-primary" />
                         <div className="text-left">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold">{client.clientName}</span>
+                            <span className="font-semibold text-black">{client.clientName}</span>
                             <span className="text-xs text-muted-foreground">({client.clientId})</span>
                             <Badge variant={statusColors[client.currentStatus] || 'default'}>
                               {formatStatus(client.currentStatus)}
@@ -696,7 +696,7 @@ export default function ClientsPage() {
                                 <FileText className="h-4 w-4 text-muted-foreground" />
                                 <div>
                                   <div className="flex items-center gap-2">
-                                    <span className="font-medium">Call #{call.callNumber}</span>
+                                    <span className="font-medium text-black">Call #{call.callNumber}</span>
                                     <Badge variant={statusColors[call.status] || 'default'}>
                                       {formatStatus(call.status)}
                                     </Badge>
@@ -746,7 +746,7 @@ export default function ClientsPage() {
             <CardContent>
               <p className="text-muted-foreground mb-6">
                 Are you sure you want to delete{' '}
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-black">
                   {clients.find(c => c.clientId === deleteConfirm)?.clientName}
                 </span>
                 ? This action cannot be undone and will remove all associated data.
