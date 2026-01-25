@@ -176,6 +176,7 @@ export function Hero() {
                   loop
                   muted
                   playsInline
+                  preload="auto"
                   className="w-full h-full object-cover"
                 >
                   <source src="/talkio-video.mp4" type="video/mp4" />

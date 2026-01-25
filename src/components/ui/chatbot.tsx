@@ -215,6 +215,7 @@ export function Chatbot() {
       <Popover.Trigger asChild>
         <button
           ref={buttonRef}
+          suppressHydrationWarning
           className={`fixed z-[9999] h-14 w-14 rounded-2xl
             bg-slate-800/80 backdrop-blur-md text-white/90
             border border-white/10
