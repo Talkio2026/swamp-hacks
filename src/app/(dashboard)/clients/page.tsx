@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useModal } from '@/contexts/modal-context'
 import { Header } from '@/components/layout/header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -213,13 +212,7 @@ export default function ClientsPage() {
   
   // Agent summary state
   const [agentModalOpen, setAgentModalOpen] = useState(false)
-  const { setModalOpen } = useModal()
   const [agentLoading, setAgentLoading] = useState(false)
-
-  // Sync modal state with context
-  useEffect(() => {
-    setModalOpen(agentModalOpen)
-  }, [agentModalOpen, setModalOpen])
   const [agentError, setAgentError] = useState<string | null>(null)
   const [agentSummary, setAgentSummary] = useState<{
     clientId: string
@@ -419,7 +412,6 @@ export default function ClientsPage() {
     if (client.isMock) {
       setAgentError('AI Agent is only available for real clients with actual call transcripts.')
       setAgentModalOpen(true)
-      setModalOpen(true)
       return
     }
     
@@ -427,7 +419,6 @@ export default function ClientsPage() {
     if (client.calls.length === 0) {
       setAgentError('No calls found for this client. Make some calls first to generate AI insights.')
       setAgentModalOpen(true)
-      setModalOpen(true)
       return
     }
     
@@ -435,7 +426,6 @@ export default function ClientsPage() {
     setAgentError(null)
     setAgentSummary(null)
     setAgentModalOpen(true)
-    setModalOpen(true)
     
     try {
       const response = await fetch(`/api/clients/${clientId}/agent-summary`, {
@@ -792,10 +782,7 @@ export default function ClientsPage() {
                   )}
                 </CardTitle>
                 <button
-                  onClick={() => {
-                    setAgentModalOpen(false)
-                    setModalOpen(false)
-                  }}
+                  onClick={() => setAgentModalOpen(false)}
                   className="p-2 hover:bg-muted rounded-md transition-colors"
                 >
                   <X className="h-5 w-5" />
