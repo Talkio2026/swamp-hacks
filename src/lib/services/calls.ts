@@ -272,10 +272,19 @@ export async function getCallStats(session: AuthSession) {
     db.call.count({ where: { ...where, riskLevel: RiskLevel.HIGH } }),
     db.call.count({ where: { ...where, status: CallStatus.PROCESSING } }),
     db.call.findMany({
-      where: { ...where, status: CallStatus.COMPLETED },
+      where,
       orderBy: { callDate: 'desc' },
-      take: 5,
-      include: {
+      take: 10,
+      select: {
+        id: true,
+        title: true,
+        prospect: true,
+        company: true,
+        phoneNumber: true,
+        duration: true,
+        callDate: true,
+        status: true,
+        summary: true,
         rep: {
           select: {
             firstName: true,
