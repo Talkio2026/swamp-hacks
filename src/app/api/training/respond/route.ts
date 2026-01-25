@@ -11,6 +11,10 @@ interface ConversationTurn {
 // POST /api/training/respond - Generate AI prospect response (text mode)
 export async function POST(request: NextRequest) {
   try {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:POST_ENTRY',message:'API handler started',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,B,C,D,E'})}).catch(()=>{});
+    // #endregion
+
     const user = await currentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -22,8 +26,15 @@ export async function POST(request: NextRequest) {
       conversation: ConversationTurn[]
     }
 
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:BODY_PARSED',message:'Request body parsed',data:{scenarioId,conversationLength:conversation?.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D,E'})}).catch(()=>{});
+    // #endregion
+
     const scenario = getScenarioById(scenarioId)
     if (!scenario) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:SCENARIO_NOT_FOUND',message:'Scenario not found',data:{scenarioId},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
       return NextResponse.json(
         { error: 'Scenario not found' },
         { status: 404 }
@@ -58,12 +69,30 @@ Respond now as ${scenario.persona.name} with your next single line of dialogue:`
     // Get AI provider - use Gemini Flash for speed
     const provider = getProvider({ provider: 'gemini' })
     
+    // #region agent log
+    const geminiAvailable = await provider.isAvailable()
+    fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:PROVIDER_CHECK',message:'Provider availability',data:{geminiAvailable,providerName:provider.name},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    
     let response: string
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:GEMINI_CALL_START',message:'Calling Gemini',data:{promptLength:prompt.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
+      // #endregion
       response = await provider.analyze(prompt)
-    } catch {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:GEMINI_SUCCESS',message:'Gemini succeeded',data:{responseLength:response?.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+    } catch (geminiError) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:GEMINI_FAILED',message:'Gemini failed, trying fallback',data:{error:String(geminiError)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,B'})}).catch(()=>{});
+      // #endregion
       // Fallback to OpenRouter with Claude Haiku (faster than Sonnet)
       const fallbackProvider = getProvider({ provider: 'openrouter', model: 'claude-3-haiku' })
+      const openrouterAvailable = await fallbackProvider.isAvailable()
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:FALLBACK_CHECK',message:'OpenRouter availability',data:{openrouterAvailable},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
       response = await fallbackProvider.analyze(prompt)
     }
 
@@ -119,6 +148,9 @@ Respond now as ${scenario.persona.name} with your next single line of dialogue:`
       response: cleanResponse,
     })
   } catch (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/e0f75188-72b9-4fcd-8705-faf3b168b72d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'respond/route.ts:FINAL_ERROR',message:'Final catch block error',data:{error:String(error),stack:(error as Error)?.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,B,C'})}).catch(()=>{});
+    // #endregion
     console.error('[Training] Response generation error:', error)
     return NextResponse.json(
       { error: 'Failed to generate response' },

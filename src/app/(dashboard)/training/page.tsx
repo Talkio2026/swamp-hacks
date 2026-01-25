@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TRAINING_SCENARIOS, TrainingScenario } from '@/lib/training/scenarios'
+import { Conversation } from '@elevenlabs/client'
 
 type SessionState = 'selecting' | 'active' | 'evaluating' | 'results'
 
@@ -80,6 +81,26 @@ export default function TrainingPage() {
   const conversationRef = useRef<HTMLDivElement>(null)
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const elevenLabsConversationRef = useRef<Conversation | null>(null)
+  
+  // State for ElevenLabs voice AI mode
+  const [isVoiceAIMode, setIsVoiceAIMode] = useState(false)
+  const [voiceAIStatus, setVoiceAIStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected')
+  const [agentIsSpeaking, setAgentIsSpeaking] = useState(false)
+  
+  // Refs to hold current values for speech recognition callbacks
+  const isListeningRef = useRef(isListening)
+  const sessionStateRef = useRef(sessionState)
+  const handleUserInputRef = useRef<(input: string) => void>(() => {})
+
+  // Keep refs in sync with state for speech recognition callbacks
+  useEffect(() => {
+    isListeningRef.current = isListening
+  }, [isListening])
+
+  useEffect(() => {
+    sessionStateRef.current = sessionState
+  }, [sessionState])
 
   // Auto-scroll conversation
   useEffect(() => {
@@ -88,7 +109,7 @@ export default function TrainingPage() {
     }
   }, [conversation])
 
-  // Initialize speech recognition
+  // Initialize speech recognition (only once)
   useEffect(() => {
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition()
@@ -112,7 +133,8 @@ export default function TrainingPage() {
         setInterimTranscript(interim)
 
         if (final) {
-          handleUserInput(final.trim())
+          // Use ref to get the latest handleUserInput function
+          handleUserInputRef.current(final.trim())
           setInterimTranscript('')
         }
       }
@@ -124,8 +146,8 @@ export default function TrainingPage() {
       }
 
       recognition.onend = () => {
-        // Restart if still in active session and listening
-        if (sessionState === 'active' && isListening) {
+        // Use refs to get the current values (not stale closure values)
+        if (sessionStateRef.current === 'active' && isListeningRef.current) {
           try {
             recognition.start()
           } catch (e) {
@@ -142,11 +164,20 @@ export default function TrainingPage() {
         recognitionRef.current.stop()
       }
     }
-  }, [sessionState, isListening])
+  }, []) // Empty dependency array - initialize only once
 
   // Play TTS audio
   const playTTS = useCallback(async (text: string, voiceId?: string) => {
-    if (!ttsEnabled || isMuted) return
+    if (!ttsEnabled) {
+      console.log('[TTS] TTS disabled, skipping')
+      return
+    }
+    if (isMuted) {
+      console.log('[TTS] Audio muted, skipping')
+      return
+    }
+
+    console.log('[TTS] Generating speech for:', text.substring(0, 50) + '...')
 
     try {
       setIsSpeaking(true)
@@ -157,31 +188,43 @@ export default function TrainingPage() {
         body: JSON.stringify({ text, voiceId }),
       })
 
+      console.log('[TTS] API response status:', response.status)
+
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Failed to generate speech')
+        console.error('[TTS] API error:', errorText)
         setError(`TTS Error: ${errorText}`)
         setIsSpeaking(false)
         return
       }
 
       const data = await response.json()
+      console.log('[TTS] Got audio data, length:', data.audio?.length || 0)
       
       if (data.audio) {
         const audio = new Audio(`data:audio/mpeg;base64,${data.audio}`)
         audioRef.current = audio
         
         audio.onended = () => {
+          console.log('[TTS] Audio playback ended')
           setIsSpeaking(false)
         }
         
-        audio.onerror = () => {
+        audio.onerror = (e) => {
+          console.error('[TTS] Audio playback error:', e)
           setError('Failed to play audio. Please check your audio settings.')
           setIsSpeaking(false)
         }
         
+        console.log('[TTS] Playing audio...')
         await audio.play()
+      } else if (data.error) {
+        console.error('[TTS] Error in response:', data.error)
+        setError(`TTS Error: ${data.error}`)
+        setIsSpeaking(false)
       }
     } catch (err) {
+      console.error('[TTS] Exception:', err)
       setError(err instanceof Error ? `TTS Error: ${err.message}` : 'Failed to generate speech')
       setIsSpeaking(false)
     }
@@ -189,9 +232,22 @@ export default function TrainingPage() {
 
   // Handle user input (from speech or text)
   const handleUserInput = useCallback(async (input: string) => {
-    if (!input.trim() || isProcessing || !selectedScenario) return
+    if (!input.trim()) {
+      console.log('[Training] Empty input, ignoring')
+      return
+    }
+    if (isProcessing) {
+      console.log('[Training] Already processing, ignoring input:', input)
+      return
+    }
+    if (!selectedScenario) {
+      console.log('[Training] No scenario selected, ignoring input')
+      return
+    }
 
+    console.log('[Training] Processing user input:', input)
     setIsProcessing(true)
+    setError(null) // Clear any previous errors
 
     // Add user message
     const userTurn: ConversationTurn = {
@@ -204,6 +260,7 @@ export default function TrainingPage() {
 
     try {
       // Get AI response
+      console.log('[Training] Calling /api/training/respond...')
       const response = await fetch('/api/training/respond', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -213,7 +270,16 @@ export default function TrainingPage() {
         }),
       })
 
+      console.log('[Training] API response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[Training] API error:', errorText)
+        throw new Error(`API error (${response.status}): ${errorText}`)
+      }
+
       const data = await response.json()
+      console.log('[Training] API response data:', data)
       
       if (data.response) {
         // Add AI response
@@ -224,14 +290,27 @@ export default function TrainingPage() {
         }])
 
         // Speak the response using ElevenLabs TTS
+        console.log('[Training] Calling TTS for response...')
         await playTTS(data.response, selectedScenario.voiceId)
+        console.log('[Training] TTS complete')
+      } else if (data.error) {
+        throw new Error(data.error)
+      } else {
+        console.warn('[Training] No response in API data:', data)
+        throw new Error('No response received from AI')
       }
     } catch (err) {
-      setError(err instanceof Error ? `Failed to get AI response: ${err.message}` : 'Failed to get AI response. Please try again.')
+      console.error('[Training] Error:', err)
+      setError(err instanceof Error ? err.message : 'Failed to get AI response. Please try again.')
     } finally {
       setIsProcessing(false)
     }
   }, [isProcessing, selectedScenario, conversation, playTTS])
+
+  // Keep handleUserInputRef in sync with the latest handleUserInput function
+  useEffect(() => {
+    handleUserInputRef.current = handleUserInput
+  }, [handleUserInput])
 
   // Start session - can accept a scenario directly for instant start
   const startSession = useCallback(async (scenario?: TrainingScenario) => {
@@ -248,16 +327,22 @@ export default function TrainingPage() {
     setSessionStartTime(Date.now())
     setError(null)
 
-    // Add the prospect's first message
-    const firstMessage = getFirstMessage(activeScenario)
-    setConversation([{
-      role: 'assistant',
-      content: firstMessage,
-      timestamp: Date.now(),
-    }])
+    // Check if this scenario has an ElevenLabs agent configured
+    if (activeScenario.agentId) {
+      console.log('[Training] Starting ElevenLabs voice AI session with agent:', activeScenario.agentId)
+      await startElevenLabsSession(activeScenario.agentId)
+    } else {
+      // Fall back to text-based mode with TTS
+      const firstMessage = getFirstMessage(activeScenario)
+      setConversation([{
+        role: 'assistant',
+        content: firstMessage,
+        timestamp: Date.now(),
+      }])
 
-    // Speak the first message
-    await playTTS(firstMessage, activeScenario.voiceId)
+      // Speak the first message
+      await playTTS(firstMessage, activeScenario.voiceId)
+    }
   }, [selectedScenario, playTTS])
 
   // Toggle microphone
@@ -292,6 +377,11 @@ export default function TrainingPage() {
 
   // End session
   const endSession = async () => {
+    // Stop ElevenLabs conversation if active
+    if (isVoiceAIMode && elevenLabsConversationRef.current) {
+      await endElevenLabsSession()
+    }
+
     // Stop listening
     if (recognitionRef.current) {
       recognitionRef.current.stop()
@@ -334,13 +424,94 @@ export default function TrainingPage() {
   }
 
   // Reset session
-  const resetSession = () => {
+  const resetSession = async () => {
+    // Stop ElevenLabs conversation if active
+    if (elevenLabsConversationRef.current) {
+      await elevenLabsConversationRef.current.endSession()
+      elevenLabsConversationRef.current = null
+    }
+    setIsVoiceAIMode(false)
+    setVoiceAIStatus('disconnected')
+    setAgentIsSpeaking(false)
     setSessionState('selecting')
     setSelectedScenario(null)
     setConversation([])
     setEvaluation(null)
     setError(null)
     setInterimTranscript('')
+  }
+
+  // Start ElevenLabs Conversational AI session
+  const startElevenLabsSession = async (agentId: string) => {
+    try {
+      setVoiceAIStatus('connecting')
+      setError(null)
+
+      // Get signed URL from our backend
+      const response = await fetch('/api/training/signed-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to get signed URL')
+      }
+
+      const { signedUrl } = await response.json()
+
+      // Start the conversation
+      const conversation = await Conversation.startSession({
+        signedUrl,
+        onConnect: () => {
+          console.log('[ElevenLabs] Connected to agent')
+          setVoiceAIStatus('connected')
+        },
+        onDisconnect: () => {
+          console.log('[ElevenLabs] Disconnected from agent')
+          setVoiceAIStatus('disconnected')
+        },
+        onError: (message: string) => {
+          console.error('[ElevenLabs] Error:', message)
+          setError(`Voice AI Error: ${message}`)
+          setVoiceAIStatus('disconnected')
+        },
+        onModeChange: (mode: { mode: 'speaking' | 'listening' }) => {
+          console.log('[ElevenLabs] Mode changed:', mode.mode)
+          setAgentIsSpeaking(mode.mode === 'speaking')
+          setIsListening(mode.mode === 'listening')
+        },
+        onMessage: (message: { source: string; message: string }) => {
+          console.log('[ElevenLabs] Message:', message)
+          // Add to conversation history
+          setConversation(prev => [...prev, {
+            role: message.source === 'user' ? 'user' : 'assistant',
+            content: message.message,
+            timestamp: Date.now(),
+          }])
+        },
+      })
+
+      elevenLabsConversationRef.current = conversation
+      setIsVoiceAIMode(true)
+
+    } catch (err) {
+      console.error('[ElevenLabs] Failed to start session:', err)
+      setError(err instanceof Error ? err.message : 'Failed to connect to voice AI')
+      setVoiceAIStatus('disconnected')
+      setIsVoiceAIMode(false)
+    }
+  }
+
+  // End ElevenLabs session
+  const endElevenLabsSession = async () => {
+    if (elevenLabsConversationRef.current) {
+      await elevenLabsConversationRef.current.endSession()
+      elevenLabsConversationRef.current = null
+    }
+    setVoiceAIStatus('disconnected')
+    setAgentIsSpeaking(false)
   }
 
   return (
@@ -478,16 +649,30 @@ export default function TrainingPage() {
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setIsMuted(!isMuted)}
-                          title={isMuted ? 'Unmute AI voice' : 'Mute AI voice'}
-                          className="px-2 h-8"
-                        >
-                          {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-                        </Button>
-                        {isSpeaking && (
+                        {!isVoiceAIMode && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsMuted(!isMuted)}
+                            title={isMuted ? 'Unmute AI voice' : 'Mute AI voice'}
+                            className="px-2 h-8"
+                          >
+                            {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                          </Button>
+                        )}
+                        {isVoiceAIMode && voiceAIStatus === 'connected' && (
+                          <Badge variant="default" className="text-xs bg-green-100 text-green-700">
+                            <Phone className="h-3 w-3 mr-1" />
+                            Voice AI Active
+                          </Badge>
+                        )}
+                        {isVoiceAIMode && voiceAIStatus === 'connecting' && (
+                          <Badge variant="secondary" className="animate-pulse text-xs">
+                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                            Connecting...
+                          </Badge>
+                        )}
+                        {!isVoiceAIMode && isSpeaking && (
                           <Badge variant="secondary" className="animate-pulse text-xs">
                             <Volume2 className="h-3 w-3 mr-1" />
                             Speaking...
@@ -497,6 +682,19 @@ export default function TrainingPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col min-h-0 p-4 pt-0">
+                    {/* Error display */}
+                    {error && (
+                      <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                        <strong>Error:</strong> {error}
+                        <button 
+                          onClick={() => setError(null)} 
+                          className="ml-2 text-red-500 hover:text-red-700"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )}
+                    
                     {/* Conversation */}
                     <div 
                       ref={conversationRef}
@@ -547,40 +745,79 @@ export default function TrainingPage() {
 
                     {/* Input Controls */}
                     <div className="space-y-2">
-                      {/* Microphone Button */}
-                      <div className="flex justify-center">
-                        <Button
-                          size="lg"
-                          variant={isListening ? 'destructive' : 'default'}
-                          onClick={toggleMicrophone}
-                          disabled={isProcessing || isSpeaking}
-                          className="rounded-full h-12 w-12"
-                        >
-                          {isListening ? (
-                            <MicOff className="h-5 w-5" />
-                          ) : (
-                            <Mic className="h-5 w-5" />
-                          )}
-                        </Button>
-                      </div>
-                      <p className="text-center text-xs text-muted-foreground">
-                        {isListening ? 'Listening... Click to stop' : 'Click to speak'}
-                      </p>
+                      {isVoiceAIMode ? (
+                        /* ElevenLabs Voice AI Mode */
+                        <div className="space-y-3">
+                          <div className="flex justify-center">
+                            <div className={cn(
+                              "h-16 w-16 rounded-full flex items-center justify-center transition-all",
+                              voiceAIStatus === 'connecting' && "bg-yellow-100 animate-pulse",
+                              voiceAIStatus === 'connected' && agentIsSpeaking && "bg-primary/20 animate-pulse",
+                              voiceAIStatus === 'connected' && !agentIsSpeaking && "bg-green-100",
+                              voiceAIStatus === 'disconnected' && "bg-red-100"
+                            )}>
+                              {voiceAIStatus === 'connecting' ? (
+                                <Loader2 className="h-8 w-8 animate-spin text-yellow-600" />
+                              ) : voiceAIStatus === 'connected' ? (
+                                agentIsSpeaking ? (
+                                  <Volume2 className="h-8 w-8 text-primary animate-pulse" />
+                                ) : (
+                                  <Mic className="h-8 w-8 text-green-600" />
+                                )
+                              ) : (
+                                <MicOff className="h-8 w-8 text-red-600" />
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-center text-sm font-medium">
+                            {voiceAIStatus === 'connecting' && 'Connecting to AI agent...'}
+                            {voiceAIStatus === 'connected' && agentIsSpeaking && `${selectedScenario?.persona.name} is speaking...`}
+                            {voiceAIStatus === 'connected' && !agentIsSpeaking && 'Listening... Speak naturally'}
+                            {voiceAIStatus === 'disconnected' && 'Disconnected'}
+                          </p>
+                          <p className="text-center text-xs text-muted-foreground">
+                            Voice AI powered by ElevenLabs
+                          </p>
+                        </div>
+                      ) : (
+                        /* Traditional Mode */
+                        <>
+                          {/* Microphone Button */}
+                          <div className="flex justify-center">
+                            <Button
+                              size="lg"
+                              variant={isListening ? 'destructive' : 'default'}
+                              onClick={toggleMicrophone}
+                              disabled={isProcessing || isSpeaking}
+                              className="rounded-full h-12 w-12"
+                            >
+                              {isListening ? (
+                                <MicOff className="h-5 w-5" />
+                              ) : (
+                                <Mic className="h-5 w-5" />
+                              )}
+                            </Button>
+                          </div>
+                          <p className="text-center text-xs text-muted-foreground">
+                            {isListening ? 'Listening... Click to stop' : 'Click to speak'}
+                          </p>
 
-                      {/* Text Input (fallback) */}
-                      <form onSubmit={handleTextSubmit} className="flex gap-2">
-                        <input
-                          type="text"
-                          value={textInput}
-                          onChange={(e) => setTextInput(e.target.value)}
-                          placeholder="Or type your response..."
-                          className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                          disabled={isProcessing || isSpeaking}
-                        />
-                        <Button type="submit" size="sm" disabled={isProcessing || !textInput.trim() || isSpeaking}>
-                          <Send className="h-3.5 w-3.5" />
-                        </Button>
-                      </form>
+                          {/* Text Input (fallback) */}
+                          <form onSubmit={handleTextSubmit} className="flex gap-2">
+                            <input
+                              type="text"
+                              value={textInput}
+                              onChange={(e) => setTextInput(e.target.value)}
+                              placeholder="Or type your response..."
+                              className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              disabled={isProcessing || isSpeaking}
+                            />
+                            <Button type="submit" size="sm" disabled={isProcessing || !textInput.trim() || isSpeaking}>
+                              <Send className="h-3.5 w-3.5" />
+                            </Button>
+                          </form>
+                        </>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

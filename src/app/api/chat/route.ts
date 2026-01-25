@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const DO_AGENT_BASE = process.env.DO_AGENT_BASE || '';
-const DO_AGENT_API_KEY = process.env.DO_AGENT_API_KEY || '';
+// Support Chatbot configuration
+// Uses DigitalOcean GenAI Agent or compatible OpenAI-style API
+const SUPPORT_CHATBOT_BASE_URL = process.env.SUPPORT_CHATBOT_BASE_URL;
+const SUPPORT_CHATBOT_API_KEY = process.env.SUPPORT_CHATBOT_API_KEY;
 
 export async function POST(request: NextRequest) {
   try {
+    // Validate configuration
+    if (!SUPPORT_CHATBOT_BASE_URL || !SUPPORT_CHATBOT_API_KEY) {
+      console.error('[Support Chatbot] Missing configuration:', {
+        hasBaseUrl: !!SUPPORT_CHATBOT_BASE_URL,
+        hasApiKey: !!SUPPORT_CHATBOT_API_KEY,
+      });
+      return NextResponse.json(
+        { error: 'Support chatbot is not configured. Please set SUPPORT_CHATBOT_BASE_URL and SUPPORT_CHATBOT_API_KEY.' },
+        { status: 503 }
+      );
+    }
+
     const { message, conversationHistory } = await request.json();
 
     if (!message || typeof message !== 'string') {
@@ -18,13 +32,13 @@ export async function POST(request: NextRequest) {
     const messages = conversationHistory || [];
     messages.push({ role: 'user', content: message });
 
-    const url = `${DO_AGENT_BASE}/api/v1/chat/completions`;
+    const url = `${SUPPORT_CHATBOT_BASE_URL}/api/v1/chat/completions`;
     
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DO_AGENT_API_KEY}`,
+        'Authorization': `Bearer ${SUPPORT_CHATBOT_API_KEY}`,
       },
       body: JSON.stringify({ messages, stream: false }),
     });
@@ -32,7 +46,7 @@ export async function POST(request: NextRequest) {
     const responseText = await response.text();
 
     if (!response.ok) {
-      console.error('DO Agent error:', response.status, responseText);
+      console.error('[Support Chatbot] Agent error:', response.status, responseText);
       return NextResponse.json(
         { error: `AI agent error: ${response.status}` },
         { status: response.status }
@@ -55,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: assistantMessage, success: true });
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('[Support Chatbot] API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

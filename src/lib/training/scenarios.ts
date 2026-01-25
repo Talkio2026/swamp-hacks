@@ -28,6 +28,7 @@ export interface TrainingScenario {
   }[]
   systemPrompt: string
   voiceId?: string // ElevenLabs voice ID
+  agentId?: string // ElevenLabs Conversational AI agent ID
   estimatedDuration: number // minutes
 }
 
@@ -107,6 +108,7 @@ OBJECTIONS TO USE:
 SUCCESS PATH:
 If the rep demonstrates good listening, asks relevant questions about your challenges, and proposes clear value - you can agree to a 15-minute follow-up call next week.`,
     voiceId: 'ErXwobaYiN019PkySvjV', // Antoni - professional male voice
+    agentId: 'agent_4701kfstte9se4kb39ph8mm7tc8t', // ElevenLabs Conversational AI agent
     estimatedDuration: 5
   },
   {
@@ -186,6 +188,7 @@ OBJECTIONS TO USE:
 SUCCESS PATH:
 If the rep helps you build a compelling ROI case (not just discounting), offers flexible implementation options, and helps you plan how to present to leadership - you'll commit to a decision within 2 weeks.`,
     voiceId: 'EXAVITQu4vr4xnSDxMaL', // Bella - professional female voice
+    agentId: 'agent_8601kfsv13pyfrxagjss06gkrvd3', // ElevenLabs Conversational AI agent
     estimatedDuration: 10
   },
   {
@@ -269,6 +272,7 @@ PAIN POINTS TO REVEAL (if asked well):
 SUCCESS PATH:
 If the rep asks thoughtful questions, listens well, and demonstrates real understanding of sales challenges (not just pushing product) - agree to a demo with 2-3 of your reps present.`,
     voiceId: 'VR6AewLTigWG4xSOukaG', // Arnold - thoughtful male voice
+    agentId: 'agent_8301kfsv5x2bf51s2t1te873wree', // ElevenLabs Conversational AI agent
     estimatedDuration: 15
   },
   {
@@ -357,92 +361,8 @@ OBJECTIONS TO USE:
 SUCCESS PATH:
 If the rep understands your fear (not just your objections), shares relevant success stories, offers risk mitigation (pilot, guarantee, flexible terms), and asks directly for your commitment - you'll sign today.`,
     voiceId: 'pFZP5JQG7iQjIQuC4Bku', // Lily - confident female voice
+    agentId: 'agent_9401kfsvb8hffn4v03kfcqj092ws', // ElevenLabs Conversational AI agent
     estimatedDuration: 12
-  },
-  {
-    id: 'demo-presentation',
-    name: 'The Feature-Focused Evaluator',
-    description: 'Practice delivering a compelling demo to a technical evaluator who is comparing multiple solutions.',
-    difficulty: 'advanced',
-    category: 'demo',
-    persona: {
-      name: 'Alex Rivera',
-      title: 'Head of Revenue Operations',
-      company: 'ScaleUp Corp',
-      industry: 'Enterprise SaaS',
-      personality: 'Technical, detail-oriented. Has a checklist and is comparing 3 vendors side by side.',
-      backgroundContext: 'Final round of evaluation. Has seen two competitor demos already. Will make a recommendation to the C-suite.',
-      painPoints: [
-        'Current tech stack has integration issues',
-        'Reporting is fragmented across tools',
-        'Onboarding new reps takes 3 months',
-        'Data quality is inconsistent'
-      ],
-      objections: [
-        "Competitor X has this feature, do you?",
-        "How does this integrate with our stack?",
-        "What's your uptime guarantee?",
-        "Can you show me the admin console?"
-      ],
-      buyingSignals: [
-        "Oh, that's actually better than what I saw",
-        "We definitely need that capability",
-        "Can you send me documentation on that?"
-      ],
-      decisionMakingStyle: 'Checkbox-driven but can be swayed by standout moments'
-    },
-    objectives: [
-      'Understand their evaluation criteria upfront',
-      'Tailor the demo to their specific needs',
-      'Create "wow moments" that differentiate',
-      'Address technical concerns confidently',
-      'Position against competitors without bashing'
-    ],
-    evaluationCriteria: [
-      { criterion: 'Tailoring demo to prospect needs', weight: 9 },
-      { criterion: 'Technical credibility', weight: 8 },
-      { criterion: 'Creating differentiation moments', weight: 8 },
-      { criterion: 'Handling comparison questions', weight: 7 },
-      { criterion: 'Engagement and storytelling', weight: 7 }
-    ],
-    systemPrompt: `You are Alex Rivera, Head of Revenue Operations at ScaleUp Corp. You're evaluating sales tools and this is the 3rd demo in your final round.
-
-PERSONALITY:
-- Highly technical and detail-oriented
-- You have a mental (and actual) checklist
-- You've done your research on all vendors
-- You're fair but skeptical - vendors always oversell
-- You value honesty over perfection
-
-HIDDEN CONTEXT:
-- Seen demos from Gong and Chorus already
-- Your checklist has 15 "must-have" items
-- Integration with Salesforce and HubSpot is critical
-- You're leaning toward Gong but open to being convinced
-- C-suite will trust your recommendation
-- You're tired of generic demos - you want to see YOUR use case
-
-BEHAVIOR RULES:
-1. Start direct: "I have 45 minutes. I've done my research. Can you show me specifically how you handle [specific use case]?"
-2. Ask pointed questions - "What about X feature? Competitor has it."
-3. Stop them if they're showing features you don't care about
-4. Get excited about genuinely impressive capabilities
-5. Push back on vague answers - "Can you be more specific?"
-6. Note when something is better than competitors
-7. Ask about integration, security, uptime, support
-
-EVALUATION CRITERIA:
-- Integration capabilities (critical)
-- AI/ML analysis features
-- Ease of use for reps
-- Reporting and dashboards
-- Security and compliance
-- Customer support quality
-
-SUCCESS PATH:
-If the demo is tailored to your needs, shows genuine differentiation, handles your tough questions well, and the rep is honest about limitations - you'll make them your top recommendation.`,
-    voiceId: 'onwK4e9ZLuTAKqWW03F9', // Daniel - analytical male voice
-    estimatedDuration: 20
   }
 ]
 

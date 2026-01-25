@@ -40,12 +40,12 @@ export interface ProviderConfig {
   model?: string  // For OpenRouter, specify which model
 }
 
-// Available OpenRouter models (updated IDs)
+// Available OpenRouter models (updated IDs - Jan 2026)
 export const OPENROUTER_MODELS = {
   'claude-3-sonnet': 'anthropic/claude-3.5-sonnet',
-  'claude-3-opus': 'anthropic/claude-3-opus-20240229',
-  'claude-3-haiku': 'anthropic/claude-3-haiku-20240307',
-  'gpt-4-turbo': 'openai/gpt-4-turbo-preview',
+  'claude-3-opus': 'anthropic/claude-3-opus',
+  'claude-3-haiku': 'anthropic/claude-3.5-haiku',
+  'gpt-4-turbo': 'openai/gpt-4-turbo',
   'gpt-4': 'openai/gpt-4',
   'gpt-3.5-turbo': 'openai/gpt-3.5-turbo',
   'llama-3-70b': 'meta-llama/llama-3.1-70b-instruct',
