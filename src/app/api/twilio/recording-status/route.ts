@@ -90,10 +90,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "ok" });
   }
 
-  // Validate environment
-  if (!accountSid || !authToken || !intelligenceServiceSid) {
-    console.error("[Recording Status] Missing Twilio credentials or Intelligence Service SID");
-    return NextResponse.json({ status: "error", message: "Missing configuration" }, { status: 500 });
+  // Validate environment - only require Intelligence SID if using Twilio transcription
+  const useDeepgram = transcriptionProvider === "deepgram" && process.env.DEEPGRAM_API_KEY;
+  
+  if (!accountSid || !authToken) {
+    console.error("[Recording Status] Missing Twilio credentials (Account SID or Auth Token)");
+    return NextResponse.json({ status: "error", message: "Missing Twilio credentials" }, { status: 500 });
+  }
+  
+  if (!useDeepgram && !intelligenceServiceSid) {
+    console.error("[Recording Status] Missing Twilio Intelligence Service SID (required when not using Deepgram)");
+    return NextResponse.json({ status: "error", message: "Missing Intelligence Service SID" }, { status: 500 });
   }
 
   // Process transcription asynchronously (don't await)

@@ -17,11 +17,11 @@ export function Header({ title, description, role, actions }: HeaderProps) {
       <div className="flex items-center gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-[18px] font-bold text-black">{title}</h1>
+            <h1 className="text-2xl font-bold text-[#1E1B4B] tracking-tight">{title}</h1>
             {role && <RoleBadge role={role} />}
           </div>
           {description && (
-            <p className="text-[15px] text-gray-600 mt-1 font-medium">{description}</p>
+            <p className="text-sm text-gray-500 mt-0.5">{description}</p>
           )}
         </div>
       </div>

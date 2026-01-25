@@ -232,9 +232,15 @@ export default function TrainingPage() {
     }
   }, [isProcessing, selectedScenario, conversation, playTTS])
 
-  // Start session
-  const startSession = useCallback(async () => {
-    if (!selectedScenario) return
+  // Start session - can accept a scenario directly for instant start
+  const startSession = useCallback(async (scenario?: TrainingScenario) => {
+    const activeScenario = scenario || selectedScenario
+    if (!activeScenario) return
+
+    // Set the scenario if passed directly
+    if (scenario) {
+      setSelectedScenario(scenario)
+    }
 
     setSessionState('active')
     setConversation([])
@@ -242,7 +248,7 @@ export default function TrainingPage() {
     setError(null)
 
     // Add the prospect's first message
-    const firstMessage = getFirstMessage(selectedScenario)
+    const firstMessage = getFirstMessage(activeScenario)
     setConversation([{
       role: 'assistant',
       content: firstMessage,
@@ -250,7 +256,7 @@ export default function TrainingPage() {
     }])
 
     // Speak the first message
-    await playTTS(firstMessage, selectedScenario.voiceId)
+    await playTTS(firstMessage, activeScenario.voiceId)
   }, [selectedScenario, playTTS])
 
   // Toggle microphone
@@ -339,8 +345,7 @@ export default function TrainingPage() {
   return (
     <div className="flex flex-col h-full">
       <Header 
-        title="Sales Training" 
-        description="Practice your sales skills with AI-powered role-play"
+        title="Sales Training"
         actions={
           sessionState === 'active' ? (
             <Button variant="destructive" onClick={endSession}>
@@ -377,11 +382,8 @@ export default function TrainingPage() {
               {TRAINING_SCENARIOS.map((scenario) => (
                 <Card 
                   key={scenario.id}
-                  className={cn(
-                    'cursor-pointer transition-all hover:shadow-lg hover:border-primary',
-                    selectedScenario?.id === scenario.id && 'border-primary ring-2 ring-primary/20'
-                  )}
-                  onClick={() => setSelectedScenario(scenario)}
+                  className="cursor-pointer transition-all hover:shadow-lg hover:border-primary hover:scale-[1.02]"
+                  onClick={() => startSession(scenario)}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between mb-2">
@@ -426,15 +428,6 @@ export default function TrainingPage() {
               ))}
             </div>
 
-            {selectedScenario && (
-              <div className="mt-8 flex justify-center">
-                <Button size="lg" onClick={startSession} className="gap-2">
-                  <Phone className="h-5 w-5" />
-                  Start Training Call
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-              </div>
-            )}
           </div>
         )}
 
