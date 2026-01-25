@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Device, Call } from '@twilio/voice-sdk'
 import { Button } from '@/components/ui/button'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   Phone,
   PhoneOff,
@@ -12,9 +13,10 @@ import {
   X,
   Loader2,
   Delete,
-  User,
+  Users,
   Building2,
   Search,
+  Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -30,6 +32,7 @@ interface Contact {
 export function FloatingDialer() {
   const [isOpen, setIsOpen] = useState(false)
   const [isContactsOpen, setIsContactsOpen] = useState(false)
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState('')
   const [callStatus, setCallStatus] = useState<CallStatus>('idle')
   const [isMuted, setIsMuted] = useState(false)
@@ -261,52 +264,79 @@ export function FloatingDialer() {
     if (!isInCall) {
       setIsOpen(false)
       setIsContactsOpen(false)
+      setIsMenuExpanded(false)
     }
   }
 
   return (
     <>
       {/* Backdrop - closes popups when clicking outside */}
-      {(isOpen || isContactsOpen) && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/5 animate-in fade-in duration-200"
-          onClick={closeAll}
-        />
-      )}
+      <AnimatePresence>
+        {(isOpen || isContactsOpen) && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[2px]"
+            onClick={closeAll}
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Floating buttons */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+      {/* Floating buttons - hidden along right edge */}
+      <div 
+        className="fixed right-0 bottom-24 z-50 flex flex-col items-end gap-4 pr-0"
+        onMouseEnter={() => setIsMenuExpanded(true)}
+        onMouseLeave={() => {
+          if (!isOpen && !isContactsOpen) {
+            setIsMenuExpanded(false)
+          }
+        }}
+      >
         {/* Contacts button */}
-        <button
+        <motion.button
           onClick={() => {
             setIsContactsOpen(!isContactsOpen)
             setIsOpen(false)
           }}
           className={cn(
-            "h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105",
-            isContactsOpen 
-              ? "bg-primary/80 scale-95" 
-              : "bg-primary hover:bg-primary/90"
+            "h-12 w-12 rounded-l-2xl shadow-xl flex items-center justify-center",
+            "bg-gradient-to-br from-violet-500 to-indigo-600",
+            "border border-white/20 border-r-0"
           )}
+          initial={{ x: 36 }}
+          animate={
+            isMenuExpanded || isContactsOpen
+              ? { x: 0 }
+              : { x: 36 }
+          }
+          transition={{ type: "tween", ease: [0.25, 0.1, 0.25, 1], duration: 0.3 }}
           title="Contacts"
         >
-          <User className="h-6 w-6 text-white" />
-        </button>
+          <Users className="h-5 w-5 text-white" />
+        </motion.button>
 
         {/* Dialer button */}
-        <button
+        <motion.button
           onClick={() => {
             setIsOpen(!isOpen)
             setIsContactsOpen(false)
           }}
           className={cn(
-            'h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105',
+            'h-14 w-14 rounded-l-2xl shadow-xl flex items-center justify-center',
+            'border border-white/20 border-r-0',
             isInCall 
-              ? 'bg-green-500 hover:bg-green-600 animate-pulse shadow-green-500/40' 
-              : isOpen
-                ? 'bg-primary/80 scale-95'
-                : 'bg-primary hover:bg-primary/90'
+              ? 'bg-gradient-to-br from-emerald-400 to-green-600 shadow-green-500/40' 
+              : 'bg-gradient-to-br from-blue-500 to-indigo-600'
           )}
+          initial={{ x: 42 }}
+          animate={
+            isMenuExpanded || isOpen || isInCall
+              ? { x: 0 }
+              : { x: 42 }
+          }
+          transition={{ type: "tween", ease: [0.25, 0.1, 0.25, 1], duration: 0.3 }}
           title="Open Dialer"
         >
           {isInCall ? (
@@ -314,224 +344,314 @@ export function FloatingDialer() {
           ) : (
             <Phone className="h-6 w-6 text-white" />
           )}
-        </button>
+        </motion.button>
       </div>
 
       {/* Contacts Popup */}
-      {isContactsOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in zoom-in-95 duration-200">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-muted/30">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-primary" />
-              <span className="font-medium">Contacts</span>
-            </div>
-            <button
-              onClick={() => setIsContactsOpen(false)}
-              className="p-1 rounded hover:bg-muted transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Search */}
-          <div className="p-3 border-b">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={contactSearch}
-                onChange={(e) => setContactSearch(e.target.value)}
-                placeholder="Search contacts..."
-                className="w-full pl-9 pr-3 py-2 text-sm bg-muted/50 rounded-lg border-0 focus:ring-2 focus:ring-primary/50 outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Contacts List */}
-          <div className="max-h-64 overflow-y-auto">
-            {contactsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      <AnimatePresence>
+        {isContactsOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: 20, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed bottom-[11.5rem] right-16 z-50 w-80 bg-white/95 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-violet-50 to-indigo-50">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                <span className="font-semibold text-gray-800">Contacts</span>
               </div>
-            ) : filteredContacts.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground">
-                {contacts.length === 0 ? 'No contacts yet' : 'No matches found'}
+              <motion.button
+                onClick={() => setIsContactsOpen(false)}
+                className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <X className="h-4 w-4 text-gray-500" />
+              </motion.button>
+            </div>
+
+            {/* Search */}
+            <div className="p-3 border-b border-gray-100">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={contactSearch}
+                  onChange={(e) => setContactSearch(e.target.value)}
+                  placeholder="Search contacts..."
+                  className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-violet-500/30 focus:bg-white outline-none transition-all"
+                />
               </div>
-            ) : (
-              <div className="divide-y">
-                {filteredContacts.map((contact) => (
-                  <button
-                    key={contact.clientId}
-                    onClick={() => handleContactSelect(contact)}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left"
+            </div>
+
+            {/* Contacts List */}
+            <div className="max-h-64 overflow-y-auto">
+              {contactsLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                   >
-                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <User className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{contact.clientName}</p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Building2 className="h-3 w-3" />
-                        <span className="truncate">{contact.companyName}</span>
+                    <Loader2 className="h-6 w-6 text-violet-500" />
+                  </motion.div>
+                </div>
+              ) : filteredContacts.length === 0 ? (
+                <div className="text-center py-12">
+                  <Sparkles className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-sm text-gray-500">
+                    {contacts.length === 0 ? 'No contacts yet' : 'No matches found'}
+                  </p>
+                </div>
+              ) : (
+                <div className="p-2">
+                  {filteredContacts.map((contact, index) => (
+                    <motion.button
+                      key={contact.clientId}
+                      onClick={() => handleContactSelect(contact)}
+                      className="w-full px-3 py-3 flex items-center gap-3 hover:bg-violet-50 rounded-xl transition-colors text-left group"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ x: 4 }}
+                    >
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center flex-shrink-0 group-hover:from-violet-200 group-hover:to-indigo-200 transition-colors">
+                        <span className="text-sm font-semibold text-violet-600">
+                          {contact.clientName.charAt(0).toUpperCase()}
+                        </span>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-primary font-mono">
-                      <Phone className="h-3 w-3" />
-                      <span>{contact.contactPhone}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm text-gray-800 truncate">{contact.clientName}</p>
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <Building2 className="h-3 w-3" />
+                          <span className="truncate">{contact.companyName}</span>
+                        </div>
+                      </div>
+                      <motion.div 
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-green-50 rounded-lg"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <Phone className="h-3 w-3 text-green-600" />
+                        <span className="text-xs font-medium text-green-700">{contact.contactPhone.slice(-4)}</span>
+                      </motion.div>
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+            </div>
 
-          {/* Footer hint */}
-          <div className="p-2 border-t bg-muted/20">
-            <p className="text-xs text-center text-muted-foreground">
-              Click a contact to call
-            </p>
-          </div>
-        </div>
-      )}
+            {/* Footer */}
+            <div className="p-3 border-t border-gray-100 bg-gray-50/50">
+              <p className="text-xs text-center text-gray-400">
+                Tap a contact to start calling
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Dialer Popup */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 fade-in zoom-in-95 duration-200">
-          {/* Header */}
-          <div className={cn(
-            "flex items-center justify-between p-4 border-b transition-colors",
-            isInCall ? "bg-green-500/10" : "bg-muted/30"
-          )}>
-            <div className="flex items-center gap-2">
-              {isInCall ? (
-                <PhoneCall className="h-4 w-4 text-green-500" />
-              ) : (
-                <Phone className="h-4 w-4 text-primary" />
-              )}
-              <span className="font-medium">{isInCall ? 'On Call' : 'Dialer'}</span>
-            </div>
-            <button
-              onClick={handleClose}
-              disabled={isInCall}
-              className={cn(
-                'p-1 rounded hover:bg-muted transition-colors',
-                isInCall && 'opacity-50 cursor-not-allowed'
-              )}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Content */}
-          <div className="p-4 space-y-4">
-            {/* Status */}
-            {(error || callStatus !== 'idle') && (
-              <p className={cn(
-                'text-sm text-center',
-                callStatus === 'connected' ? 'text-green-500 font-medium' :
-                callStatus === 'ringing' ? 'text-yellow-500' :
-                error ? 'text-red-500' :
-                'text-muted-foreground'
-              )}>
-                {error || getStatusText()}
-              </p>
-            )}
-
-            {/* Phone number input */}
-            <div className="relative">
-              <input
-                ref={inputRef}
-                type="tel"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d+*#]/g, ''))}
-                placeholder="Enter phone number"
-                className="w-full text-center text-xl font-mono py-3 px-10 bg-muted/50 rounded-lg border-0 focus:ring-2 focus:ring-primary/50 outline-none"
-                disabled={isInCall}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && phoneNumber && isDeviceReady && !isInCall) {
-                    handleCall()
-                  }
-                }}
-              />
-              {phoneNumber && !isInCall && (
-                <button
-                  onClick={() => setPhoneNumber(prev => prev.slice(0, -1))}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 hover:bg-muted rounded transition-colors cursor-pointer"
-                >
-                  <Delete className="h-4 w-4 text-muted-foreground" />
-                </button>
-              )}
-            </div>
-
-            {/* Call controls */}
-            <div className="flex justify-center gap-4">
-              {isInCall ? (
-                <>
-                  {/* Mute button */}
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={handleToggleMute}
-                    className={cn(
-                      'rounded-full h-14 w-14 shadow-md transition-all',
-                      isMuted 
-                        ? 'bg-red-500/20 border-red-500 hover:bg-red-500/30' 
-                        : 'bg-muted/50 hover:bg-muted'
-                    )}
-                  >
-                    {isMuted ? (
-                      <MicOff className="h-6 w-6 text-red-500" />
-                    ) : (
-                      <Mic className="h-6 w-6" />
-                    )}
-                  </Button>
-
-                  {/* Hang up button */}
-                  <Button
-                    variant="destructive"
-                    size="lg"
-                    onClick={handleHangup}
-                    className="rounded-full h-14 w-14 bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/30 transition-all hover:scale-105"
-                  >
-                    <PhoneOff className="h-6 w-6 rotate-[135deg]" />
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={handleCall}
-                  disabled={!phoneNumber || !isDeviceReady || callStatus === 'disconnected'}
-                  className="w-full h-14 text-base rounded-full bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all hover:scale-[1.02]"
-                >
-                  {!isDeviceReady ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Initializing...
-                    </>
-                  ) : (
-                    <>
-                      <Phone className="h-5 w-5 mr-2" />
-                      Call
-                    </>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: 20, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed bottom-24 right-[4.5rem] z-50 w-80 bg-white/95 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden"
+          >
+            {/* Header */}
+            <div className={cn(
+              "flex items-center justify-between p-4 border-b transition-colors",
+              isInCall 
+                ? "bg-gradient-to-r from-emerald-50 to-green-50 border-green-100" 
+                : "bg-gradient-to-r from-blue-50 to-indigo-50 border-gray-100"
+            )}>
+              <div className="flex items-center gap-2">
+                <motion.div 
+                  className={cn(
+                    "h-8 w-8 rounded-xl flex items-center justify-center",
+                    isInCall 
+                      ? "bg-gradient-to-br from-emerald-400 to-green-600" 
+                      : "bg-gradient-to-br from-blue-500 to-indigo-600"
                   )}
-                </Button>
-              )}
+                  animate={isInCall ? { scale: [1, 1.1, 1] } : {}}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                >
+                  {isInCall ? (
+                    <PhoneCall className="h-4 w-4 text-white" />
+                  ) : (
+                    <Phone className="h-4 w-4 text-white" />
+                  )}
+                </motion.div>
+                <span className="font-semibold text-gray-800">{isInCall ? 'On Call' : 'Dialer'}</span>
+              </div>
+              <motion.button
+                onClick={handleClose}
+                disabled={isInCall}
+                className={cn(
+                  'p-2 rounded-xl transition-colors',
+                  isInCall ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
+                )}
+                whileHover={!isInCall ? { scale: 1.1 } : {}}
+                whileTap={!isInCall ? { scale: 0.9 } : {}}
+              >
+                <X className="h-4 w-4 text-gray-500" />
+              </motion.button>
             </div>
 
-            {/* Hint */}
-            {!isDeviceReady && !error && (
-              <p className="text-xs text-center text-muted-foreground">
-                Setting up your browser for calls...
-              </p>
-            )}
-            {isDeviceReady && !isInCall && (
-              <p className="text-xs text-center text-muted-foreground">
-                Type number and press Enter or click Call
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+            {/* Content */}
+            <div className="p-5 space-y-5">
+              {/* Status */}
+              <AnimatePresence mode="wait">
+                {(error || callStatus !== 'idle') && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className={cn(
+                      'text-sm text-center font-medium py-2 px-4 rounded-xl',
+                      callStatus === 'connected' ? 'text-green-600 bg-green-50' :
+                      callStatus === 'ringing' ? 'text-amber-600 bg-amber-50' :
+                      error ? 'text-red-600 bg-red-50' :
+                      'text-gray-500 bg-gray-50'
+                    )}
+                  >
+                    {error || getStatusText()}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              {/* Phone number input */}
+              <div className="relative">
+                <input
+                  ref={inputRef}
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d+*#]/g, ''))}
+                  placeholder="Enter phone number"
+                  className="w-full text-center text-2xl font-mono py-4 px-12 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-blue-500/30 focus:bg-white outline-none transition-all"
+                  disabled={isInCall}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && phoneNumber && isDeviceReady && !isInCall) {
+                      handleCall()
+                    }
+                  }}
+                />
+                <AnimatePresence>
+                  {phoneNumber && !isInCall && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={() => setPhoneNumber(prev => prev.slice(0, -1))}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-xl transition-colors"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <Delete className="h-5 w-5 text-gray-400" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Call controls */}
+              <div className="flex justify-center gap-4">
+                {isInCall ? (
+                  <>
+                    {/* Mute button */}
+                    <motion.button
+                      onClick={handleToggleMute}
+                      className={cn(
+                        'rounded-2xl h-16 w-16 shadow-lg flex items-center justify-center border-2',
+                        isMuted 
+                          ? 'bg-red-50 border-red-200' 
+                          : 'bg-gray-50 border-gray-200'
+                      )}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {isMuted ? (
+                        <MicOff className="h-7 w-7 text-red-500" />
+                      ) : (
+                        <Mic className="h-7 w-7 text-gray-600" />
+                      )}
+                    </motion.button>
+
+                    {/* Hang up button */}
+                    <motion.button
+                      onClick={handleHangup}
+                      className="rounded-2xl h-16 w-16 bg-gradient-to-br from-red-500 to-rose-600 shadow-xl shadow-red-500/30 flex items-center justify-center"
+                      whileHover={{ scale: 1.1, rotate: 10 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <PhoneOff className="h-7 w-7 text-white rotate-[135deg]" />
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.button
+                    onClick={handleCall}
+                    disabled={!phoneNumber || !isDeviceReady || callStatus === 'disconnected'}
+                    className={cn(
+                      "w-full h-14 text-base rounded-2xl shadow-xl flex items-center justify-center gap-2 font-semibold text-white",
+                      (!phoneNumber || !isDeviceReady) 
+                        ? "bg-gray-300 cursor-not-allowed" 
+                        : "bg-gradient-to-r from-emerald-500 to-green-600 shadow-green-500/30"
+                    )}
+                    whileHover={phoneNumber && isDeviceReady ? { scale: 1.02 } : {}}
+                    whileTap={phoneNumber && isDeviceReady ? { scale: 0.98 } : {}}
+                  >
+                    {!isDeviceReady ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                        >
+                          <Loader2 className="h-5 w-5" />
+                        </motion.div>
+                        Initializing...
+                      </>
+                    ) : (
+                      <>
+                        <Phone className="h-5 w-5" />
+                        Call
+                      </>
+                    )}
+                  </motion.button>
+                )}
+              </div>
+
+              {/* Hint */}
+              <AnimatePresence mode="wait">
+                {!isDeviceReady && !error && (
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xs text-center text-gray-400"
+                  >
+                    Setting up your browser for calls...
+                  </motion.p>
+                )}
+                {isDeviceReady && !isInCall && (
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xs text-center text-gray-400"
+                  >
+                    Type number and press Enter or click Call
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
