@@ -211,68 +211,62 @@ export default function SettingsPage() {
       
       <div className="flex-1 p-6 overflow-auto">
         <div className="max-w-3xl mx-auto space-y-6">
-          {/* Profile Settings - Clerk Component */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl font-bold">
-                <Users className="h-6 w-6" />
-                Profile Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex justify-center items-start py-6">
-              <div className="w-full max-w-2xl mx-auto flex justify-center">
-                <UserProfile 
-                  routing="hash"
-                  appearance={{
-                    elements: {
-                      rootBox: 'w-full flex justify-center mx-auto',
-                      cardBox: 'shadow-none border-0 w-full mx-auto flex justify-center',
-                      card: 'w-full mx-auto',
-                      navbar: 'hidden',
-                      navbarMobileMenuButton: 'hidden',
-                      headerTitle: 'hidden',
-                      headerSubtitle: 'hidden',
-                      profileSectionTitleText: 'text-lg font-bold',
-                      // Account section styling - center it
-                      accountSwitcherTrigger: 'text-base font-semibold mx-auto',
-                      accountSwitcherTriggerText: 'text-base font-semibold',
-                      // Navigation items
-                      navbarButton: 'text-base font-medium',
-                      navbarButtonText: 'text-base font-medium',
-                      // Content sections - center content
-                      page: 'w-full mx-auto',
-                      pageScrollBox: 'w-full mx-auto',
-                      pageHeaderTitle: 'text-xl font-bold text-center',
-                      pageHeaderSubtitle: 'hidden',
-                      formFieldLabel: 'text-base font-semibold',
-                      formFieldInput: 'text-base',
-                      formButtonPrimary: 'text-base font-semibold',
-                      // Profile info - center profile section
-                      profileSection: 'text-base mx-auto',
-                      profileSectionContent: 'mx-auto',
-                      profileSectionPrimaryButton: 'text-base font-semibold mx-auto',
-                      // Email and connected accounts
-                      formFieldLabelRow: 'text-base font-semibold',
-                      badge: 'text-sm font-medium',
-                    },
-                  }}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Account Component */}
+          <div className="flex justify-center items-start py-6">
+            <div className="w-full max-w-2xl mx-auto flex justify-center">
+              <UserProfile 
+                routing="hash"
+                appearance={{
+                  elements: {
+                    rootBox: 'w-full flex justify-center mx-auto',
+                    cardBox: 'shadow-none border-0 w-full mx-auto flex justify-center',
+                    card: 'w-full mx-auto',
+                    navbar: 'hidden',
+                    navbarMobileMenuButton: 'hidden',
+                    headerTitle: 'hidden',
+                    headerSubtitle: 'hidden',
+                    profileSectionTitleText: 'text-lg font-bold',
+                    // Account section styling - center it
+                    accountSwitcherTrigger: 'text-base font-semibold mx-auto',
+                    accountSwitcherTriggerText: 'text-base font-semibold',
+                    // Navigation items
+                    navbarButton: 'text-base font-medium',
+                    navbarButtonText: 'text-base font-medium',
+                    // Content sections - center content
+                    page: 'w-full mx-auto',
+                    pageScrollBox: 'w-full mx-auto',
+                    pageHeaderTitle: 'text-xl font-bold text-center',
+                    pageHeaderSubtitle: 'hidden',
+                    formFieldLabel: 'text-base font-semibold',
+                    formFieldInput: 'text-base',
+                    formButtonPrimary: 'text-base font-semibold',
+                    // Profile info - center profile section
+                    profileSection: 'text-base mx-auto',
+                    profileSectionContent: 'mx-auto',
+                    profileSectionPrimaryButton: 'text-base font-semibold mx-auto',
+                    // Email and connected accounts
+                    formFieldLabelRow: 'text-base font-semibold',
+                    badge: 'text-sm font-medium',
+                  },
+                }}
+              />
+            </div>
+          </div>
 
           {/* AI Model Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-500" />
-                AI Summarizer Model
-              </CardTitle>
-              <CardDescription>
-                Choose the AI model used for analyzing call transcripts. This affects all future analyses.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="flex justify-center items-start py-6">
+            <div className="w-full max-w-2xl mx-auto flex justify-center">
+              <Card className="w-full">
+                <CardHeader className="px-6 py-5">
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-500" />
+                    AI Summarizer Model
+                  </CardTitle>
+                  <CardDescription>
+                    Choose the AI model used for analyzing call transcripts. This affects all future analyses.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 px-6 py-5">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -346,8 +340,10 @@ export default function SettingsPage() {
                   </p>
                 </>
               )}
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
         </div>
       </div>
