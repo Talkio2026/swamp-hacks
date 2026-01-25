@@ -4,6 +4,8 @@ import connectToDatabase from '@/lib/mongodb'
 import Transcript from '@/lib/models/Transcript'
 import { analyzeTranscript } from '@/lib/ai/analyzer'
 import { ProviderConfig, OpenRouterModel, OPENROUTER_MODELS } from '@/lib/ai/types'
+import { generateTranscriptEmbedding } from '@/lib/ai/vector-search'
+import { isEmbeddingConfigured } from '@/lib/ai/embeddings'
 
 interface RouteContext {
   params: Promise<{ callSid: string }>
@@ -110,6 +112,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
     
     await transcript.save()
+    
+    // Generate embedding for vector search (non-blocking)
+    if (isEmbeddingConfigured()) {
+      generateTranscriptEmbedding(callSid).catch(err => {
+        console.warn(`[Analysis] Failed to generate embedding for ${callSid}:`, err.message)
+      })
+    }
     
     return NextResponse.json({
       success: true,

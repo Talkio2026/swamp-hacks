@@ -66,6 +66,11 @@ export interface ITranscript extends Document {
   
   // AI Analysis
   analysis?: IAnalysis;
+  
+  // Vector Search Embedding
+  embedding?: number[];           // 1536-dimension vector for semantic search
+  embeddingText?: string;         // The text that was embedded (for debugging)
+  embeddingGeneratedAt?: Date;    // When the embedding was last generated
 }
 
 // Schema for conversation entries
@@ -205,6 +210,18 @@ const TranscriptSchema = new Schema<ITranscript>(
       analyzedAt: Date,
       modelUsed: String,
       processingTimeMs: Number,
+    },
+    
+    // Vector Search Embedding (1536 dimensions for text-embedding-3-small)
+    embedding: {
+      type: [Number],
+      index: false,  // We'll create a vector search index in Atlas
+    },
+    embeddingText: {
+      type: String,
+    },
+    embeddingGeneratedAt: {
+      type: Date,
     },
   },
   {
