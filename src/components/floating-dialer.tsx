@@ -109,8 +109,16 @@ export function FloatingDialer() {
           setIsDeviceReady(true)
         })
 
-        device.on('error', (err) => {
+        device.on('error', (err: any) => {
           console.error('Twilio Device error:', err)
+          const errorCode = err.code || err.message?.match(/\((\d+)\)/)?.[1]
+          
+          // Handle specific error codes - 31005 is a connection error during hangup (usually not critical)
+          if (errorCode === '31005') {
+            console.log('Device connection error during hangup (normal)')
+            return // Don't show this as an error
+          }
+          
           setError(err.message || 'Device error')
         })
 
@@ -193,13 +201,41 @@ export function FloatingDialer() {
         if (timerRef.current) {
           clearInterval(timerRef.current)
         }
-        setTimeout(() => setCallStatus('idle'), 2000)
+        setTimeout(() => {
+          setCallStatus('idle')
+          setError(null) // Clear any previous errors
+        }, 2000)
       })
 
-      call.on('error', (err) => {
+      call.on('error', (err: any) => {
         console.error('Call error:', err)
-        setError(err.message || 'Call failed')
-        setCallStatus('idle')
+        // Handle specific Twilio error codes
+        const errorCode = err.code || err.message?.match(/\((\d+)\)/)?.[1]
+        let errorMessage = 'Call failed'
+        
+        if (errorCode === '31005' || err.message?.includes('31005')) {
+          // ConnectionError from gateway during HANGUP - usually means call was disconnected
+          errorMessage = 'Call disconnected by gateway'
+          // Don't show this as an error since it's a normal disconnect scenario
+          setError(null)
+        } else if (errorCode === '31000' || err.message?.includes('31000')) {
+          errorMessage = 'Connection timeout'
+        } else if (errorCode === '31008' || err.message?.includes('31008')) {
+          errorMessage = 'Connection lost'
+        } else {
+          errorMessage = err.message || 'Call failed'
+        }
+        
+        // Only set error for non-hangup errors
+        if (errorCode !== '31005') {
+          setError(errorMessage)
+        }
+        
+        setCallStatus('disconnected')
+        if (timerRef.current) {
+          clearInterval(timerRef.current)
+        }
+        setTimeout(() => setCallStatus('idle'), 2000)
       })
 
       call.on('cancel', () => {
