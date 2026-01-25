@@ -102,6 +102,55 @@ export default function SettingsPage() {
     fetchSettings()
   }, [])
 
+  // Debug: Measure centering of Profile Settings Clerk component
+  useEffect(() => {
+    // #region agent log
+    const measureCentering = () => {
+      const card = document.querySelector('[class*="Card"][class*="Profile Settings"]')?.closest('[class*="Card"]') || 
+                   Array.from(document.querySelectorAll('[class*="Card"]')).find(el => {
+                     const title = el.querySelector('[class*="CardTitle"]');
+                     return title?.textContent?.includes('Profile Settings');
+                   });
+      const cardContent = card?.querySelector('[class*="CardContent"]');
+      const wrapperDiv = cardContent?.querySelector('div');
+      const clerkRoot = document.querySelector('.cl-userProfile');
+      const clerkCardBox = clerkRoot?.querySelector('.cl-cardBox');
+      
+      if (card && cardContent && wrapperDiv) {
+        const cardRect = card.getBoundingClientRect();
+        const contentRect = cardContent.getBoundingClientRect();
+        const wrapperRect = wrapperDiv.getBoundingClientRect();
+        const clerkRootRect = clerkRoot?.getBoundingClientRect();
+        const clerkCardBoxRect = clerkCardBox?.getBoundingClientRect();
+        
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const contentCenter = contentRect.left + contentRect.width / 2;
+        const wrapperCenter = wrapperRect.left + wrapperRect.width / 2;
+        const clerkRootCenter = clerkRootRect ? clerkRootRect.left + clerkRootRect.width / 2 : null;
+        const clerkCardBoxCenter = clerkCardBoxRect ? clerkCardBoxRect.left + clerkCardBoxRect.width / 2 : null;
+        
+        const contentStyles = window.getComputedStyle(cardContent);
+        const wrapperStyles = window.getComputedStyle(wrapperDiv);
+        const clerkRootStyles = clerkRoot ? window.getComputedStyle(clerkRoot) : null;
+        const clerkCardBoxStyles = clerkCardBox ? window.getComputedStyle(clerkCardBox) : null;
+        
+        fetch('http://127.0.0.1:7242/ingest/a4918017-0b21-4e17-ac77-6519ee12f785',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings/page.tsx:103',message:'Centering measurements',data:{cardWidth:cardRect.width,cardLeft:cardRect.left,cardCenter,contentWidth:contentRect.width,contentLeft:contentRect.left,contentCenter,contentOffsetFromCard:Math.abs(contentCenter-cardCenter),contentDisplay:contentStyles.display,contentJustifyContent:contentStyles.justifyContent,contentAlignItems:contentStyles.alignItems,contentFlexDirection:contentStyles.flexDirection,wrapperWidth:wrapperRect.width,wrapperLeft:wrapperRect.left,wrapperCenter,wrapperOffsetFromCard:Math.abs(wrapperCenter-cardCenter),wrapperMaxWidth:wrapperStyles.maxWidth,wrapperWidthStyle:wrapperStyles.width,wrapperMargin:wrapperStyles.margin,wrapperMarginLeft:wrapperStyles.marginLeft,wrapperMarginRight:wrapperStyles.marginRight,clerkRootWidth:clerkRootRect?.width,clerkRootLeft:clerkRootRect?.left,clerkRootCenter,clerkRootOffsetFromCard:clerkRootCenter?Math.abs(clerkRootCenter-cardCenter):null,clerkRootWidthStyle:clerkRootStyles?.width,clerkRootMargin:clerkRootStyles?.margin,clerkCardBoxWidth:clerkCardBoxRect?.width,clerkCardBoxLeft:clerkCardBoxRect?.left,clerkCardBoxCenter,clerkCardBoxOffsetFromCard:clerkCardBoxCenter?Math.abs(clerkCardBoxCenter-cardCenter):null,clerkCardBoxWidthStyle:clerkCardBoxStyles?.width,clerkCardBoxMargin:clerkCardBoxStyles?.margin},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+      }
+    };
+    
+    // Measure after delays to allow Clerk to render
+    const timer1 = setTimeout(measureCentering, 1000);
+    const timer2 = setTimeout(measureCentering, 3000);
+    const timer3 = setTimeout(measureCentering, 5000);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+    // #endregion
+  }, [])
+
   // Connect Google Calendar
   const handleConnectGoogle = () => {
     setIsConnectingGoogle(true)
@@ -169,18 +218,15 @@ export default function SettingsPage() {
                 <Users className="h-6 w-6" />
                 Profile Settings
               </CardTitle>
-              <CardDescription className="text-base mt-2">
-                Update your profile photo, name, and account settings
-              </CardDescription>
             </CardHeader>
-            <CardContent className="flex justify-center">
-              <div className="w-full max-w-4xl">
+            <CardContent className="flex justify-center items-start py-6">
+              <div className="max-w-2xl mx-auto">
                 <UserProfile 
                   routing="hash"
                   appearance={{
                     elements: {
-                      rootBox: 'w-full flex justify-center',
-                      cardBox: 'shadow-none border-0 w-full mx-auto',
+                      rootBox: 'flex justify-center mx-auto',
+                      cardBox: 'shadow-none border-0 mx-auto',
                       navbar: 'hidden',
                       navbarMobileMenuButton: 'hidden',
                       headerTitle: 'hidden',
@@ -194,7 +240,7 @@ export default function SettingsPage() {
                       navbarButtonText: 'text-base font-medium',
                       // Content sections
                       pageHeaderTitle: 'text-xl font-bold',
-                      pageHeaderSubtitle: 'text-base',
+                      pageHeaderSubtitle: 'hidden',
                       formFieldLabel: 'text-base font-semibold',
                       formFieldInput: 'text-base',
                       formButtonPrimary: 'text-base font-semibold',
