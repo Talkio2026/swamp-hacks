@@ -448,33 +448,34 @@ export default function TrainingPage() {
 
         {/* Active Session */}
         {sessionState === 'active' && selectedScenario && (
-          <div className="max-w-5xl mx-auto">
-            <div className="grid lg:grid-cols-3 gap-6">
+          <div className="max-w-6xl mx-auto w-full">
+            <div className="grid lg:grid-cols-3 gap-4 h-[calc(100vh-10rem)]">
               {/* Conversation Panel */}
               <div className="lg:col-span-2">
-                <Card className="h-[600px] flex flex-col">
-                  <CardHeader className="flex-shrink-0">
+                <Card className="h-full flex flex-col">
+                  <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 flex-shrink-0 py-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <MessageSquare className="h-5 w-5" />
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4" />
                           Call with {selectedScenario.persona.name}
                         </CardTitle>
-                        <CardDescription>
+                        <CardDescription className="text-xs">
                           {selectedScenario.persona.title} at {selectedScenario.persona.company}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
-                          size="icon"
+                          size="sm"
                           onClick={() => setIsMuted(!isMuted)}
                           title={isMuted ? 'Unmute AI voice' : 'Mute AI voice'}
+                          className="px-2 h-8"
                         >
-                          {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                          {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
                         </Button>
                         {isSpeaking && (
-                          <Badge variant="secondary" className="animate-pulse">
+                          <Badge variant="secondary" className="animate-pulse text-xs">
                             <Volume2 className="h-3 w-3 mr-1" />
                             Speaking...
                           </Badge>
@@ -486,7 +487,7 @@ export default function TrainingPage() {
                     {/* Conversation */}
                     <div 
                       ref={conversationRef}
-                      className="flex-1 overflow-y-auto space-y-4 mb-4"
+                      className="flex-1 overflow-y-auto space-y-3 mb-3 pt-3"
                     >
                       {conversation.map((turn, i) => (
                         <div
@@ -498,16 +499,16 @@ export default function TrainingPage() {
                         >
                           <div
                             className={cn(
-                              'max-w-[80%] rounded-lg px-4 py-2',
+                              'max-w-[80%] rounded-lg px-3 py-1.5',
                               turn.role === 'user' 
                                 ? 'bg-primary text-primary-foreground' 
                                 : 'bg-muted'
                             )}
                           >
-                            <p className="text-sm font-medium mb-1">
+                            <p className="text-xs font-medium mb-0.5">
                               {turn.role === 'user' ? 'You (Sales Rep)' : selectedScenario.persona.name}
                             </p>
-                            <p>{turn.content}</p>
+                            <p className="text-sm">{turn.content}</p>
                           </div>
                         </div>
                       ))}
@@ -515,24 +516,24 @@ export default function TrainingPage() {
                       {/* Interim transcript (what you're saying) */}
                       {interimTranscript && (
                         <div className="flex justify-end">
-                          <div className="max-w-[80%] rounded-lg px-4 py-2 bg-primary/50 text-primary-foreground italic">
-                            <p className="text-sm">{interimTranscript}...</p>
+                          <div className="max-w-[80%] rounded-lg px-3 py-1.5 bg-primary/50 text-primary-foreground italic">
+                            <p className="text-xs">{interimTranscript}...</p>
                           </div>
                         </div>
                       )}
                       
                       {isProcessing && (
                         <div className="flex justify-start">
-                          <div className="bg-muted rounded-lg px-4 py-2 flex items-center gap-2">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span className="text-sm">Thinking...</span>
+                          <div className="bg-muted rounded-lg px-3 py-1.5 flex items-center gap-2">
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <span className="text-xs">Thinking...</span>
                           </div>
                         </div>
                       )}
                     </div>
 
                     {/* Input Controls */}
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {/* Microphone Button */}
                       <div className="flex justify-center">
                         <Button
@@ -540,16 +541,16 @@ export default function TrainingPage() {
                           variant={isListening ? 'destructive' : 'default'}
                           onClick={toggleMicrophone}
                           disabled={isProcessing || isSpeaking}
-                          className="rounded-full h-16 w-16"
+                          className="rounded-full h-12 w-12"
                         >
                           {isListening ? (
-                            <MicOff className="h-6 w-6" />
+                            <MicOff className="h-5 w-5" />
                           ) : (
-                            <Mic className="h-6 w-6" />
+                            <Mic className="h-5 w-5" />
                           )}
                         </Button>
                       </div>
-                      <p className="text-center text-sm text-muted-foreground">
+                      <p className="text-center text-xs text-muted-foreground">
                         {isListening ? 'Listening... Click to stop' : 'Click to speak'}
                       </p>
 
@@ -560,11 +561,11 @@ export default function TrainingPage() {
                           value={textInput}
                           onChange={(e) => setTextInput(e.target.value)}
                           placeholder="Or type your response..."
-                          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                           disabled={isProcessing || isSpeaking}
                         />
-                        <Button type="submit" disabled={isProcessing || !textInput.trim() || isSpeaking}>
-                          <Send className="h-4 w-4" />
+                        <Button type="submit" size="sm" disabled={isProcessing || !textInput.trim() || isSpeaking}>
+                          <Send className="h-3.5 w-3.5" />
                         </Button>
                       </form>
                     </div>
@@ -573,19 +574,19 @@ export default function TrainingPage() {
               </div>
 
               {/* Scenario Info Panel */}
-              <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
+              <div className="h-full flex flex-col gap-3">
+                <Card className="flex-1 flex flex-col min-h-0">
+                  <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 px-4 py-3 flex-shrink-0">
+                    <CardTitle className="text-sm flex items-center gap-2">
                       <Target className="h-4 w-4" />
                       Your Objectives
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
+                  <CardContent className="px-4 py-3 flex-1 overflow-hidden">
+                    <ul className="space-y-2 h-full flex flex-col justify-center">
                       {selectedScenario.objectives.map((obj, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
-                          <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-medium">
                             {i + 1}
                           </div>
                           {obj}
@@ -595,15 +596,15 @@ export default function TrainingPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
+                <Card className="flex-1 flex flex-col min-h-0">
+                  <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 px-4 py-3 flex-shrink-0">
+                    <CardTitle className="text-sm flex items-center gap-2">
                       <GraduationCap className="h-4 w-4" />
                       Quick Tips
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
+                  <CardContent className="px-4 py-3 flex-1 overflow-hidden">
+                    <ul className="space-y-2 text-sm text-muted-foreground h-full flex flex-col justify-center">
                       <li>• Listen more than you talk</li>
                       <li>• Ask open-ended questions</li>
                       <li>• Address objections, don&apos;t ignore them</li>
@@ -612,11 +613,11 @@ export default function TrainingPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Prospect Context</CardTitle>
+                <Card className="flex-1 flex flex-col min-h-0">
+                  <CardHeader className="bg-gradient-to-br from-violet-50 via-violet-50/80 to-violet-100/50 px-4 py-3 flex-shrink-0">
+                    <CardTitle className="text-sm">Prospect Context</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-sm space-y-2">
+                  <CardContent className="px-4 py-3 flex-1 overflow-hidden text-sm space-y-2 flex flex-col justify-center">
                     <p><strong>Industry:</strong> {selectedScenario.persona.industry}</p>
                     <p><strong>Company:</strong> {selectedScenario.persona.company}</p>
                     <p><strong>Style:</strong> {selectedScenario.persona.decisionMakingStyle}</p>

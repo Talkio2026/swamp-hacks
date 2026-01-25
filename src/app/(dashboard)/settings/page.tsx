@@ -220,33 +220,37 @@ export default function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center items-start py-6">
-              <div className="max-w-2xl mx-auto">
+              <div className="w-full max-w-2xl mx-auto flex justify-center">
                 <UserProfile 
                   routing="hash"
                   appearance={{
                     elements: {
-                      rootBox: 'flex justify-center mx-auto',
-                      cardBox: 'shadow-none border-0 mx-auto',
+                      rootBox: 'w-full flex justify-center mx-auto',
+                      cardBox: 'shadow-none border-0 w-full mx-auto flex justify-center',
+                      card: 'w-full mx-auto',
                       navbar: 'hidden',
                       navbarMobileMenuButton: 'hidden',
                       headerTitle: 'hidden',
                       headerSubtitle: 'hidden',
                       profileSectionTitleText: 'text-lg font-bold',
-                      // Account section styling
-                      accountSwitcherTrigger: 'text-base font-semibold',
+                      // Account section styling - center it
+                      accountSwitcherTrigger: 'text-base font-semibold mx-auto',
                       accountSwitcherTriggerText: 'text-base font-semibold',
                       // Navigation items
                       navbarButton: 'text-base font-medium',
                       navbarButtonText: 'text-base font-medium',
-                      // Content sections
-                      pageHeaderTitle: 'text-xl font-bold',
+                      // Content sections - center content
+                      page: 'w-full mx-auto',
+                      pageScrollBox: 'w-full mx-auto',
+                      pageHeaderTitle: 'text-xl font-bold text-center',
                       pageHeaderSubtitle: 'hidden',
                       formFieldLabel: 'text-base font-semibold',
                       formFieldInput: 'text-base',
                       formButtonPrimary: 'text-base font-semibold',
-                      // Profile info
-                      profileSection: 'text-base',
-                      profileSectionPrimaryButton: 'text-base font-semibold',
+                      // Profile info - center profile section
+                      profileSection: 'text-base mx-auto',
+                      profileSectionContent: 'mx-auto',
+                      profileSectionPrimaryButton: 'text-base font-semibold mx-auto',
                       // Email and connected accounts
                       formFieldLabelRow: 'text-base font-semibold',
                       badge: 'text-sm font-medium',
