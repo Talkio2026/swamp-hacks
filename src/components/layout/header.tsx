@@ -19,8 +19,8 @@ export function Header({ title, description, role, actions, className, titleSize
   
   return (
     <header className={cn(
-      "h-16 border-b border-[#E0E7FF] bg-white flex items-center justify-between px-8 transition-all duration-300 ease-in-out",
-      isModalOpen && "opacity-5 blur-xl pointer-events-none border-transparent shadow-none",
+      "relative z-[1] h-16 border-b border-[#E0E7FF] bg-white flex items-center justify-between px-8 transition-all duration-300 ease-in-out",
+      isModalOpen && "opacity-60",
       className
     )}>
       <div className="flex items-center gap-4">
@@ -41,10 +41,7 @@ export function Header({ title, description, role, actions, className, titleSize
       <div className="flex items-center gap-4">
         {actions}
 
-        <div className={cn(
-          "w-px h-6 bg-[#E0E7FF] mx-1 transition-all duration-300",
-          isModalOpen && "bg-transparent"
-        )} />
+        <div className="w-px h-6 bg-[#E0E7FF] mx-1 transition-all duration-300" />
 
         <UserButton
           appearance={{

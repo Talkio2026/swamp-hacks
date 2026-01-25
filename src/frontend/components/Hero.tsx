@@ -108,7 +108,7 @@ export function Hero() {
     >
       <div className="relative z-10 flex flex-col justify-center h-full px-6 pt-24 pb-12 lg:px-8 lg:pt-32 lg:pb-16">
         <div className="mx-auto max-w-[1280px] w-full">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center -mt-16 lg:-mt-24">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-80 items-center -mt-16 lg:-mt-24">
           {/* Left: Text Content — light, inverted against photo */}
           <div className="max-w-2xl">
             <h1
@@ -146,69 +146,41 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right: Preview — dark glass, light text */}
-          <div className="hero-preview w-full max-w-md ml-auto">
-            <div className="relative rounded-xl border border-white/20 bg-black/40 p-4 shadow-xl backdrop-blur-md">
-              {/* Search Bar */}
-              <div className="mb-4 flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2">
-                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  readOnly
-                  value="former tesla autopilot engineers..."
-                  className="flex-1 bg-transparent text-xs text-slate-200 outline-none placeholder:text-slate-500"
-                />
-              </div>
-
-              {/* Results Preview */}
-              <div className="space-y-2">
-                {[
-                  { name: 'Dr. Emily Zhang', role: 'VP of Engineering', company: 'Wayve', matches: 3 },
-                  { name: 'Alex Petrov', role: 'Lead Machine Learning', company: 'Aurora', matches: 3 },
-                  { name: 'Dr. Priya Sharma', role: 'Co-Founder & CTO', company: 'MotionPilot', matches: 3 },
-                ].map((person, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 rounded-md border border-white/10 bg-white/5 p-2 transition-colors hover:border-white/20"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-xs font-medium text-white">
-                      {person.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-white text-xs">{person.name}</div>
-                      <div className="text-[10px] text-slate-400">
-                        {person.role} • {person.company}
-                      </div>
-                    </div>
-                    <div className="flex gap-0.5">
-                      {[...Array(person.matches)].map((_, j) => (
-                        <div key={j} className="h-1 w-1 rounded-full bg-emerald-400" />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Bottom badge */}
-              <div className="mt-4 flex items-center justify-between rounded-md border border-white/10 bg-white/5 px-3 py-2">
+          {/* Right: Mac-style Video Frame */}
+          <div className="hero-preview w-full max-w-2xl ml-auto mr-8 lg:mr-16 xl:mr-32">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white" style={{
+              boxShadow: '0 0 40px rgba(59, 130, 246, 0.4), 0 0 80px rgba(59, 130, 246, 0.2), 0 20px 40px rgba(0, 0, 0, 0.1)'
+            }}>
+              {/* Mac-style Title Bar with white background */}
+              <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
+                {/* Traffic Lights with hover effects */}
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span className="text-[10px] font-medium text-slate-300">Max Compute</span>
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e] shadow-inner hover:bg-[#ff6f67] transition-colors cursor-pointer group relative">
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Close</span>
                   </div>
-                  <div className="h-2.5 w-px bg-white/20" />
-                  <div className="flex items-center gap-1">
-                    <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    <span className="text-[10px] font-medium text-slate-300">High Reasoning</span>
+                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] shadow-inner hover:bg-[#ffcd3e] transition-colors cursor-pointer group relative">
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Minimize</span>
+                  </div>
+                  <div className="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29] shadow-inner hover:bg-[#38d850] transition-colors cursor-pointer group relative">
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Fullscreen</span>
                   </div>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">Try Atlas →</span>
+                {/* Spacer for symmetry - no title text */}
+                <div className="flex-1"></div>
+              </div>
+              
+              {/* Video Container */}
+              <div className="relative w-full aspect-video bg-black overflow-hidden">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/talkio-video.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </div>
           </div>

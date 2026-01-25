@@ -34,15 +34,14 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'relative z-20 flex flex-col border-r border-[#E0E7FF] bg-[#F6F5FA] transition-all duration-300 ease-in-out',
+        'relative z-[1] flex flex-col border-r border-[#E0E7FF] bg-[#F6F5FA] transition-all duration-300 ease-in-out',
         collapsed ? 'w-16' : 'w-60',
-        isModalOpen && 'opacity-40 blur-xl pointer-events-none border-transparent shadow-none brightness-[0.3]'
+        isModalOpen && 'opacity-60'
       )}
     >
       {/* Logo & Org Switcher */}
       <div className={cn(
-        "relative flex h-16 items-center justify-center border-b border-[#E0E7FF] px-4 bg-white transition-all duration-300",
-        isModalOpen && "border-transparent shadow-none"
+        "relative flex h-16 items-center justify-center border-b border-[#E0E7FF] px-4 bg-white transition-all duration-300"
       )}>
         {!collapsed ? (
           <>
@@ -85,8 +84,7 @@ export function Sidebar() {
         collapsed ? "max-h-0 opacity-0" : "max-h-32 opacity-100"
       )}>
         <div className={cn(
-          "p-3 border-b border-[#E0E7FF] bg-white transition-all duration-300",
-          isModalOpen && "border-transparent shadow-none"
+          "p-3 border-b border-[#E0E7FF] bg-white transition-all duration-300"
         )}>
           <OrganizationSwitcher
             appearance={{
@@ -119,7 +117,7 @@ export function Sidebar() {
                   ? 'justify-center px-0 py-3 gap-0' 
                   : 'gap-3 px-3 py-2.5',
                 isActive
-                  ? cn('bg-white text-black font-semibold', !isModalOpen && 'shadow-sm')
+                  ? 'bg-white text-black font-semibold shadow-sm'
                   : 'text-black font-medium hover:bg-white/80',
               )}
               title={collapsed ? item.name : undefined}
@@ -144,8 +142,7 @@ export function Sidebar() {
         collapsed ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
       )}>
         <div className={cn(
-          "px-4 py-3 border-t border-[#E0E7FF] transition-all duration-300",
-          isModalOpen && "border-transparent"
+          "px-4 py-3 border-t border-[#E0E7FF] transition-all duration-300"
         )}>
           <p className="text-[10px] text-gray-400 font-medium">
             v1.0.0

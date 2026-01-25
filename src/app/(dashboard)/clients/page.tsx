@@ -439,9 +439,21 @@ export default function ClientsPage() {
         method: 'POST',
       })
       
+      if (!response.ok) {
+        let errorMessage = 'Failed to generate summary'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.details || errorMessage
+        } catch (parseError) {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage
+        }
+        throw new Error(errorMessage)
+      }
+      
       const data = await response.json()
       
-      if (!response.ok) {
+      if (!data.success) {
         throw new Error(data.error || 'Failed to generate summary')
       }
       
@@ -454,7 +466,10 @@ export default function ClientsPage() {
       })
     } catch (err) {
       console.error('Error generating agent summary:', err)
-      setAgentError(err instanceof Error ? err.message : 'Failed to generate summary')
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Failed to generate summary. Please check your API keys and try again.'
+      setAgentError(errorMessage)
     } finally {
       setAgentLoading(false)
     }
@@ -781,8 +796,8 @@ export default function ClientsPage() {
 
       {/* Agent Summary Modal */}
       {agentModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <Card className="w-full max-w-4xl max-h-[90vh] my-auto overflow-hidden flex flex-col">
             <CardHeader className="flex-shrink-0 border-b bg-gradient-to-b from-violet-50 via-violet-50/80 to-transparent">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
