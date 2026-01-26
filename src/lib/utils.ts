@@ -93,3 +93,33 @@ export function isApiError(value: unknown): value is ApiError {
     'message' in (value as ApiError).error
   )
 }
+
+/**
+ * Safely parse JSON from a fetch Response.
+ * Checks content-type header to ensure response is JSON before parsing.
+ * Throws an error if response is not JSON (e.g., HTML error page).
+ * 
+ * @param response - The fetch Response object
+ * @returns Parsed JSON data
+ * @throws Error if response is not JSON or parsing fails
+ */
+export async function safeJsonParse<T = unknown>(response: Response): Promise<T> {
+  const contentType = response.headers.get('content-type');
+  
+  if (!contentType || !contentType.includes('application/json')) {
+    const text = await response.text();
+    throw new Error(
+      `Expected JSON but got ${contentType || 'unknown content-type'}. ` +
+      `Status: ${response.status}. ` +
+      `Response preview: ${text.substring(0, 200)}`
+    );
+  }
+  
+  try {
+    return await response.json() as T;
+  } catch (error) {
+    throw new Error(
+      `Failed to parse JSON response: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}

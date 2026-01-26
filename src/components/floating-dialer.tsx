@@ -57,6 +57,11 @@ export function FloatingDialer() {
       try {
         const response = await fetch('/api/clients')
         if (response.ok) {
+          // Check if response is JSON before parsing
+          const contentType = response.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('API returned non-JSON response');
+          }
           const data = await response.json()
           setContacts(data.clients || [])
         }
@@ -95,6 +100,12 @@ export function FloatingDialer() {
         const response = await fetch('/api/twilio/token')
         if (!response.ok) {
           throw new Error('Failed to get token')
+        }
+        
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('API returned non-JSON response');
         }
         
         const { token } = await response.json()

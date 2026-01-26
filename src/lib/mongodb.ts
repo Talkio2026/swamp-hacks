@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
+// Don't throw at module load - let the connection function handle it
+// This prevents Next.js from returning HTML error pages
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
@@ -28,6 +27,11 @@ if (!global.mongoose) {
 }
 
 async function connectToDatabase(): Promise<typeof mongoose> {
+  // Check for MONGODB_URI here instead of at module load
+  if (!MONGODB_URI) {
+    throw new Error("MONGODB_URI environment variable is not defined. Please configure your database connection.");
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -37,9 +41,14 @@ async function connectToDatabase(): Promise<typeof mongoose> {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log("[MongoDB] Connected successfully");
       return mongoose;
+    }).catch((error) => {
+      // Clear the promise on error so we can retry
+      cached.promise = null;
+      console.error("[MongoDB] Connection error:", error);
+      throw new Error(`Failed to connect to MongoDB: ${error instanceof Error ? error.message : 'Unknown error'}`);
     });
   }
 

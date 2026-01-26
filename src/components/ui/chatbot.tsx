@@ -157,6 +157,13 @@ export function Chatbot() {
         }),
       });
 
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        throw new Error(`Expected JSON but got ${contentType}. Response: ${text.substring(0, 200)}`);
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -215,6 +222,7 @@ export function Chatbot() {
       <Popover.Trigger asChild>
         <button
           ref={buttonRef}
+          suppressHydrationWarning
           className={`fixed z-[9999] h-14 w-14 rounded-2xl
             bg-slate-800/80 backdrop-blur-md text-white/90
             border border-white/10

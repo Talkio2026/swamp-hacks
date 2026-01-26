@@ -275,10 +275,23 @@ export default function ClientsPage() {
       try {
         // Fetch real clients from API
         const response = await fetch('/api/clients')
+        
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          throw new Error(`API returned non-JSON response. Status: ${response.status}`);
+        }
+        
         const data = await response.json()
         
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch clients')
+          // Provide more helpful error messages
+          const errorMessage = data.error || data.details || 'Failed to fetch clients';
+          if (errorMessage.includes('MONGODB_URI') || errorMessage.includes('Database')) {
+            throw new Error('Database connection error. Please check your environment configuration.');
+          }
+          throw new Error(errorMessage);
         }
         
         // Process real clients and fetch their transcripts
@@ -298,6 +311,14 @@ export default function ClientsPage() {
             let calls: Call[] = []
             try {
               const transcriptsRes = await fetch(`/api/clients/${client.clientId}/transcripts`)
+              
+              // Check if response is JSON before parsing
+              const transcriptsContentType = transcriptsRes.headers.get('content-type');
+              if (!transcriptsContentType || !transcriptsContentType.includes('application/json')) {
+                console.warn(`Non-JSON response for transcripts: ${client.clientId}`);
+                return { ...client, calls: [] };
+              }
+              
               const transcriptsData = await transcriptsRes.json()
               
               if (transcriptsRes.ok && transcriptsData.transcripts) {
@@ -341,8 +362,9 @@ export default function ClientsPage() {
         setClients([...realClients, ...filteredMockClients])
       } catch (err) {
         console.error('Error fetching clients:', err)
-        setError(err instanceof Error ? err.message : 'Something went wrong')
-        // Fall back to mock data on error
+        const errorMessage = err instanceof Error ? err.message : 'Something went wrong'
+        setError(errorMessage)
+        // Fall back to mock data on error so user can still see the UI
         setClients(mockClients)
       } finally {
         setIsLoading(false)
@@ -533,6 +555,36 @@ export default function ClientsPage() {
       
       <div className="flex-1 overflow-auto">
         <div className="p-6 pb-0 space-y-6">
+          {/* Error Banner - Show even when mock data is loaded */}
+          {error && error.includes('Database') && (
+            <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
+                      Database Connection Issue
+                    </h3>
+                    <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
+                      {error}
+                    </p>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                      Showing mock data for demonstration. To connect to your database, add <code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">MONGODB_URI</code> to your <code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">.env.local</code> file and restart the server.
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setError(null)}
+                    className="text-yellow-700 hover:text-yellow-900 hover:bg-yellow-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card>

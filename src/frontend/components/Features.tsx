@@ -82,6 +82,7 @@ export function Features() {
                 autoPlay
                 muted
                 playsInline
+                preload="auto"
                 className="w-full h-auto"
                 style={{ maxHeight: '80vh' }}
               >
