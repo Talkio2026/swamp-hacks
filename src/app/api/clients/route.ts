@@ -93,7 +93,27 @@ export async function POST(request: NextRequest) {
 // GET /api/clients - List all clients or get by phone/id
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
+    // Check MongoDB connection first
+    if (!process.env.MONGODB_URI) {
+      console.error("[API] GET /api/clients: MONGODB_URI not configured");
+      return NextResponse.json(
+        { error: "Database not configured. Please set MONGODB_URI environment variable." },
+        { status: 500 }
+      );
+    }
+
+    try {
+      await connectDB();
+    } catch (dbError) {
+      console.error("[API] GET /api/clients: Database connection failed:", dbError);
+      return NextResponse.json(
+        { 
+          error: "Database connection failed", 
+          details: dbError instanceof Error ? dbError.message : "Unknown database error" 
+        },
+        { status: 500 }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const phone = searchParams.get("phone");
@@ -143,8 +163,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[API] GET /api/clients error:", error);
+    // Ensure we always return JSON, even for unexpected errors
     return NextResponse.json(
-      { error: "Failed to fetch clients", details: error instanceof Error ? error.message : "Unknown error" },
+      { 
+        error: "Failed to fetch clients", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        type: error instanceof Error ? error.constructor.name : typeof error
+      },
       { status: 500 }
     );
   }
