@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/mongodb'
 import Transcript from '@/lib/models/Transcript'
+import type { ITranscript } from '@/lib/models/Transcript'
 import { analyzeTranscript } from '@/lib/ai/analyzer'
 import { ProviderConfig, OpenRouterModel, OPENROUTER_MODELS } from '@/lib/ai/types'
 import { generateTranscriptEmbedding } from '@/lib/ai/vector-search'
@@ -134,8 +135,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
 }
 
 // Map analysis stage to transcript status
-function mapStageToStatus(stage: string): string {
-  const stageMap: Record<string, string> = {
+function mapStageToStatus(stage: string): ITranscript['status'] {
+  const stageMap: Record<string, ITranscript['status']> = {
     'initial_contact': 'initial_contact',
     'discovery': 'initial_contact',
     'demo': 'demo',
