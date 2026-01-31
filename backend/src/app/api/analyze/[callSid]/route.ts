@@ -69,7 +69,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     
     // Validate OpenRouter model if specified
     if (config.provider === 'openrouter' && config.model) {
-      if (!OPENROUTER_MODELS[config.model]) {
+      if (!(config.model in OPENROUTER_MODELS)) {
         return NextResponse.json(
           { error: `Invalid model: ${config.model}` },
           { status: 400 }
