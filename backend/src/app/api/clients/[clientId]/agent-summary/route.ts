@@ -63,7 +63,7 @@ interface ClientAgentResult {
     rationale: string;
   };
   modelUsed: string;
-  generatedAt: string;
+  generatedAt: Date;
   processingTimeMs: number;
 }
 
@@ -236,7 +236,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           rationale: 'Insufficient data for accurate prediction',
         },
         modelUsed: `${provider.name}/${provider.modelId}`,
-        generatedAt: new Date().toISOString(),
+        generatedAt: new Date(),
         processingTimeMs,
       };
     } catch (parseError) {
