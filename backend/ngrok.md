@@ -34,7 +34,7 @@ when ngrok stops working or when you move to a new domain.
 ### 2) Local development
 - Keep `NGROK_URL` pointing to your current ngrok tunnel.
 - If you are not using ngrok locally, you can set:
-  - `NEXT_PUBLIC_BASE_URL=http://localhost:3000`
+  - `NEXT_PUBLIC_BASE_URL=http://localhost:4000`
   - and avoid `NGROK_URL` entirely.
 
 ### 3) Update the hardcoded fallback
