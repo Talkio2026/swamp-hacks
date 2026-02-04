@@ -18,28 +18,34 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    const body = await request.json();
+    const body = (await request.json()) as Record<string, unknown>;
     
     // Validate required fields (salesRepName removed - auto-filled from logged-in user)
+    const clientName = typeof body.clientName === "string" ? body.clientName : "";
+    const companyName = typeof body.companyName === "string" ? body.companyName : "";
+    const industry = typeof body.industry === "string" ? body.industry : "";
+    const contactEmail = typeof body.contactEmail === "string" ? body.contactEmail : "";
+    const contactPhone = typeof body.contactPhone === "string" ? body.contactPhone : "";
+
     const requiredFields = [
-      "clientName",
-      "companyName",
-      "industry",
-      "contactEmail",
-      "contactPhone",
+      { key: "clientName", value: clientName },
+      { key: "companyName", value: companyName },
+      { key: "industry", value: industry },
+      { key: "contactEmail", value: contactEmail },
+      { key: "contactPhone", value: contactPhone },
     ];
-    
+
     for (const field of requiredFields) {
-      if (!body[field]) {
+      if (!field.value) {
         return NextResponse.json(
-          { error: `Missing required field: ${field}` },
+          { error: `Missing required field: ${field.key}` },
           { status: 400 }
         );
       }
     }
 
     // Normalize phone number
-    const normalizedPhone = normalizePhoneNumber(body.contactPhone);
+    const normalizedPhone = normalizePhoneNumber(contactPhone);
 
     // Check if client with this phone already exists
     const existingClient = await Client.findOne({ contactPhone: normalizedPhone });
@@ -60,14 +66,14 @@ export async function POST(request: NextRequest) {
     // Create the client
     const client = await Client.create({
       clientId,
-      clientName: body.clientName,
-      companyName: body.companyName,
-      industry: body.industry,
-      contactEmail: body.contactEmail,
+      clientName,
+      companyName,
+      industry,
+      contactEmail,
       contactPhone: normalizedPhone,
       salesRepName,
       salesRepEmail,
-      initialNotes: body.initialNotes || null,
+      initialNotes: typeof body.initialNotes === "string" ? body.initialNotes : undefined,
       currentStatus: "prospect",
       totalCalls: 0,
     });
@@ -211,7 +217,7 @@ export async function PATCH(request: NextRequest) {
 
     for (const field of allowedUpdates) {
       if (body[field] !== undefined) {
-        (client as Record<string, unknown>)[field] = body[field];
+        client.set(field, body[field]);
       }
     }
 

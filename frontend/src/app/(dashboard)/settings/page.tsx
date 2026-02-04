@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { UserProfile } from '@clerk/nextjs'
 import { Header } from '@/components/layout/header'
@@ -33,7 +33,7 @@ interface GoogleCalendarSettings {
   connected: boolean
 }
 
-export default function SettingsPage() {
+function SettingsContent() {
   const searchParams = useSearchParams()
   const [selectedModel, setSelectedModel] = useState<string>('gemini')
   const [availableModels, setAvailableModels] = useState<AIModel[]>([])
@@ -348,5 +348,13 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading settings...</div>}>
+      <SettingsContent />
+    </Suspense>
   )
 }

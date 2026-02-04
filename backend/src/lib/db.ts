@@ -10,7 +10,7 @@ function createPrismaClient() {
   // Use Accelerate URL if available (production), otherwise use adapter (development)
   if (process.env.PRISMA_ACCELERATE_URL) {
     return new PrismaClient({
-      accelerateUrl: process.env.PRISMA_ACCELERATE_URL,
+      datasourceUrl: process.env.PRISMA_ACCELERATE_URL,
     })
   }
   

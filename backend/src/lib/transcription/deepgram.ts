@@ -83,8 +83,8 @@ export async function transcribeWithDeepgram(
 
     // Extract utterances with speaker info
     const utterances: TranscriptionUtterance[] = (result.results?.utterances || []).map(
-      (u: { speaker: number; transcript: string; start: number; end: number; confidence: number }) => ({
-        speaker: u.speaker,
+      (u: { speaker?: number; transcript: string; start: number; end: number; confidence: number }) => ({
+        speaker: u.speaker ?? 0,
         text: u.transcript,
         start: u.start,
         end: u.end,
@@ -94,12 +94,12 @@ export async function transcribeWithDeepgram(
 
     // Extract words with timing
     const words: TranscriptionWord[] = (alternative.words || []).map(
-      (w: { word: string; start: number; end: number; confidence: number; speaker: number }) => ({
+      (w: { word: string; start: number; end: number; confidence: number; speaker?: number }) => ({
         word: w.word,
         start: w.start,
         end: w.end,
         confidence: w.confidence,
-        speaker: w.speaker,
+        speaker: w.speaker ?? 0,
       })
     );
 

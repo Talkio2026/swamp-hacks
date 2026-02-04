@@ -6,6 +6,7 @@
 import connectDB from '@/lib/mongodb';
 import Transcript, { ITranscript } from '@/lib/models/Transcript';
 import { generateEmbedding, createEmbeddingText, isEmbeddingConfigured } from './embeddings';
+import type { PipelineStage } from 'mongoose';
 
 // Vector search index name (must match what's configured in MongoDB Atlas)
 const VECTOR_INDEX_NAME = 'transcript_vector_index';
@@ -269,15 +270,12 @@ export async function getAggregatedInsights(salesRepEmail?: string): Promise<{
 }> {
   await connectDB();
 
-  const matchStage: Record<string, unknown> = {
+  const matchStage: PipelineStage.Match['$match'] = {
     'analysis.summary': { $exists: true },
+    ...(salesRepEmail ? { salesRepEmail } : {}),
   };
-  
-  if (salesRepEmail) {
-    matchStage.salesRepEmail = salesRepEmail;
-  }
 
-  const pipeline = [
+  const pipeline: PipelineStage[] = [
     { $match: matchStage },
     {
       $facet: {
@@ -306,7 +304,7 @@ export async function getAggregatedInsights(salesRepEmail?: string): Promise<{
           { $limit: 10 },
         ],
       },
-    },
+    } as PipelineStage,
   ];
 
   const [result] = await Transcript.aggregate(pipeline);

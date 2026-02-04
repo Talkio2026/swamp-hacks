@@ -112,7 +112,6 @@ export function FloatingDialer() {
         
         const device = new Device(token, {
           logLevel: 1,
-          codecPreferences: ['opus', 'pcmu'],
         })
 
         device.on('registered', () => {

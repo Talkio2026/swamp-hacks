@@ -401,21 +401,30 @@ export async function PATCH(
     const body = (await request.json()) as Record<string, unknown>
     const baseKey = `${clientId}:${callId}`
 
-    if (Array.isArray(body.summary?.bullets)) {
-      setOverride(`${baseKey}:summary.bullets`, { bullets: body.summary.bullets as string[] })
+    const summary = body.summary
+    if (
+      summary &&
+      typeof summary === 'object' &&
+      Array.isArray((summary as { bullets?: unknown }).bullets)
+    ) {
+      setOverride(`${baseKey}:summary.bullets`, {
+        bullets: (summary as { bullets: string[] }).bullets,
+      })
     }
-    if (body.outcome && 'explanation' in body.outcome) {
-      const v = (body.outcome as { explanation: unknown }).explanation
+    const outcome = body.outcome
+    if (outcome && typeof outcome === 'object' && 'explanation' in outcome) {
+      const v = (outcome as { explanation: unknown }).explanation
       if (typeof v === 'string') setOverride(`${baseKey}:outcome.explanation`, { explanation: v })
       else editOverrides.delete(`${baseKey}:outcome.explanation`)
     }
-    if (body.nextAction && 'purpose' in body.nextAction) {
-      const v = (body.nextAction as { purpose?: unknown }).purpose
+    const nextAction = body.nextAction
+    if (nextAction && typeof nextAction === 'object' && 'purpose' in nextAction) {
+      const v = (nextAction as { purpose?: unknown }).purpose
       if (typeof v === 'string') setOverride(`${baseKey}:nextAction.purpose`, { purpose: v })
       else editOverrides.delete(`${baseKey}:nextAction.purpose`)
     }
-    if (body.nextAction && 'missingReason' in body.nextAction) {
-      const v = (body.nextAction as { missingReason?: unknown }).missingReason
+    if (nextAction && typeof nextAction === 'object' && 'missingReason' in nextAction) {
+      const v = (nextAction as { missingReason?: unknown }).missingReason
       if (typeof v === 'string') setOverride(`${baseKey}:nextAction.missingReason`, { missingReason: v })
       else editOverrides.delete(`${baseKey}:nextAction.missingReason`)
     }

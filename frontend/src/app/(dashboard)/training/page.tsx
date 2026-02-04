@@ -58,10 +58,28 @@ interface EvaluationResult {
   recommendedPractice: string
 }
 
+interface SpeechRecognition {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  onresult: ((event: any) => void) | null
+  onerror: ((event: any) => void) | null
+  onend: (() => void) | null
+  start(): void
+  stop(): void
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognition
+
 // Check if browser supports speech recognition
-const SpeechRecognition = typeof window !== 'undefined' 
-  ? (window.SpeechRecognition || window.webkitSpeechRecognition)
-  : null
+const SpeechRecognitionCtor: SpeechRecognitionConstructor | null =
+  typeof window !== 'undefined'
+    ? window.SpeechRecognition ||
+      (window as typeof window & {
+        webkitSpeechRecognition?: SpeechRecognitionConstructor
+      }).webkitSpeechRecognition ||
+      null
+    : null
 
 export default function TrainingPage() {
   const [sessionState, setSessionState] = useState<SessionState>('selecting')
@@ -111,8 +129,8 @@ export default function TrainingPage() {
 
   // Initialize speech recognition (only once)
   useEffect(() => {
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition()
+    if (SpeechRecognitionCtor) {
+      const recognition = new SpeechRecognitionCtor()
       recognition.continuous = true
       recognition.interimResults = true
       recognition.lang = 'en-US'
@@ -369,7 +387,7 @@ export default function TrainingPage() {
 
   // Toggle microphone
   const toggleMicrophone = () => {
-    if (!SpeechRecognition) {
+    if (!SpeechRecognitionCtor) {
       setError('Speech recognition is not supported in your browser. Please use Chrome.')
       return
     }
@@ -1130,7 +1148,7 @@ function getFirstMessage(scenario: TrainingScenario): string {
 // TypeScript declarations for Web Speech API
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition
-    webkitSpeechRecognition: typeof SpeechRecognition
+    SpeechRecognition: SpeechRecognitionConstructor
+    webkitSpeechRecognition: SpeechRecognitionConstructor
   }
 }
